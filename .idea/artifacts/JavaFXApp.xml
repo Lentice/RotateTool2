@@ -17,11 +17,21 @@
         <element id="directory" name="META-INF">
           <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
         </element>
-        <element id="directory" name="Libs">
-          <element id="library" level="project" name="Libs" />
-        </element>
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/commons-codec-1.10.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/commons-collections4-4.1.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/commons-logging-1.2.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/jfoenix.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/junit-4.12.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/log4j-api-2.3-javadoc.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/log4j-api-2.3.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/log4j-core-2.3-javadoc.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/log4j-core-2.3.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/poi-3.16.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/poi-ooxml-3.16.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/poi-ooxml-schemas-3.16.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/xmlbeans-2.6.0.jar" path-in-jar="/" />
+        <element id="file-copy" path="$PROJECT_DIR$/src/log4j2.xml" />
       </element>
-      <element id="file-copy" path="$PROJECT_DIR$/resources/log4j2.xml" />
     </root>
   </artifact>
 </component>
