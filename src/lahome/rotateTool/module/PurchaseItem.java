@@ -18,10 +18,10 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
     private StringProperty grDate;
     private IntegerProperty grQty;
 
-    private Row row;
+    private int rowNum;
     private StockItem stockItem;
 
-    public PurchaseItem(Row row, String kitName, String partNum, String po, String grDate, int grQty) {
+    public PurchaseItem(int rowNum, String kitName, String partNum, String po, String grDate, int grQty) {
 
         if (kitName == null)
             kitName = "";
@@ -32,7 +32,7 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
         this.grDate = new SimpleStringProperty(grDate);
         this.grQty = new SimpleIntegerProperty(grQty);
 
-        this.row = row;
+        this.rowNum = rowNum;
     }
 
     public void setStockItem(StockItem item) {

@@ -1,14 +1,21 @@
 package lahome.rotateTool.Util;
 
+import com.monitorjbl.xlsx.StreamingReader;
 import lahome.rotateTool.module.RotateCollection;
 import lahome.rotateTool.module.RotateItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Date;
 
 public class ExcelParser {
     private static final Logger log = LogManager.getLogger(ExcelParser.class.getName());
@@ -113,19 +120,17 @@ public class ExcelParser {
 
         InputStream is;
         try {
-            is = new FileInputStream(file.getPath());
+            is = new FileInputStream(file);
         } catch (FileNotFoundException e) {
             log.error(String.format("File %s opened failed", file.getPath()));
             return null;
         }
 
         Workbook wb;
-        try {
-            wb = WorkbookFactory.create(is);
-        } catch (IOException | InvalidFormatException e) {
-            log.error("failed!", e);
-            return null;
-        }
+        wb = StreamingReader.builder()
+                .rowCacheSize(100)    // number of rows to keep in memory (defaults to 10)
+                .bufferSize(4096)     // buffer size to use when reading InputStream to file (defaults to 1024)
+                .open(is);            // InputStream or File for XLSX file (required)
         if (wb == null) {
             log.warn(String.format("%s(%d) wb is null",
                     Thread.currentThread().getStackTrace()[1].getMethodName(),
@@ -199,7 +204,8 @@ public class ExcelParser {
 
     private String cellGetDate(Cell cell) {
         try {
-            return cell.getStringCellValue();
+            Date date = cell.getDateCellValue();
+            return DateUtil.format(date);
         } catch (Exception e) {
             log.error("failed!", e);
             return null;
@@ -224,12 +230,12 @@ public class ExcelParser {
     }
 
 
-    public void loadRotateExcel(File file, int firstDataRow, String kitColStr, String partColStr, String pmQty) {
+    public void loadRotateExcel(File file, int firstDataRow, String kitColStr, String partColStr, String pmQtyColStr) {
 
         firstDataRow = firstDataRow - 1;
         int kitColumn = CellReference.convertColStringToIndex(kitColStr.toUpperCase());
         int partColumn = CellReference.convertColStringToIndex(partColStr.toLowerCase());
-        int pmQtyColumn = CellReference.convertColStringToIndex(pmQty.toUpperCase());
+        int pmQtyColumn = CellReference.convertColStringToIndex(pmQtyColStr.toUpperCase());
 
         int maxColumnUsed = Math.max(Math.max(kitColumn, partColumn), pmQtyColumn);
 
@@ -239,14 +245,10 @@ public class ExcelParser {
             return;
         }
 
-        int rowCount = sheet.getPhysicalNumberOfRows();
-        for (int i = firstDataRow; i < rowCount; i++) {
-            Row row = sheet.getRow(i);
-            if (row == null)
-                continue;
-
+        for (Row row : sheet) {
             int rowNum = row.getRowNum();
-            log.debug(String.format("Rotate row %d", rowNum));
+            if (rowNum < firstDataRow)
+                continue;
 
             int columnCount = row.getPhysicalNumberOfCells();
             if (columnCount < maxColumnUsed)
@@ -258,13 +260,12 @@ public class ExcelParser {
                 if (kit.isEmpty() && part.isEmpty())
                     continue;
 
-                int qty = getExpectQty(row, pmQtyColumn);
+                int pmQty = getExpectQty(row, pmQtyColumn);
 
-                if (qty == 0)
+                if (pmQty == 0)
                     continue;
 
-                RotateItem item = new RotateItem(row, kit, part, qty);
-                collection.addRotate(item);
+                collection.addRotate(rowNum, kit, part, pmQty);
 
             } catch (Exception e) {
                 log.error("failed!", e);
@@ -293,14 +294,10 @@ public class ExcelParser {
             return;
         }
 
-        int rowCount = sheet.getPhysicalNumberOfRows();
-        for (int i = firstDataRow; i < rowCount; i++) {
-            Row row = sheet.getRow(i);
-            if (row == null)
-                continue;
-
+        for (Row row : sheet) {
             int rowNum = row.getRowNum();
-            log.debug(String.format("Stock row %d", rowNum));
+            if (rowNum < firstDataRow)
+                continue;
 
             int columnCount = row.getPhysicalNumberOfCells();
             if (columnCount < maxColumnUsed)
@@ -323,7 +320,7 @@ public class ExcelParser {
                 int dc = getDc(row, dcColumn);
                 int myQty = getMyQty(row, myQtyColumn);
 
-                collection.addStock(row, kitName, partNumber, po, stockQty, dc, myQty);
+                collection.addStock(rowNum, kitName, partNumber, po, stockQty, dc, myQty);
 
             } catch (Exception e) {
                 log.error("failed!", e);
@@ -350,14 +347,10 @@ public class ExcelParser {
             return;
         }
 
-        int rowCount = sheet.getPhysicalNumberOfRows();
-        for (int i = firstDataRow; i < rowCount; i++) {
-            Row row = sheet.getRow(i);
-            if (row == null)
-                continue;
-
+        for (Row row : sheet) {
             int rowNum = row.getRowNum();
-            log.debug(String.format("Purchase row %d", rowNum));
+            if (rowNum < firstDataRow)
+                continue;
 
             int columnCount = row.getPhysicalNumberOfCells();
             if (columnCount < maxColumnUsed)
@@ -380,7 +373,7 @@ public class ExcelParser {
                 int grQty = getGrQty(row, grQtyColumn);
 
 
-                collection.addPurchase(row, kit, part, po, date, grQty);
+                collection.addPurchase(rowNum, kit, part, po, date, grQty);
 
             } catch (Exception e) {
                 log.error("failed!", e);

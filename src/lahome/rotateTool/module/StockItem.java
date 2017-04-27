@@ -24,13 +24,14 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     private IntegerProperty stockQty;
     private IntegerProperty dc;
     private IntegerProperty myQty;
+    private IntegerProperty totalGrQty;
 
-    private Row row;
+    private int rowNum;
     private RotateItem rotateItem;
 
     private List<PurchaseItem> purchaseItems = new ArrayList<>();
 
-    public StockItem(Row row, String kitName, String partNum, String po,
+    public StockItem(int rowNum, String kitName, String partNum, String po,
                      int stockQty, int dc, int myQty) {
 
         if (kitName == null)
@@ -42,8 +43,9 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.stockQty = new SimpleIntegerProperty(stockQty);
         this.dc = new SimpleIntegerProperty(dc);
         this.myQty = new SimpleIntegerProperty(myQty);
+        this.totalGrQty = new SimpleIntegerProperty(0);
 
-        this.row = row;
+        this.rowNum = rowNum;
     }
 
     public void setRotateItem(RotateItem rotateItem) {
@@ -128,11 +130,26 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.myQty.set(myQty);
     }
 
+    public int getTotalGrQty() {
+        return totalGrQty.get();
+    }
+
+    public IntegerProperty totalGrQtyProperty() {
+        return totalGrQty;
+    }
+
+    public void setTotalGrQty(int totalGrQty) {
+        this.totalGrQty.set(totalGrQty);
+    }
+
     public void addPurchaseItem(PurchaseItem item) {
-        log.debug(String.format("Add purchase: %s, %s, %s, %d, %d, %d",
+        log.debug(String.format("Add purchase: %s, %s, %s, %s, %d",
                 item.getKitName(), item.getPartNumber(), item.getPo(), item.getGrDate(), item.getGrQty()));
+
+        totalGrQty.set(totalGrQty.get() + item.getGrQty());
 
         purchaseItems.add(item);
         item.setStockItem(this);
+
     }
 }

@@ -24,7 +24,9 @@ public class RotateCollection {
         return kitName.replaceAll("-", "") + partNum.replaceAll("-", "");
     }
 
-    public void addRotate(RotateItem item) {
+    public void addRotate(int rowNum, String kitName, String partNum, int pmQty) {
+
+        RotateItem item = new RotateItem(rowNum, kitName, partNum, pmQty);
 
         log.debug(String.format("Add rotate: %s, %s, %d, %s",
                 item.getKitName(), item.getPartNumber(), item.getPmQty(), item.isKit()? "K" : "S"));
@@ -41,7 +43,7 @@ public class RotateCollection {
         partCount++;
     }
 
-    public void addStock(Row row, String kitName, String partNum, String po,
+    public void addStock(int rowNum, String kitName, String partNum, String po,
                          int stockQty, int dc, int myQty) {
         String key = getRotateKey(kitName, partNum);
         RotateItem rotateItem = rotateItems.get(key);
@@ -50,11 +52,11 @@ public class RotateCollection {
             return;
         }
 
-        StockItem item = new StockItem(row, kitName, partNum, po, stockQty, dc, myQty);
+        StockItem item = new StockItem(rowNum, kitName, partNum, po, stockQty, dc, myQty);
         rotateItem.addStockItem(item);
     }
 
-    public void addPurchase(Row row, String kitName, String partNum, String po, String date, int grQty) {
+    public void addPurchase(int rowNum, String kitName, String partNum, String po, String date, int grQty) {
 
         String key = getRotateKey(kitName, partNum);
         RotateItem rotateItem = rotateItems.get(key);
@@ -63,7 +65,7 @@ public class RotateCollection {
             return;
         }
 
-        PurchaseItem purchaseItem = new PurchaseItem(row, kitName, partNum, po, date, grQty);
+        PurchaseItem purchaseItem = new PurchaseItem(rowNum, kitName, partNum, po, date, grQty);
         StockItem stockitem = rotateItem.getStock(po);
         if (stockitem == null) {
             rotateItem.addNoneStockPurchase(purchaseItem);

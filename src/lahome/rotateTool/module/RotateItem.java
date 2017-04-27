@@ -25,18 +25,17 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     private boolean isKit;
     private boolean isDuplicate;
-    private Row row;
+    private int rowNum;
 
     private List<RotateItem> duplicateRotateItems;
 
     private HashMap<String, StockItem> stockItems = new HashMap<>();
 
-
     private ObservableList<StockItem> stockItemObsList = FXCollections.observableArrayList();
 
     private ObservableList<PurchaseItem> noneStockPurchaseItemObsList = FXCollections.observableArrayList();
 
-    public RotateItem(Row row, String kitName, String partNum, int pmQty) {
+    public RotateItem(int rowNum, String kitName, String partNum, int pmQty) {
         if (kitName == null)
             kitName = "";
 
@@ -48,7 +47,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
         this.isKit = !kitName.isEmpty();
         this.isDuplicate = false;
-        this.row = row;
+        this.rowNum = rowNum;
     }
 
     public boolean isKit() {

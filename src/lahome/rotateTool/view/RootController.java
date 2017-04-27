@@ -16,7 +16,9 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import lahome.rotateTool.Main;
 import lahome.rotateTool.Util.ExcelParser;
-import lahome.rotateTool.module.*;
+import lahome.rotateTool.module.RotateCollection;
+import lahome.rotateTool.module.RotateItem;
+import lahome.rotateTool.module.StockItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -75,10 +77,13 @@ public class RootController {
     private JFXTreeTableColumn<StockItem, String> stockPoColumn;
 
     @FXML
+    private JFXTreeTableColumn<StockItem, Number> stockDcColumn;
+
+    @FXML
     private JFXTreeTableColumn<StockItem, Number> stockQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, Number> stockDcColumn;
+    private JFXTreeTableColumn<StockItem, Number> stockTotalGrQtyColumn;
 
     @FXML
     private JFXTreeTableColumn<StockItem, Number> stockMyQtyColumn;
@@ -201,20 +206,26 @@ public class RootController {
         ExcelParser excelParser = new ExcelParser(collection);
 
         file = new File(pathAgingReport.getText());
-        excelParser.loadRotateExcel(file, 4, "F", "G", "R");
+        excelParser.loadRotateExcel(file, 4, "F", "H", "R");
         log.info("Process rotate table: Done");
 
         file = new File(pathStockFile.getText());
-
-        excelParser.loadStockExcel(file, 2, "G", "F", "I",
+        excelParser.loadStockExcel(file, 2, "G", "E", "I",
                 "J", "P", "L");
         log.info("Process stock table: Done");
+
+        file = new File(pathPurchaseFile.getText());
+        excelParser.loadPurchaseExcel(file, 4, "B", "D", "G",
+                "F", "I");
+        log.info("Process purchase table: Done");
+
 
         final TreeItem<RotateItem> rotateRoot = new RecursiveTreeItem<>(
                 collection.getRotateObsList(), RecursiveTreeObject::getChildren);
         rotateTreeTableView.setRoot(rotateRoot);
-        rotateTreeTableView.getSelectionModel().select(0);
         rotateTreeTableView.requestFocus();
+        rotateTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
+        rotateTreeTableView.getSelectionModel().select(0);
 
 //        rotateTreeTableView.group(rotateKitColumn);
 //        for(TreeItem<RotateItem> child:rotateTreeTableView.getRoot().getChildren()){
@@ -231,7 +242,7 @@ public class RootController {
 
         initialRotateTable();
         initialStockTable();
-
+        initialPurchaseTable();
     }
 
     private void initialRotateTable() {
@@ -284,12 +295,10 @@ public class RootController {
             rotateTreeTableView.requestFocus();
         });
 
-        filterField.textProperty().addListener((o, oldVal, newVal) -> {
-            rotateTreeTableView.setPredicate(itemProp -> {
-                final RotateItem item = itemProp.getValue();
-                return item.kitNameProperty().get().contains(newVal) || item.partNumberProperty().get().contains(newVal);
-            });
-        });
+        filterField.textProperty().addListener((o, oldVal, newVal) -> rotateTreeTableView.setPredicate(itemProp -> {
+            final RotateItem item = itemProp.getValue();
+            return item.kitNameProperty().get().contains(newVal) || item.partNumberProperty().get().contains(newVal);
+        }));
 
         rotateTreeTableView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> selectedRotateItem(oldValue, newValue)
@@ -317,6 +326,7 @@ public class RootController {
     }
 
     private void initialStockTable() {
+        stockTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
         stockTreeTableView.setPlaceholder(new Label("庫存找不到符合項目"));
         stockPoColumn.setStyle("-fx-alignment: top-left; ");
 
@@ -328,6 +338,14 @@ public class RootController {
             }
         });
 
+        stockDcColumn.setCellValueFactory(cellData -> {
+            if (stockDcColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().dcProperty();
+            } else {
+                return stockDcColumn.getComputedValue(cellData);
+            }
+        });
+
         stockQtyColumn.setCellValueFactory(cellData -> {
             if (stockQtyColumn.validateValue(cellData)) {
                 return cellData.getValue().getValue().stockQtyProperty();
@@ -336,11 +354,11 @@ public class RootController {
             }
         });
 
-        stockDcColumn.setCellValueFactory(cellData -> {
-            if (stockDcColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().dcProperty();
+        stockTotalGrQtyColumn.setCellValueFactory(cellData -> {
+            if (stockTotalGrQtyColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().totalGrQtyProperty();
             } else {
-                return stockDcColumn.getComputedValue(cellData);
+                return stockTotalGrQtyColumn.getComputedValue(cellData);
             }
         });
 
@@ -361,6 +379,9 @@ public class RootController {
 
     }
 
+    private void initialPurchaseTable() {
+
+    }
 
     private void selectedRotateItem(TreeItem<RotateItem> oldValue, TreeItem<RotateItem> newValue) {
 
