@@ -24,53 +24,49 @@ public class RotateCollection {
         return kitName.replaceAll("-", "") + partNum.replaceAll("-", "");
     }
 
-    public void addRotate(int rowNum, String kitName, String partNum, int pmQty) {
-
-        RotateItem item = new RotateItem(rowNum, kitName, partNum, pmQty);
+    public void addRotate(RotateItem item) {
 
         log.debug(String.format("Add rotate: %s, %s, %d, %s",
-                item.getKitName(), item.getPartNumber(), item.getPmQty(), item.isKit()? "K" : "S"));
+                item.getKitName(), item.getPartNumber(), item.getPmQty(), item.isKit() ? "K" : "S"));
 
         String key = getRotateKey(item.getKitName(), item.getPartNumber());
         RotateItem rotateItem = rotateItems.get(key);
         if (rotateItem != null) {
             rotateItem.addDuplicate(item);
+        } else {
+            rotateItems.put(key, item);
         }
 
-        rotateItems.put(key, item);
         rotateObsList.add(item);
 
         partCount++;
     }
 
-    public void addStock(int rowNum, String kitName, String partNum, String po,
-                         int stockQty, int dc, int myQty) {
-        String key = getRotateKey(kitName, partNum);
+    public void addStock(StockItem item) {
+        String key = getRotateKey(item.getKitName(), item.getPartNumber());
         RotateItem rotateItem = rotateItems.get(key);
         if (rotateItem == null) {
-            log.trace(String.format("Ignore no needed stock item %s, %s", kitName, partNum));
+            log.trace(String.format("Ignore no needed stock item %s, %s", item.getKitName(), item.getPartNumber()));
             return;
         }
 
-        StockItem item = new StockItem(rowNum, kitName, partNum, po, stockQty, dc, myQty);
         rotateItem.addStockItem(item);
     }
 
-    public void addPurchase(int rowNum, String kitName, String partNum, String po, String date, int grQty) {
+    public void addPurchase(PurchaseItem item) {
 
-        String key = getRotateKey(kitName, partNum);
+        String key = getRotateKey(item.getKitName(), item.getPartNumber());
         RotateItem rotateItem = rotateItems.get(key);
         if (rotateItem == null) {
-            log.trace(String.format("Ignore no needed purchase item %s, %s", kitName, partNum));
+            log.trace(String.format("Ignore no needed purchase item %s, %s", item.getKitName(), item.getPartNumber()));
             return;
         }
 
-        PurchaseItem purchaseItem = new PurchaseItem(rowNum, kitName, partNum, po, date, grQty);
-        StockItem stockitem = rotateItem.getStock(po);
+        StockItem stockitem = rotateItem.getStock(item.getPo());
         if (stockitem == null) {
-            rotateItem.addNoneStockPurchase(purchaseItem);
+            rotateItem.addNoneStockPurchase(item);
         } else {
-            stockitem.addPurchaseItem(purchaseItem);
+            stockitem.addPurchaseItem(item);
         }
     }
 

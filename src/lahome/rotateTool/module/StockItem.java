@@ -5,9 +5,10 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Row;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +23,27 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     private StringProperty partNumber;
     private StringProperty po;
     private IntegerProperty stockQty;
-    private IntegerProperty dc;
+    private StringProperty lot;
+    private StringProperty dc;
     private IntegerProperty myQty;
-    private IntegerProperty totalGrQty;
+    private StringProperty remark;
 
     private int rowNum;
     private RotateItem rotateItem;
 
-    private List<PurchaseItem> purchaseItems = new ArrayList<>();
+    private boolean isDuplicate;
+    private List<StockItem> duplicateStockItems;
+    private IntegerProperty duplicatePoStockQtyTotal;
+    private IntegerProperty duplicatePoMyQtyTotal;
+
+    private IntegerProperty purchaseGrQtyTotal;
+    private IntegerProperty purchaseApQtyTotal;
+    private IntegerProperty purchaseApSetTotal;
+
+    private ObservableList<PurchaseItem> purchaseItems = FXCollections.observableArrayList();
 
     public StockItem(int rowNum, String kitName, String partNum, String po,
-                     int stockQty, int dc, int myQty) {
+                     int stockQty, String lot, String dc, int myQty, String remark) {
 
         if (kitName == null)
             kitName = "";
@@ -41,9 +52,17 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.partNumber = new SimpleStringProperty(partNum);
         this.po = new SimpleStringProperty(po);
         this.stockQty = new SimpleIntegerProperty(stockQty);
-        this.dc = new SimpleIntegerProperty(dc);
+        this.lot = new SimpleStringProperty(lot);
+        this.dc = new SimpleStringProperty(dc);
         this.myQty = new SimpleIntegerProperty(myQty);
-        this.totalGrQty = new SimpleIntegerProperty(0);
+        this.remark = new SimpleStringProperty(remark);
+
+        this.purchaseGrQtyTotal = new SimpleIntegerProperty(0);
+        this.purchaseApQtyTotal = new SimpleIntegerProperty(0);
+        this.purchaseApSetTotal = new SimpleIntegerProperty(0);
+
+        this.duplicatePoStockQtyTotal = new SimpleIntegerProperty(stockQty);
+        this.duplicatePoMyQtyTotal = new SimpleIntegerProperty(myQty);
 
         this.rowNum = rowNum;
     }
@@ -56,6 +75,46 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
                 this.rotateItem.addMyQty(newValue.intValue() - oldValue.intValue());
             }
         });
+    }
+
+    public void setDuplicate(StockItem firstItem) {
+
+        this.isDuplicate = true;
+        this.duplicateStockItems = firstItem.getDuplicateStockItems();
+        this.purchaseItems = firstItem.getPurchaseItems();
+        this.purchaseGrQtyTotal = firstItem.purchaseGrQtyTotalProperty();
+        this.purchaseApQtyTotal = firstItem.purchaseApQtyTotalProperty();
+        this.purchaseApSetTotal = firstItem.purchaseApSetTotalProperty();
+        this.duplicatePoStockQtyTotal = firstItem.duplicatePoStockQtyTotalProperty();
+        this.duplicatePoMyQtyTotal = firstItem.duplicatePoMyQtyTotalProperty();
+        this.duplicateStockItems.add(this);
+
+        this.myQty.addListener((observable, oldValue, newValue) -> {
+            firstItem.addDuplicatePoMyQtyTotal(newValue.intValue() - oldValue.intValue());
+        });
+    }
+
+    public void addDuplicate(StockItem item) {
+
+        if (!isDuplicate) {
+            this.myQty.addListener((observable, oldValue, newValue) -> {
+                this.addDuplicatePoMyQtyTotal(newValue.intValue() - oldValue.intValue());
+            });
+        }
+
+        isDuplicate = true;
+
+        duplicatePoStockQtyTotal.set(duplicatePoStockQtyTotal.get() + item.getStockQty());
+        addDuplicatePoMyQtyTotal(item.getMyQty());
+
+        duplicateStockItems = new ArrayList<>();
+        duplicateStockItems.add(this);
+
+        item.setDuplicate(this);
+    }
+
+    public boolean isDuplicate() {
+        return isDuplicate;
     }
 
     public String getKitName() {
@@ -106,15 +165,27 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.stockQty.set(stockQty);
     }
 
-    public int getDc() {
+    public String getLot() {
+        return lot.get();
+    }
+
+    public StringProperty lotProperty() {
+        return lot;
+    }
+
+    public void setLot(String lot) {
+        this.lot.set(lot);
+    }
+
+    public String getDc() {
         return dc.get();
     }
 
-    public IntegerProperty dcProperty() {
+    public StringProperty dcProperty() {
         return dc;
     }
 
-    public void setDc(int dc) {
+    public void setDc(String dc) {
         this.dc.set(dc);
     }
 
@@ -130,26 +201,105 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.myQty.set(myQty);
     }
 
-    public int getTotalGrQty() {
-        return totalGrQty.get();
+    public int getPurchaseGrQtyTotal() {
+        return purchaseGrQtyTotal.get();
     }
 
-    public IntegerProperty totalGrQtyProperty() {
-        return totalGrQty;
+    public IntegerProperty purchaseGrQtyTotalProperty() {
+        return purchaseGrQtyTotal;
     }
 
-    public void setTotalGrQty(int totalGrQty) {
-        this.totalGrQty.set(totalGrQty);
+    public void setPurchaseGrQtyTotal(int purchaseGrQtyTotal) {
+        this.purchaseGrQtyTotal.set(purchaseGrQtyTotal);
+    }
+
+    public int getPurchaseApQtyTotal() {
+        return purchaseApQtyTotal.get();
+    }
+
+    public IntegerProperty purchaseApQtyTotalProperty() {
+        return purchaseApQtyTotal;
+    }
+
+    public void setPurchaseApQtyTotal(int purchaseApQtyTotal) {
+        this.purchaseApQtyTotal.set(purchaseApQtyTotal);
+    }
+
+    public void addPurchaseApQtyTotal(int qty) {
+        purchaseApQtyTotal.set(purchaseApQtyTotal.intValue() + qty);
+    }
+
+    public int getPurchaseApSetTotal() {
+        return purchaseApSetTotal.get();
+    }
+
+    public IntegerProperty purchaseApSetTotalProperty() {
+        return purchaseApSetTotal;
+    }
+
+    public void setPurchaseApSetTotal(int purchaseApSetTotal) {
+        this.purchaseApSetTotal.set(purchaseApSetTotal);
+    }
+
+    public void addPurchaseApSetTotal(int qty) {
+        purchaseApSetTotal.set(purchaseApSetTotal.intValue() + qty);
+    }
+
+    public String getRemark() {
+        return remark.get();
+    }
+
+    public StringProperty remarkProperty() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark.set(remark);
+    }
+
+    public int getDuplicatePoStockQtyTotal() {
+        return duplicatePoStockQtyTotal.get();
+    }
+
+    public IntegerProperty duplicatePoStockQtyTotalProperty() {
+        return duplicatePoStockQtyTotal;
+    }
+
+    public void setDuplicatePoStockQtyTotal(int duplicatePoStockQtyTotal) {
+        this.duplicatePoStockQtyTotal.set(duplicatePoStockQtyTotal);
+    }
+
+    public int getDuplicatePoMyQtyTotal() {
+        return duplicatePoMyQtyTotal.get();
+    }
+
+    public IntegerProperty duplicatePoMyQtyTotalProperty() {
+        return duplicatePoMyQtyTotal;
+    }
+
+    public void addDuplicatePoMyQtyTotal(int qty) {
+        duplicatePoMyQtyTotal.set(duplicatePoMyQtyTotal.intValue() + qty);
     }
 
     public void addPurchaseItem(PurchaseItem item) {
         log.debug(String.format("Add purchase: %s, %s, %s, %s, %d",
                 item.getKitName(), item.getPartNumber(), item.getPo(), item.getGrDate(), item.getGrQty()));
 
-        totalGrQty.set(totalGrQty.get() + item.getGrQty());
+        purchaseGrQtyTotal.set(purchaseGrQtyTotal.get() + item.getGrQty());
+        purchaseApQtyTotal.set(purchaseApQtyTotal.get() + item.getMyQty());
+        purchaseApSetTotal.set(purchaseApSetTotal.get() + item.getApplySet());
 
         purchaseItems.add(item);
         item.setStockItem(this);
 
+        rotateItem.setGrQtyTotal(rotateItem.getGrQtyTotal() + item.getGrQty());
+    }
+
+    public List<StockItem> getDuplicateStockItems() {
+        return duplicateStockItems;
+    }
+
+    public ObservableList<PurchaseItem> getPurchaseItems() {
+        return purchaseItems;
     }
 }

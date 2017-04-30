@@ -1,8 +1,10 @@
 package lahome.rotateTool.Util;
 
 import com.monitorjbl.xlsx.StreamingReader;
+import lahome.rotateTool.module.PurchaseItem;
 import lahome.rotateTool.module.RotateCollection;
 import lahome.rotateTool.module.RotateItem;
+import lahome.rotateTool.module.StockItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -31,7 +33,7 @@ public class ExcelParser {
     private String getKitName(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
-            throw new Exception(String.format("kit is null at row %d", row.getRowNum()));
+            return "";
         }
 
         String kitName = cellGetString(cell).trim();
@@ -44,7 +46,7 @@ public class ExcelParser {
     private String getPartNumber(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
-            throw new Exception(String.format("part is null at row %d", row.getRowNum()));
+            return "";
         }
 
         return cellGetString(cell).trim();
@@ -53,7 +55,7 @@ public class ExcelParser {
     private int getExpectQty(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
-            throw new Exception(String.format("qty is null at row %d", row.getRowNum()));
+            return 0;
         }
         return (int) cellGetValue(cell);
     }
@@ -61,7 +63,7 @@ public class ExcelParser {
     private String getPo(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
-            throw new Exception(String.format("po is null at row %d", row.getRowNum()));
+            return "";
         }
 
         return cellGetString(cell).trim();
@@ -70,17 +72,26 @@ public class ExcelParser {
     private int getStockQty(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
-            throw new Exception(String.format("stockQty is null at row %d", row.getRowNum()));
+            return 0;
         }
         return (int) cellGetValue(cell);
     }
 
-    private int getDc(Row row, int column) throws Exception {
+    private String getLot(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
-            throw new Exception(String.format("dc is null at row %d", row.getRowNum()));
+            return "";
         }
-        return (int) cellGetValue(cell);
+
+        return cellGetString(cell).trim();
+    }
+
+    private String getDc(Row row, int column) throws Exception {
+        Cell cell = row.getCell(column);
+        if (cell == null) {
+            return "";
+        }
+        return cellGetString(cell).trim();
     }
 
     private int getMyQty(Row row, int column) throws Exception {
@@ -92,10 +103,36 @@ public class ExcelParser {
         return (int) cellGetValue(cell);
     }
 
+    private String getRatio(Row row, int column) throws Exception {
+        Cell cell = row.getCell(column);
+        if (cell == null) {
+            return "";
+        }
+
+        return cellGetString(cell).trim();
+    }
+
+    private int getApplySet(Row row, int column) throws Exception {
+        Cell cell = row.getCell(column);
+        if (cell == null) {
+            return 0;
+        }
+        return (int) cellGetValue(cell);
+    }
+
+    private String getRemark(Row row, int column) throws Exception {
+        Cell cell = row.getCell(column);
+        if (cell == null) {
+            return "";
+        }
+
+        return cellGetString(cell).trim();
+    }
+
     private String getGrDateQty(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
-            throw new Exception(String.format("stockQty is null at row %d", row.getRowNum()));
+            return "";
         }
         return cellGetDate(cell);
     }
@@ -230,12 +267,17 @@ public class ExcelParser {
     }
 
 
-    public void loadRotateExcel(File file, int firstDataRow, String kitColStr, String partColStr, String pmQtyColStr) {
+    public void loadRotateExcel(File file, int firstDataRow, String kitColStr, String partColStr,
+                                String pmQtyColStr, String ratioColStr, String applySetColStr,
+                                String remarkColStr) {
 
         firstDataRow = firstDataRow - 1;
         int kitColumn = CellReference.convertColStringToIndex(kitColStr.toUpperCase());
         int partColumn = CellReference.convertColStringToIndex(partColStr.toLowerCase());
         int pmQtyColumn = CellReference.convertColStringToIndex(pmQtyColStr.toUpperCase());
+        int ratioColumn = CellReference.convertColStringToIndex(ratioColStr.toUpperCase());
+        int applySetColumn = CellReference.convertColStringToIndex(applySetColStr.toUpperCase());
+        int remarkColumn = CellReference.convertColStringToIndex(remarkColStr.toUpperCase());
 
         int maxColumnUsed = Math.max(Math.max(kitColumn, partColumn), pmQtyColumn);
 
@@ -255,9 +297,9 @@ public class ExcelParser {
                 continue;
 
             try {
-                String kit = getKitName(row, kitColumn);
-                String part = getPartNumber(row, partColumn);
-                if (kit.isEmpty() && part.isEmpty())
+                String kitName = getKitName(row, kitColumn);
+                String partNum = getPartNumber(row, partColumn);
+                if (kitName.isEmpty() && partNum.isEmpty())
                     continue;
 
                 int pmQty = getExpectQty(row, pmQtyColumn);
@@ -265,7 +307,11 @@ public class ExcelParser {
                 if (pmQty == 0)
                     continue;
 
-                collection.addRotate(rowNum, kit, part, pmQty);
+                String ratio = getRatio(row, ratioColumn);
+                int applySet = getApplySet(row, applySetColumn);
+                String remark = getRemark(row, remarkColumn);
+
+                collection.addRotate(new RotateItem(rowNum, kitName, partNum, pmQty, ratio, applySet, remark));
 
             } catch (Exception e) {
                 log.error("failed!", e);
@@ -274,15 +320,18 @@ public class ExcelParser {
     }
 
     public void loadStockExcel(File file, int firstDataRow, String kitColStr, String partColStr,
-                               String poColStr, String stockQtyColStr, String dcColStr, String myQtyColStr) {
+                               String poColStr, String stockQtyColStr, String lotColStr, String dcColStr,
+                               String myQtyColStr, String remarkColStr) {
         firstDataRow = firstDataRow - 1;
 
         int kitColumn = CellReference.convertColStringToIndex(kitColStr);
         int partColumn = CellReference.convertColStringToIndex(partColStr);
         int poColumn = CellReference.convertColStringToIndex(poColStr);
         int stockQtyColumn = CellReference.convertColStringToIndex(stockQtyColStr);
+        int lotColumn = CellReference.convertColStringToIndex(lotColStr);
         int dcColumn = CellReference.convertColStringToIndex(dcColStr);
         int myQtyColumn = CellReference.convertColStringToIndex(myQtyColStr);
+        int remarkColumn = CellReference.convertColStringToIndex(remarkColStr);
 
         int maxColumnUsed = Math.max(kitColumn, Math.max(partColumn, Math.max(poColumn, Math.max(stockQtyColumn,
                 Math.max(stockQtyColumn, Math.max(dcColumn, myQtyColumn))))));
@@ -305,11 +354,11 @@ public class ExcelParser {
 
             try {
                 String kitName = getKitName(row, kitColumn);
-                String partNumber = getPartNumber(row, partColumn);
-                if (kitName.isEmpty() && partNumber.isEmpty())
+                String partNum = getPartNumber(row, partColumn);
+                if (kitName.isEmpty() && partNum.isEmpty())
                     continue;
 
-                if (!collection.isRotateItem(kitName, partNumber))
+                if (!collection.isRotateItem(kitName, partNum))
                     continue;
 
                 String po = getPo(row, poColumn);
@@ -317,10 +366,12 @@ public class ExcelParser {
                     continue;
 
                 int stockQty = getStockQty(row, stockQtyColumn);
-                int dc = getDc(row, dcColumn);
+                String lot = getLot(row, lotColumn);
+                String dc = getDc(row, dcColumn);
                 int myQty = getMyQty(row, myQtyColumn);
+                String remark = getRemark(row, remarkColumn);
 
-                collection.addStock(rowNum, kitName, partNumber, po, stockQty, dc, myQty);
+                collection.addStock(new StockItem(rowNum, kitName, partNum, po, stockQty, lot, dc, myQty, remark));
 
             } catch (Exception e) {
                 log.error("failed!", e);
@@ -329,13 +380,18 @@ public class ExcelParser {
     }
 
     public void loadPurchaseExcel(File file, int firstDataRow, String kitColStr, String partColStr,
-                                  String poColStr, String grDateColStr, String grQtyColStr) {
+                                  String poColStr, String grDateColStr, String grQtyColStr,
+                                  String myQtyColStr, String setColStr, String remarkColStr) {
         firstDataRow = firstDataRow - 1;
         int kitColumn = CellReference.convertColStringToIndex(kitColStr);
         int partColumn = CellReference.convertColStringToIndex(partColStr);
         int poColumn = CellReference.convertColStringToIndex(poColStr);
         int grDateColumn = CellReference.convertColStringToIndex(grDateColStr);
         int grQtyColumn = CellReference.convertColStringToIndex(grQtyColStr);
+        int myQtyColumn = CellReference.convertColStringToIndex(myQtyColStr);
+        int setColumn = CellReference.convertColStringToIndex(setColStr);
+        int remarkCOlumn = CellReference.convertColStringToIndex(remarkColStr);
+
 
         int maxColumnUsed = Math.max(kitColumn, Math.max(partColumn, Math.max(poColumn, Math.max(grDateColumn,
                 grQtyColumn))));
@@ -357,12 +413,12 @@ public class ExcelParser {
                 continue;
 
             try {
-                String kit = getKitName(row, kitColumn);
-                String part = getPartNumber(row, partColumn);
-                if (kit.isEmpty() && part.isEmpty())
+                String kitName = getKitName(row, kitColumn);
+                String partNum = getPartNumber(row, partColumn);
+                if (kitName.isEmpty() && partNum.isEmpty())
                     continue;
 
-                if (!collection.isRotateItem(kit, part))
+                if (!collection.isRotateItem(kitName, partNum))
                     continue;
 
                 String po = getPo(row, poColumn);
@@ -372,8 +428,12 @@ public class ExcelParser {
                 String date = getGrDateQty(row, grDateColumn);
                 int grQty = getGrQty(row, grQtyColumn);
 
+                int myQty = getMyQty(row, myQtyColumn);
+                int applySet = getApplySet(row, setColumn);
+                String remark = getRemark(row, setColumn);
 
-                collection.addPurchase(rowNum, kit, part, po, date, grQty);
+                collection.addPurchase(new PurchaseItem(rowNum, kitName, partNum, po, date, grQty,
+                        myQty, applySet, remark));
 
             } catch (Exception e) {
                 log.error("failed!", e);
