@@ -7,8 +7,11 @@
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -30,9 +33,9 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <SplitPane dividerPositions="0.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane dividerPositions="0.7172211350293543" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                              <AnchorPane prefHeight="663.0" prefWidth="688.0">
                                  <children>
                                     <GridPane hgap="10.0" layoutX="20.0" layoutY="91.0" prefHeight="138.0" prefWidth="570.0" vgap="30.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="91.0">
                                       <columnConstraints>
@@ -63,7 +66,435 @@
                                     </JFXButton>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                              <ScrollPane focusTraversable="false">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0">
+                                       <children>
+                                          <VBox layoutY="-3.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="設定">
+                                                   <font>
+                                                      <Font name="System Bold" size="18.0" />
+                                                   </font>
+                                                </Text>
+                                                <TitledPane focusTraversable="false" text="退貨總表">
+                                                   <content>
+                                                      <GridPane alignment="CENTER_RIGHT" hgap="5.0" prefWidth="250.0" vgap="5.0">
+                                                         <columnConstraints>
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="130.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="62.0" />
+                                                         </columnConstraints>
+                                                         <rowConstraints>
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                         </rowConstraints>
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Row" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kit Name" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part Number" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PM Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ratio" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Set" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Remark" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <TextField fx:id="settingRotateFirstRow" alignment="CENTER" focusTraversable="false" promptText="列號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingRotateKitNameCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingRotatePartNumCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingRotatePmQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingRotateApQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingRotateRatioCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingRotateApSetCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingRotateRemarkCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                         </children>
+                                                      </GridPane>
+                                                   </content>
+                                                   <VBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </VBox.margin>
+                                                </TitledPane>
+                                                <TitledPane focusTraversable="false" text="庫存表">
+                                                   <content>
+                                                      <GridPane alignment="CENTER_RIGHT" hgap="5.0" prefWidth="250.0" vgap="5.0">
+                                                         <columnConstraints>
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="130.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="62.0" />
+                                                         </columnConstraints>
+                                                         <rowConstraints>
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                         </rowConstraints>
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Row" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kit Name" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part Number" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PO" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Remark" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Stock Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Lot" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <TextField fx:id="settingStockFirstRow" alignment="CENTER" focusTraversable="false" promptText="列號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockKitNameCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockPartNumCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockPoCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockStockQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockApQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockRemarkCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockLotCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="D/C" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <TextField fx:id="settingStockDcCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                         </children>
+                                                      </GridPane>
+                                                   </content>
+                                                   <VBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </VBox.margin>
+                                                </TitledPane>
+                                                <TitledPane focusTraversable="false" text="進貨表">
+                                                   <content>
+                                                      <GridPane alignment="CENTER_RIGHT" hgap="5.0" prefWidth="250.0" vgap="5.0">
+                                                         <columnConstraints>
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="130.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="62.0" />
+                                                         </columnConstraints>
+                                                         <rowConstraints>
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                         </rowConstraints>
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Row" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kit Name" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part Number" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PO" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GrDate" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GR Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Remark" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <TextField fx:id="settingPurchaseFirstRow" alignment="CENTER" focusTraversable="false" promptText="列號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingPurchaseKitNameCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingPurchasePartNumCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingPurchasePoCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingPurchaseApQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingPurchaseGrDateCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingPurchaseGrQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingPurchaseRemarkCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Set" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <TextField fx:id="settingPurchaseApSetCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                         </children>
+                                                      </GridPane>
+                                                   </content>
+                                                   <VBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </VBox.margin>
+                                                </TitledPane>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
                           </items>
                         </SplitPane>
                      </children>
@@ -102,17 +533,92 @@
                                                 </JFXTextField>
                                              </children>
                                           </HBox>
-                                          <JFXTreeTableView fx:id="rotateTreeTableView" editable="true" prefHeight="9999.0" showRoot="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
-                                            <columns>
-                                              <JFXTreeTableColumn fx:id="rotateKitColumn" minWidth="20.0" prefWidth="140.0" text="KitName" />
-                                              <JFXTreeTableColumn fx:id="rotatePartColumn" minWidth="20.0" prefWidth="140.0" text="PartNum" />
-                                                <JFXTreeTableColumn fx:id="rotatePmQtyColumn" minWidth="20.0" prefWidth="50.0" text="PM Qty" />
-                                                <JFXTreeTableColumn fx:id="rotateMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
-                                                <JFXTreeTableColumn fx:id="rotateRatioColumn" minWidth="20.0" prefWidth="50.0" text="Ratio" />
-                                                <JFXTreeTableColumn fx:id="rotateApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
-                                                <JFXTreeTableColumn fx:id="rotateRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
-                                            </columns>
-                                          </JFXTreeTableView>
+                                          <VBox layoutY="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                             <children>
+                                                <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Text>
+                                                      <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part:">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Text>
+                                                      <Label fx:id="rotatePartCount" focusTraversable="false" minWidth="45.0" text="0">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #FFF176;">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Part:">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Text>
+                                                      <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Gr Qty:">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Text>
+                                                      <Label fx:id="rotateCurrPartGrQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Set">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Text>
+                                                      <Label fx:id="rotateCurrPartSetTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <JFXTreeTableView fx:id="rotateTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
+                                                   <columns>
+                                                      <JFXTreeTableColumn fx:id="rotateKitColumn" minWidth="20.0" prefWidth="140.0" text="KitName" />
+                                                      <JFXTreeTableColumn fx:id="rotatePartColumn" minWidth="20.0" prefWidth="140.0" text="PartNum" />
+                                                      <JFXTreeTableColumn fx:id="rotatePmQtyColumn" minWidth="20.0" prefWidth="50.0" text="PM Qty" />
+                                                      <JFXTreeTableColumn fx:id="rotateMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                      <JFXTreeTableColumn fx:id="rotateRatioColumn" minWidth="20.0" prefWidth="50.0" text="Ratio" />
+                                                      <JFXTreeTableColumn fx:id="rotateApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
+                                                      <JFXTreeTableColumn fx:id="rotateRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
+                                                   </columns>
+                                                </JFXTreeTableView>
+                                             </children>
+                                          </VBox>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane SplitPane.resizableWithParent="false">
@@ -127,20 +633,7 @@
                                                       <Insets bottom="5.0" left="5.0" top="5.0" />
                                                    </VBox.margin>
                                                 </Label>
-                                                <VBox>
-                                                   <children>
-                                                      <JFXTreeTableView fx:id="noneStPurchaseTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
-                                                         <columns>
-                                                            <JFXTreeTableColumn fx:id="noneStPurchasePoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
-                                                            <JFXTreeTableColumn fx:id="noneStPurchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
-                                                            <JFXTreeTableColumn fx:id="noneStPurchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
-                                                            <JFXTreeTableColumn fx:id="noneStPurchaseMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
-                                                            <JFXTreeTableColumn fx:id="noneStPurchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
-                                                            <JFXTreeTableColumn fx:id="noneStPurchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
-                                                         </columns>
-                                                      </JFXTreeTableView>
-                                                   </children>
-                                                </VBox>
+                                                <VBox />
                                                 <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
                                                    <children>
                                                       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
@@ -157,10 +650,10 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <HBox.margin>
-                                                            <Insets left="20.0" />
+                                                            <Insets />
                                                          </HBox.margin>
                                                       </Text>
-                                                      <Label fx:id="noneStPurchaseGrQtyTotal" focusTraversable="false" text="0">
+                                                      <Label fx:id="noneStPurchaseGrQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -170,10 +663,10 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <HBox.margin>
-                                                            <Insets left="20.0" />
+                                                            <Insets />
                                                          </HBox.margin>
                                                       </Text>
-                                                      <Label fx:id="noneStPurchaseApQtyTotal" focusTraversable="false" text="0">
+                                                      <Label fx:id="noneStPurchaseApQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -183,10 +676,10 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                          <HBox.margin>
-                                                            <Insets left="20.0" />
+                                                            <Insets />
                                                          </HBox.margin>
                                                       </Text>
-                                                      <Label fx:id="noneStPurchaseApSetTotal" focusTraversable="false" text="0">
+                                                      <Label fx:id="noneStPurchaseApSetTotal" focusTraversable="false" minWidth="45.0" text="0">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -196,6 +689,16 @@
                                                       <Insets left="10.0" right="10.0" />
                                                    </padding>
                                                 </HBox>
+                                                <JFXTreeTableView fx:id="noneStPurchaseTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
+                                                   <columns>
+                                                      <JFXTreeTableColumn fx:id="noneStPurchasePoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
+                                                      <JFXTreeTableColumn fx:id="noneStPurchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
+                                                      <JFXTreeTableColumn fx:id="noneStPurchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
+                                                      <JFXTreeTableColumn fx:id="noneStPurchaseMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                      <JFXTreeTableColumn fx:id="noneStPurchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
+                                                      <JFXTreeTableColumn fx:id="noneStPurchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
+                                                   </columns>
+                                                </JFXTreeTableView>
                                              </children>
                                           </VBox>
                                        </children>
@@ -215,59 +718,6 @@
                                                 </Label>
                                                 <VBox layoutY="50.0" maxHeight="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                                    <children>
-                                                      <JFXTreeTableView fx:id="stockTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
-                                                         <columns>
-                                                            <JFXTreeTableColumn fx:id="stockPoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
-                                                            <JFXTreeTableColumn fx:id="stockLotColumn" minWidth="20.0" prefWidth="120.0" text="Lot" />
-                                                            <JFXTreeTableColumn fx:id="stockDcColumn" minWidth="20.0" prefWidth="50.0" text="D/C" />
-                                                            <JFXTreeTableColumn fx:id="stockGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
-                                                            <JFXTreeTableColumn fx:id="stockQtyColumn" minWidth="20.0" prefWidth="50.0" text="St Qty" />
-                                                            <JFXTreeTableColumn fx:id="stockMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
-                                                            <JFXTreeTableColumn fx:id="stockRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
-                                                         </columns>
-                                                      </JFXTreeTableView>
-                                                      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #FFF176;">
-                                                         <children>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current PO:">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <HBox.margin>
-                                                                  <Insets />
-                                                               </HBox.margin>
-                                                            </Text>
-                                                            <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="St Qty:">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <HBox.margin>
-                                                                  <Insets left="20.0" />
-                                                               </HBox.margin>
-                                                            </Text>
-                                                            <Label fx:id="stockCurrPoStQtyTotal" focusTraversable="false" text="0">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </Label>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Qty:">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <HBox.margin>
-                                                                  <Insets left="20.0" />
-                                                               </HBox.margin>
-                                                            </Text>
-                                                            <Label fx:id="stockCurrPoApQtyTotal" focusTraversable="false" text="0">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </Label>
-                                                         </children>
-                                                         <padding>
-                                                            <Insets left="10.0" right="10.0" />
-                                                         </padding>
-                                                      </HBox>
                                                       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
                                                          <children>
                                                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
@@ -284,23 +734,10 @@
                                                                   <Font size="14.0" />
                                                                </font>
                                                                <HBox.margin>
-                                                                  <Insets left="20.0" />
+                                                                  <Insets />
                                                                </HBox.margin>
                                                             </Text>
-                                                            <Label fx:id="stockStQtyTotal" focusTraversable="false" text="0">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </Label>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GR Qty:">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <HBox.margin>
-                                                                  <Insets left="20.0" />
-                                                               </HBox.margin>
-                                                            </Text>
-                                                            <Label fx:id="stockGrQtyTotal" focusTraversable="false" text="0">
+                                                            <Label fx:id="stockStQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -310,10 +747,10 @@
                                                                   <Font size="14.0" />
                                                                </font>
                                                                <HBox.margin>
-                                                                  <Insets left="20.0" />
+                                                                  <Insets />
                                                                </HBox.margin>
                                                             </Text>
-                                                            <Label fx:id="stockApQtyTotal" focusTraversable="false" text="0">
+                                                            <Label fx:id="stockApQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -323,8 +760,81 @@
                                                             <Insets left="10.0" right="10.0" />
                                                          </padding>
                                                       </HBox>
+                                                      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #FFF176;">
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current PO:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="St Qty:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="stockCurrPoStQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Qty:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="stockCurrPoApQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                         <padding>
+                                                            <Insets left="10.0" right="10.0" />
+                                                         </padding>
+                                                      </HBox>
+                                                      <JFXTreeTableView fx:id="stockTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
+                                                         <columns>
+                                                            <JFXTreeTableColumn fx:id="stockPoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
+                                                            <JFXTreeTableColumn fx:id="stockLotColumn" minWidth="20.0" prefWidth="120.0" text="Lot" />
+                                                            <JFXTreeTableColumn fx:id="stockDcColumn" minWidth="20.0" prefWidth="50.0" text="D/C" />
+                                                            <JFXTreeTableColumn fx:id="stockGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
+                                                            <JFXTreeTableColumn fx:id="stockQtyColumn" minWidth="20.0" prefWidth="50.0" text="St Qty" />
+                                                            <JFXTreeTableColumn fx:id="stockMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                            <JFXTreeTableColumn fx:id="stockRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
+                                                         </columns>
+                                                      </JFXTreeTableView>
                                                    </children>
                                                 </VBox>
+                                                <HBox alignment="CENTER_RIGHT" layoutX="317.0" layoutY="31.0" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #8BC34A;" AnchorPane.rightAnchor="0.0">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PM Qty:">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Text>
+                                                      <Label fx:id="stockPmQty" focusTraversable="false" minWidth="45.0" text="0">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </HBox>
                                              </children>
                                           </AnchorPane>
                                           <AnchorPane SplitPane.resizableWithParent="false">
@@ -341,15 +851,6 @@
                                                       </Label>
                                                       <VBox>
                                                          <children>
-                                                            <JFXTreeTableView fx:id="purchaseTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
-                                                               <columns>
-                                                                  <JFXTreeTableColumn fx:id="purchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
-                                                               </columns>
-                                                            </JFXTreeTableView>
                                                             <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
                                                                <children>
                                                                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
@@ -366,10 +867,10 @@
                                                                         <Font size="14.0" />
                                                                      </font>
                                                                      <HBox.margin>
-                                                                        <Insets left="20.0" />
+                                                                        <Insets />
                                                                      </HBox.margin>
                                                                   </Text>
-                                                                  <Label fx:id="purchaseGrQtyTotal" focusTraversable="false" text="0">
+                                                                  <Label fx:id="purchaseGrQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
                                                                      <font>
                                                                         <Font size="14.0" />
                                                                      </font>
@@ -379,10 +880,10 @@
                                                                         <Font size="14.0" />
                                                                      </font>
                                                                      <HBox.margin>
-                                                                        <Insets left="20.0" />
+                                                                        <Insets />
                                                                      </HBox.margin>
                                                                   </Text>
-                                                                  <Label fx:id="purchaseApQtyTotal" focusTraversable="false" text="0">
+                                                                  <Label fx:id="purchaseApQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
                                                                      <font>
                                                                         <Font size="14.0" />
                                                                      </font>
@@ -392,10 +893,10 @@
                                                                         <Font size="14.0" />
                                                                      </font>
                                                                      <HBox.margin>
-                                                                        <Insets left="20.0" />
+                                                                        <Insets />
                                                                      </HBox.margin>
                                                                   </Text>
-                                                                  <Label fx:id="purchaseApSetTotal" focusTraversable="false" text="0">
+                                                                  <Label fx:id="purchaseApSetTotal" focusTraversable="false" minWidth="45.0" text="0">
                                                                      <font>
                                                                         <Font size="14.0" />
                                                                      </font>
@@ -405,6 +906,15 @@
                                                                   <Insets left="10.0" right="10.0" />
                                                                </padding>
                                                             </HBox>
+                                                            <JFXTreeTableView fx:id="purchaseTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
+                                                               <columns>
+                                                                  <JFXTreeTableColumn fx:id="purchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
+                                                               </columns>
+                                                            </JFXTreeTableView>
                                                          </children>
                                                       </VBox>
                                                    </children>

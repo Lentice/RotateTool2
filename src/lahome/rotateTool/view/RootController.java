@@ -6,7 +6,6 @@ import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -14,11 +13,9 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lahome.rotateTool.Main;
-import lahome.rotateTool.Util.DateUtil;
 import lahome.rotateTool.Util.ExcelParser;
 import lahome.rotateTool.module.PurchaseItem;
 import lahome.rotateTool.module.RotateCollection;
@@ -28,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.util.prefs.Preferences;
 
 public class RootController {
@@ -62,6 +58,84 @@ public class RootController {
     private JFXTextField pathPurchaseFile;
 
     @FXML
+    private TextField settingRotateFirstRow;
+
+    @FXML
+    private TextField settingRotateKitNameCol;
+
+    @FXML
+    private TextField settingRotatePartNumCol;
+
+    @FXML
+    private TextField settingRotatePmQtyCol;
+
+    @FXML
+    private TextField settingRotateApQtyCol;
+
+    @FXML
+    private TextField settingRotateRatioCol;
+
+    @FXML
+    private TextField settingRotateApSetCol;
+
+    @FXML
+    private TextField settingRotateRemarkCol;
+
+    @FXML
+    private TextField settingStockFirstRow;
+
+    @FXML
+    private TextField settingStockKitNameCol;
+
+    @FXML
+    private TextField settingStockPartNumCol;
+
+    @FXML
+    private TextField settingStockPoCol;
+
+    @FXML
+    private TextField settingStockStockQtyCol;
+
+    @FXML
+    private TextField settingStockApQtyCol;
+
+    @FXML
+    private TextField settingStockRemarkCol;
+
+    @FXML
+    private TextField settingStockLotCol;
+
+    @FXML
+    private TextField settingStockDcCol;
+
+    @FXML
+    private TextField settingPurchaseFirstRow;
+
+    @FXML
+    private TextField settingPurchaseKitNameCol;
+
+    @FXML
+    private TextField settingPurchasePartNumCol;
+
+    @FXML
+    private TextField settingPurchasePoCol;
+
+    @FXML
+    private TextField settingPurchaseGrDateCol;
+
+    @FXML
+    private TextField settingPurchaseGrQtyCol;
+
+    @FXML
+    private TextField settingPurchaseApQtyCol;
+
+    @FXML
+    private TextField settingPurchaseApSetCol;
+
+    @FXML
+    private TextField settingPurchaseRemarkCol;
+
+    @FXML
     private ImageView filterIcon;
 
     @FXML
@@ -92,6 +166,15 @@ public class RootController {
     private JFXTreeTableColumn<RotateItem, String> rotateRemarkColumn;
 
     @FXML
+    private Label rotatePartCount;
+
+    @FXML
+    private Label rotateCurrPartGrQtyTotal;
+
+    @FXML
+    private Label rotateCurrPartSetTotal;
+
+    @FXML
     private JFXTreeTableView<StockItem> stockTreeTableView;
 
     @FXML
@@ -116,10 +199,13 @@ public class RootController {
     private JFXTreeTableColumn<StockItem, String> stockRemarkColumn;
 
     @FXML
-    private Label stockStQtyTotal;
+    private Label stockPmQty;
 
     @FXML
-    private Label stockGrQtyTotal;
+    private Label stockStQtyTotal;
+
+//    @FXML
+//    private Label stockGrQtyTotal;
 
     @FXML
     private Label stockApQtyTotal;
@@ -214,6 +300,35 @@ public class RootController {
         path = pathPurchaseFile.getText();
         prefs.put("PurchasePath", path != null ? path : "");
 
+        prefs.put("settingRotateFirstRow", settingRotateFirstRow.getText());
+        prefs.put("settingRotateKitNameCol", settingRotateKitNameCol.getText());
+        prefs.put("settingRotatePartNumCol", settingRotatePartNumCol.getText());
+        prefs.put("settingRotatePmQtyCol", settingRotatePmQtyCol.getText());
+        prefs.put("settingRotateApQtyCol", settingRotateApQtyCol.getText());
+        prefs.put("settingRotateRatioCol", settingRotateRatioCol.getText());
+        prefs.put("settingRotateApSetCol", settingRotateApSetCol.getText());
+        prefs.put("settingRotateRemarkCol", settingRotateRemarkCol.getText());
+
+        prefs.put("settingStockFirstRow", settingStockFirstRow.getText());
+        prefs.put("settingStockKitNameCol", settingStockKitNameCol.getText());
+        prefs.put("settingStockPartNumCol", settingStockPartNumCol.getText());
+        prefs.put("settingStockPoCol", settingStockPoCol.getText());
+        prefs.put("settingStockStockQtyCol", settingStockStockQtyCol.getText());
+        prefs.put("settingStockApQtyCol", settingStockApQtyCol.getText());
+        prefs.put("settingStockRemarkCol", settingStockRemarkCol.getText());
+        prefs.put("settingStockLotCol", settingStockLotCol.getText());
+        prefs.put("settingStockDcCol", settingStockDcCol.getText());
+
+        prefs.put("settingPurchaseFirstRow", settingPurchaseFirstRow.getText());
+        prefs.put("settingPurchaseKitNameCol", settingPurchaseKitNameCol.getText());
+        prefs.put("settingPurchasePartNumCol", settingPurchasePartNumCol.getText());
+        prefs.put("settingPurchasePoCol", settingPurchasePoCol.getText());
+        prefs.put("settingPurchaseGrDateCol", settingPurchaseGrDateCol.getText());
+        prefs.put("settingPurchaseGrQtyCol", settingPurchaseGrQtyCol.getText());
+        prefs.put("settingPurchaseApQtyCol", settingPurchaseApQtyCol.getText());
+        prefs.put("settingPurchaseApSetCol", settingPurchaseApSetCol.getText());
+        prefs.put("settingPurchaseRemarkCol", settingPurchaseRemarkCol.getText());
+
         prefs.put("EditTabHDiv", String.valueOf(editTabHSlitPane.getDividerPositions()[0]));
         prefs.put("EditTabVLeftDiv", String.valueOf(editTabVLeftSlitPane.getDividerPositions()[0]));
         prefs.put("EditTabVRightDiv", String.valueOf(editTabVRightSlitPane.getDividerPositions()[0]));
@@ -258,6 +373,35 @@ public class RootController {
         pathAgingReport.setText(prefs.get("AgingPath", ""));
         pathStockFile.setText(prefs.get("StockPath", ""));
         pathPurchaseFile.setText(prefs.get("PurchasePath", ""));
+
+        settingRotateFirstRow.setText(prefs.get("settingRotateFirstRow", "4"));
+        settingRotateKitNameCol.setText(prefs.get("settingRotateKitNameCol", "F"));
+        settingRotatePartNumCol.setText(prefs.get("settingRotatePartNumCol", "H"));
+        settingRotatePmQtyCol.setText(prefs.get("settingRotatePmQtyCol", "R"));
+        settingRotateApQtyCol.setText(prefs.get("settingRotateApQtyCol", "AO"));
+        settingRotateRatioCol.setText(prefs.get("settingRotateRatioCol", "AP"));
+        settingRotateApSetCol.setText(prefs.get("settingRotateApSetCol", "AQ"));
+        settingRotateRemarkCol.setText(prefs.get("settingRotateRemarkCol", "AS"));
+
+        settingStockFirstRow.setText(prefs.get("settingStockFirstRow", "2"));
+        settingStockKitNameCol.setText(prefs.get("settingStockKitNameCol", "G"));
+        settingStockPartNumCol.setText(prefs.get("settingStockPartNumCol", "E"));
+        settingStockPoCol.setText(prefs.get("settingStockPoCol", "I"));
+        settingStockStockQtyCol.setText(prefs.get("settingStockStockQtyCol", "J"));
+        settingStockApQtyCol.setText(prefs.get("settingStockApQtyCol", "L"));
+        settingStockRemarkCol.setText(prefs.get("settingStockRemarkCol", "M"));
+        settingStockLotCol.setText(prefs.get("settingStockLotCol", "N"));
+        settingStockDcCol.setText(prefs.get("settingStockDcCol", "P"));
+
+        settingPurchaseFirstRow.setText(prefs.get("settingPurchaseFirstRow", "4"));
+        settingPurchaseKitNameCol.setText(prefs.get("settingPurchaseKitNameCol", "B"));
+        settingPurchasePartNumCol.setText(prefs.get("settingPurchasePartNumCol", "D"));
+        settingPurchasePoCol.setText(prefs.get("settingPurchasePoCol", "G"));
+        settingPurchaseGrDateCol.setText(prefs.get("settingPurchaseGrDateCol", "F"));
+        settingPurchaseGrQtyCol.setText(prefs.get("settingPurchaseGrQtyCol", "I"));
+        settingPurchaseApQtyCol.setText(prefs.get("settingPurchaseApQtyCol", "K"));
+        settingPurchaseApSetCol.setText(prefs.get("settingPurchaseApSetCol", "M"));
+        settingPurchaseRemarkCol.setText(prefs.get("settingPurchaseRemarkCol", "J"));
 
         editTabHSlitPane.setDividerPosition(0, Double.valueOf(prefs.get("EditTabHDiv", "0.41")));
         editTabVLeftSlitPane.setDividerPosition(0, Double.valueOf(prefs.get("EditTabVLeftDiv", "0.75")));
@@ -312,8 +456,9 @@ public class RootController {
                 int row = rotateTreeTableView.getSelectionModel().getSelectedIndex();
                 row++;
                 if (row < rotateTreeTableView.getCurrentItemsCount()) {
-                    rotateTreeTableView.getSelectionModel().select(row);
+                    rotateTreeTableView.getSelectionModel().select(row, rotateApplySetColumn);
                     rotateTreeTableView.scrollTo(Math.max(row - 3, 0));
+                    rotateTreeTableView.scrollToColumn(rotateApplySetColumn);
                 }
 
                 //Stop letting it do anything else
@@ -325,8 +470,9 @@ public class RootController {
                 int row = rotateTreeTableView.getSelectionModel().getSelectedIndex();
                 row--;
                 if (row >= 0) {
-                    rotateTreeTableView.getSelectionModel().select(row);
+                    rotateTreeTableView.getSelectionModel().select(row, rotateApplySetColumn);
                     rotateTreeTableView.scrollTo(Math.max(row - 3, 0));
+                    rotateTreeTableView.scrollToColumn(rotateApplySetColumn);
                 }
 
                 focusNode.requestFocus();
@@ -394,18 +540,40 @@ public class RootController {
         ExcelParser excelParser = new ExcelParser(collection);
 
         file = new File(pathAgingReport.getText());
-        excelParser.loadRotateExcel(file, 4, "F", "H", "R",
-                "AP", "AQ", "AS");
+        excelParser.loadRotateExcel(file,
+                Integer.valueOf(settingRotateFirstRow.getText()),
+                settingRotateKitNameCol.getText(),
+                settingRotatePartNumCol.getText(),
+                settingRotatePmQtyCol.getText(),
+                settingRotateRatioCol.getText(),
+                settingRotateApSetCol.getText(),
+                settingRotateRemarkCol.getText());
         log.info("Process rotate table: Done");
 
         file = new File(pathStockFile.getText());
-        excelParser.loadStockExcel(file, 2, "G", "E", "I",
-                "J", "N", "P", "L", "M");
+        excelParser.loadStockExcel(file,
+                Integer.valueOf(settingStockFirstRow.getText()),
+                settingStockKitNameCol.getText(),
+                settingStockPartNumCol.getText(),
+                settingStockPoCol.getText(),
+                settingStockStockQtyCol.getText(),
+                settingStockLotCol.getText(),
+                settingStockDcCol.getText(),
+                settingStockApQtyCol.getText(),
+                settingStockRemarkCol.getText());
         log.info("Process stock table: Done");
 
         file = new File(pathPurchaseFile.getText());
-        excelParser.loadPurchaseExcel(file, 4, "B", "D", "G",
-                "F", "I", "K", "M", "J");
+        excelParser.loadPurchaseExcel(file,
+                Integer.valueOf(settingPurchaseFirstRow.getText()),
+                settingPurchaseKitNameCol.getText(),
+                settingPurchasePartNumCol.getText(),
+                settingPurchasePoCol.getText(),
+                settingPurchaseGrDateCol.getText(),
+                settingPurchaseGrQtyCol.getText(),
+                settingPurchaseApQtyCol.getText(),
+                settingPurchaseApSetCol.getText(),
+                settingPurchaseRemarkCol.getText());
         log.info("Process purchase table: Done");
 
 
@@ -416,11 +584,7 @@ public class RootController {
         if (rotateTreeTableView.getCurrentItemsCount() > 0) {
             rotateTreeTableView.getSelectionModel().select(0, rotatePmQtyColumn);
         }
-
-//        rotateTreeTableView.group(rotateKitColumn);
-//        for(TreeItem<RotateItem> child:rotateTreeTableView.getRoot().getChildren()){
-//            child.setExpanded(true);
-//        }
+        rotatePartCount.setText(String.valueOf(collection.getRotateObsList().size()));
 
         mainTab.getSelectionModel().select(editTab);
     }
@@ -766,17 +930,17 @@ public class RootController {
                 (observable, oldValue, newValue) -> selectedPurchaseItem(oldValue, newValue)
         );
 
-//        purchaseTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<PurchaseItem>() {
-//            @Override
-//            public void updateItem(PurchaseItem item, boolean empty) {
-//                super.updateItem(item, empty);
-//                if (item != null && item.getPo().compareTo(purchaseSelectedPo) == 0) {
-//                    setStyle("-fx-background-color: #FFF176;");
-//                } else {
-//                    setStyle("");
-//                }
-//            }
-//        });
+        purchaseTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<PurchaseItem>() {
+            @Override
+            public void updateItem(PurchaseItem item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item != null && item.getPo().compareTo(purchaseSelectedPo) == 0) {
+                    setStyle("-fx-background-color: #FFF176;");
+                } else {
+                    setStyle("");
+                }
+            }
+        });
 
     }
 
@@ -901,7 +1065,7 @@ public class RootController {
         stockTreeTableView.setRoot(root);
 
         stockStQtyTotal.textProperty().bind(rotateItem.stockQtyTotalProperty().asString());
-        stockGrQtyTotal.textProperty().bind(rotateItem.grQtyTotalProperty().asString());
+//        stockGrQtyTotal.textProperty().bind(rotateItem.stockGrQtyTotalProperty().asString());
         stockApQtyTotal.textProperty().bind(rotateItem.myQtyProperty().asString());
 
 
@@ -910,6 +1074,11 @@ public class RootController {
                 noneStockObsList, RecursiveTreeObject::getChildren);
 
         noneStPurchaseTreeTableView.setRoot(noneStockRoot);
+
+        stockPmQty.textProperty().bind(rotateItem.pmQtyProperty().asString());
+
+        rotateCurrPartGrQtyTotal.textProperty().bind(rotateItem.purchaseAllGrQtyTotalProperty().asString());
+        rotateCurrPartSetTotal.textProperty().bind(rotateItem.purchaseAllApSetTotalProperty().asString());
 
         noneStPurchaseGrQtyTotal.textProperty().bind(rotateItem.noneStPurchaseGrQtyTotalProperty().asString());
         noneStPurchaseApQtyTotal.textProperty().bind(rotateItem.noneStPurchaseApQtyTotalProperty().asString());
@@ -944,8 +1113,8 @@ public class RootController {
 
         purchaseTreeTableView.setRoot(root);
 
-        stockCurrPoStQtyTotal.textProperty().bind(stockItem.duplicatePoStockQtyTotalProperty().asString());
-        stockCurrPoApQtyTotal.textProperty().bind(stockItem.duplicatePoMyQtyTotalProperty().asString());
+        stockCurrPoStQtyTotal.textProperty().bind(stockItem.currentPoStockQtyTotalProperty().asString());
+        stockCurrPoApQtyTotal.textProperty().bind(stockItem.currentPoMyQtyTotalProperty().asString());
 
         purchaseGrQtyTotal.textProperty().bind(stockItem.purchaseGrQtyTotalProperty().asString());
         purchaseApQtyTotal.textProperty().bind(stockItem.purchaseApQtyTotalProperty().asString());
@@ -959,7 +1128,6 @@ public class RootController {
 
     private void selectedPurchaseItem(TreeItem<PurchaseItem> oldValue, TreeItem<PurchaseItem> newValue) {
         if (newValue == null || !newValue.isLeaf()) {
-            purchaseTreeTableView.setRoot(null);
             return;
         }
 
@@ -969,7 +1137,6 @@ public class RootController {
 
     private void selectedNoneStockPurchaseItem(TreeItem<PurchaseItem> oldValue, TreeItem<PurchaseItem> newValue) {
         if (newValue == null || !newValue.isLeaf()) {
-            purchaseTreeTableView.setRoot(null);
             return;
         }
 

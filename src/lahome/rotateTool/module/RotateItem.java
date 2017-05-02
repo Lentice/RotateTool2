@@ -10,9 +10,7 @@ import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private static final Logger log = LogManager.getLogger(RotateItem.class.getName());
@@ -26,11 +24,15 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private StringProperty remark;
 
     private IntegerProperty stockQtyTotal;
-    private IntegerProperty grQtyTotal;
+    private IntegerProperty stockGrQtyTotal;
 
     private IntegerProperty noneStPurchaseGrQtyTotal;
     private IntegerProperty noneStPurchaseApQtyTotal;
     private IntegerProperty noneStPurchaseApSetTotal;
+
+    private IntegerProperty purchaseAllGrQtyTotal;
+    private IntegerProperty purchaseAllApSetTotal;
+
 
     private boolean isKit;
     private boolean isDuplicate;
@@ -57,11 +59,14 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         this.remark = new SimpleStringProperty(remark);
 
         this.stockQtyTotal = new SimpleIntegerProperty(0);
-        this.grQtyTotal = new SimpleIntegerProperty(0);
+        this.stockGrQtyTotal = new SimpleIntegerProperty(0);
 
         this.noneStPurchaseGrQtyTotal = new SimpleIntegerProperty(0);
         this.noneStPurchaseApQtyTotal = new SimpleIntegerProperty(0);
         this.noneStPurchaseApSetTotal = new SimpleIntegerProperty(0);
+
+        this.purchaseAllGrQtyTotal = new SimpleIntegerProperty(0);
+        this.purchaseAllApSetTotal = new SimpleIntegerProperty(0);
 
         this.isKit = !kitName.isEmpty();
         this.isDuplicate = false;
@@ -83,8 +88,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         duplicateRotateItems.add(this);
     }
 
-    public void addDuplicate(RotateItem item)
-    {
+    public void addDuplicate(RotateItem item) {
         isDuplicate = true;
         duplicateRotateItems = new ArrayList<>();
         duplicateRotateItems.add(this);
@@ -150,6 +154,16 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     }
 
     public ObservableList<StockItem> getStockItemObsList() {
+
+        Collections.sort(stockItemObsList, (o1, o2) -> {
+            if (o2.getEarliestGrDate().isEmpty()) {
+                return -1;
+            } else if (o1.getEarliestGrDate().isEmpty()) {
+                return 1;
+            } else {
+                return o1.getEarliestGrDate().compareTo(o2.getEarliestGrDate());
+            }
+        });
         return stockItemObsList;
     }
 
@@ -205,16 +219,20 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         this.stockQtyTotal.set(stockQtyTotal);
     }
 
-    public int getGrQtyTotal() {
-        return grQtyTotal.get();
+    public int getStockGrQtyTotal() {
+        return stockGrQtyTotal.get();
     }
 
-    public IntegerProperty grQtyTotalProperty() {
-        return grQtyTotal;
+    public IntegerProperty stockGrQtyTotalProperty() {
+        return stockGrQtyTotal;
     }
 
-    public void setGrQtyTotal(int grQtyTotal) {
-        this.grQtyTotal.set(grQtyTotal);
+    public void setStockGrQtyTotal(int stockGrQtyTotal) {
+        this.stockGrQtyTotal.set(stockGrQtyTotal);
+    }
+
+    public void addStockGrQtyTotal(int qty) {
+        stockGrQtyTotal.set(stockGrQtyTotal.intValue() + qty);
     }
 
     public int getNoneStPurchaseGrQtyTotal() {
@@ -261,6 +279,29 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         noneStPurchaseApSetTotal.set(noneStPurchaseApSetTotal.intValue() + qty);
     }
 
+    public int getPurchaseAllGrQtyTotal() {
+        return purchaseAllGrQtyTotal.get();
+    }
+
+    public IntegerProperty purchaseAllGrQtyTotalProperty() {
+        return purchaseAllGrQtyTotal;
+    }
+
+    public void addPurchaseAllGrQtyTotal(int qty) {
+        purchaseAllGrQtyTotal.set(purchaseAllGrQtyTotal.intValue() + qty);
+    }
+
+    public int getPurchaseAllApSetTotal() {
+        return purchaseAllApSetTotal.get();
+    }
+
+    public IntegerProperty purchaseAllApSetTotalProperty() {
+        return purchaseAllApSetTotal;
+    }
+
+    public void addPurchaseAllApSetTotal(int set) {
+        purchaseAllApSetTotal.set(purchaseAllApSetTotal.intValue() + set);
+    }
 
     public void addNoneStockPurchase(PurchaseItem purchaseItem) {
         noneStPurchaseGrQtyTotal.set(noneStPurchaseGrQtyTotal.get() + purchaseItem.getGrQty());
@@ -268,10 +309,11 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         noneStPurchaseApSetTotal.set(noneStPurchaseApSetTotal.get() + purchaseItem.getApplySet());
 
         noneStockPurchaseItemObsList.add(purchaseItem);
-        purchaseItem.setRotateItem(this, true);
+        purchaseItem.setRotate(this, true);
     }
 
     public ObservableList<PurchaseItem> getNoneStockPurchaseItemObsList() {
+        noneStockPurchaseItemObsList.sort(Comparator.comparing(PurchaseItem::getGrDate));
         return noneStockPurchaseItemObsList;
     }
 

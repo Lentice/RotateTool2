@@ -44,30 +44,47 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
         this.isNoneStock = false;
     }
 
-    public void setStockItem(StockItem stockItem) {
+    public void setStock(StockItem stockItem) {
         this.stockItem = stockItem;
 
-        this.myQty.addListener((observable, oldValue, newValue) -> {
-            stockItem.addPurchaseApQtyTotal(newValue.intValue() - oldValue.intValue());
-        });
+        stockItem.addPurchaseGrQtyTotal(getGrQty());
+        stockItem.addPurchaseApQtyTotal(getMyQty());
+        stockItem.addPurchaseApSetTotal(getApplySet());
 
-        this.applySet.addListener((observable, oldValue, newValue) -> {
-            stockItem.addPurchaseApSetTotal(newValue.intValue() - oldValue.intValue());
-        });
+        this.grQty.addListener((observable, oldValue, newValue) ->
+                stockItem.addPurchaseGrQtyTotal(newValue.intValue() - oldValue.intValue()));
+
+        this.myQty.addListener((observable, oldValue, newValue) ->
+                stockItem.addPurchaseApQtyTotal(newValue.intValue() - oldValue.intValue()));
+
+        this.applySet.addListener((observable, oldValue, newValue) ->
+                stockItem.addPurchaseApSetTotal(newValue.intValue() - oldValue.intValue()));
     }
 
-    public void setRotateItem(RotateItem rotateItem, boolean isNoneStock) {
+    public void setRotate(RotateItem rotateItem, boolean isNoneStock) {
         this.isNoneStock = isNoneStock;
         this.rotateItem = rotateItem;
 
-        if (isNoneStock) {
-            this.myQty.addListener((observable, oldValue, newValue) -> {
-                rotateItem.addNoneStPurchaseApQtyTotal(newValue.intValue() - oldValue.intValue());
-            });
+        rotateItem.addPurchaseAllGrQtyTotal(getGrQty());
+        rotateItem.addPurchaseAllApSetTotal(getApplySet());
+        this.applySet.addListener((observable, oldValue, newValue) ->
+                rotateItem.addPurchaseAllApSetTotal(newValue.intValue() - oldValue.intValue()));
+        this.grQty.addListener((observable, oldValue, newValue) ->
+                rotateItem.addPurchaseAllGrQtyTotal(newValue.intValue() - oldValue.intValue()));
 
-            this.applySet.addListener((observable, oldValue, newValue) -> {
-                rotateItem.addNoneStPurchaseApSetTotal(newValue.intValue() - oldValue.intValue());
-            });
+        if (isNoneStock) {
+            rotateItem.addNoneStPurchaseApQtyTotal(getMyQty());
+            rotateItem.addNoneStPurchaseApSetTotal(getApplySet());
+
+            this.myQty.addListener((observable, oldValue, newValue) ->
+                    rotateItem.addNoneStPurchaseApQtyTotal(newValue.intValue() - oldValue.intValue()));
+
+            this.applySet.addListener((observable, oldValue, newValue) ->
+                    rotateItem.addNoneStPurchaseApSetTotal(newValue.intValue() - oldValue.intValue()));
+        } else {
+            rotateItem.addStockGrQtyTotal(getGrQty());
+            this.grQty.addListener((observable, oldValue, newValue) ->
+                    rotateItem.addStockGrQtyTotal(newValue.intValue() - oldValue.intValue()));
         }
     }
 

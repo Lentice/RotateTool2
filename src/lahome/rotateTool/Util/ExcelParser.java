@@ -146,7 +146,7 @@ public class ExcelParser {
         return (int) cellGetValue(cell);
     }
 
-    private Sheet getSheet(File file) {
+    private Workbook getSheet(File file) {
 
         if (!file.exists()) {
             log.warn(String.format("%s(%d) file is not exists",
@@ -175,7 +175,7 @@ public class ExcelParser {
             return null;
         }
 
-        return wb.getSheetAt(sheetIdx);
+        return wb;
     }
 
     private String cellGetString(Cell cell) {
@@ -281,7 +281,8 @@ public class ExcelParser {
 
         int maxColumnUsed = Math.max(Math.max(kitColumn, partColumn), pmQtyColumn);
 
-        Sheet sheet = getSheet(file);
+        Workbook wb = getSheet(file);
+        Sheet sheet = wb.getSheetAt(sheetIdx);
         if (sheet == null) {
             log.error("open sheet failed");
             return;
@@ -337,7 +338,8 @@ public class ExcelParser {
                 Math.max(stockQtyColumn, Math.max(dcColumn, myQtyColumn))))));
 
 
-        Sheet sheet = getSheet(file);
+        Workbook wb = getSheet(file);
+        Sheet sheet = wb.getSheetAt(sheetIdx);
         if (sheet == null) {
             log.error("open sheet failed");
             return;
@@ -390,14 +392,15 @@ public class ExcelParser {
         int grQtyColumn = CellReference.convertColStringToIndex(grQtyColStr);
         int myQtyColumn = CellReference.convertColStringToIndex(myQtyColStr);
         int setColumn = CellReference.convertColStringToIndex(setColStr);
-        int remarkCOlumn = CellReference.convertColStringToIndex(remarkColStr);
+        int remarkColumn = CellReference.convertColStringToIndex(remarkColStr);
 
 
         int maxColumnUsed = Math.max(kitColumn, Math.max(partColumn, Math.max(poColumn, Math.max(grDateColumn,
                 grQtyColumn))));
 
 
-        Sheet sheet = getSheet(file);
+        Workbook wb = getSheet(file);
+        Sheet sheet = wb.getSheetAt(sheetIdx);
         if (sheet == null) {
             log.error("open sheet failed");
             return;
@@ -430,7 +433,7 @@ public class ExcelParser {
 
                 int myQty = getMyQty(row, myQtyColumn);
                 int applySet = getApplySet(row, setColumn);
-                String remark = getRemark(row, setColumn);
+                String remark = getRemark(row, remarkColumn);
 
                 collection.addPurchase(new PurchaseItem(rowNum, kitName, partNum, po, date, grQty,
                         myQty, applySet, remark));

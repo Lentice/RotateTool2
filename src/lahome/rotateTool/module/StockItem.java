@@ -12,12 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Administrator on 2017/4/15.
- */
 public class StockItem extends RecursiveTreeObject<StockItem> {
     private static final Logger log = LogManager.getLogger(StockItem.class.getName());
 
@@ -37,8 +35,8 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     private boolean isDuplicate;
     private StockItem firstStockItem;
     private List<StockItem> duplicateStockItems;
-    private IntegerProperty duplicatePoStockQtyTotal;
-    private IntegerProperty duplicatePoMyQtyTotal;
+    private IntegerProperty currentPoStockQtyTotal;
+    private IntegerProperty currentPoMyQtyTotal;
 
     private IntegerProperty purchaseGrQtyTotal;
     private IntegerProperty purchaseApQtyTotal;
@@ -66,8 +64,10 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.purchaseApQtyTotal = new SimpleIntegerProperty(0);
         this.purchaseApSetTotal = new SimpleIntegerProperty(0);
 
-        this.duplicatePoStockQtyTotal = new SimpleIntegerProperty(stockQty);
-        this.duplicatePoMyQtyTotal = new SimpleIntegerProperty(myQty);
+        this.currentPoStockQtyTotal = new SimpleIntegerProperty(stockQty);
+        this.currentPoMyQtyTotal = new SimpleIntegerProperty(myQty);
+        this.myQty.addListener((observable, oldValue, newValue) ->
+                this.addCurrentPoMyQtyTotal(newValue.intValue() - oldValue.intValue()));
 
         this.rowNum = rowNum;
     }
@@ -93,29 +93,24 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.purchaseGrQtyTotal = firstItem.purchaseGrQtyTotalProperty();
         this.purchaseApQtyTotal = firstItem.purchaseApQtyTotalProperty();
         this.purchaseApSetTotal = firstItem.purchaseApSetTotalProperty();
-        this.duplicatePoStockQtyTotal = firstItem.duplicatePoStockQtyTotalProperty();
-        this.duplicatePoMyQtyTotal = firstItem.duplicatePoMyQtyTotalProperty();
+        this.currentPoStockQtyTotal = firstItem.currentPoStockQtyTotalProperty();
+        this.currentPoMyQtyTotal = firstItem.currentPoMyQtyTotalProperty();
         this.duplicateStockItems.add(this);
 
-        this.myQty.addListener((observable, oldValue, newValue) -> {
-            firstItem.addDuplicatePoMyQtyTotal(newValue.intValue() - oldValue.intValue());
-        });
+        addCurrentPoMyQtyTotal(getMyQty());
+        this.myQty.addListener((observable, oldValue, newValue) ->
+                addCurrentPoMyQtyTotal(newValue.intValue() - oldValue.intValue()));
     }
 
     public void addDuplicate(StockItem item) {
 
         if (!isDuplicate) {
             firstStockItem = this;
-            this.myQty.addListener((observable, oldValue, newValue) -> {
-                this.addDuplicatePoMyQtyTotal(newValue.intValue() - oldValue.intValue());
-            });
         }
 
         isDuplicate = true;
 
-        duplicatePoStockQtyTotal.set(duplicatePoStockQtyTotal.get() + item.getStockQty());
-        addDuplicatePoMyQtyTotal(item.getMyQty());
-
+        currentPoStockQtyTotal.set(currentPoStockQtyTotal.get() + item.getStockQty());
         duplicateStockItems = new ArrayList<>();
         duplicateStockItems.add(this);
 
@@ -234,6 +229,10 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.purchaseGrQtyTotal.set(purchaseGrQtyTotal);
     }
 
+    public void addPurchaseGrQtyTotal(int qty) {
+        purchaseGrQtyTotal.set(purchaseGrQtyTotal.intValue() + qty);
+    }
+
     public int getPurchaseApQtyTotal() {
         return purchaseApQtyTotal.get();
     }
@@ -278,40 +277,33 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.remark.set(remark);
     }
 
-    public int getDuplicatePoStockQtyTotal() {
-        return duplicatePoStockQtyTotal.get();
+    public int getCurrentPoStockQtyTotal() {
+        return currentPoStockQtyTotal.get();
     }
 
-    public IntegerProperty duplicatePoStockQtyTotalProperty() {
-        return duplicatePoStockQtyTotal;
+    public IntegerProperty currentPoStockQtyTotalProperty() {
+        return currentPoStockQtyTotal;
     }
 
-    public void setDuplicatePoStockQtyTotal(int duplicatePoStockQtyTotal) {
-        this.duplicatePoStockQtyTotal.set(duplicatePoStockQtyTotal);
+    public void setCurrentPoStockQtyTotal(int currentPoStockQtyTotal) {
+        this.currentPoStockQtyTotal.set(currentPoStockQtyTotal);
     }
 
-    public int getDuplicatePoMyQtyTotal() {
-        return duplicatePoMyQtyTotal.get();
+    public int getCurrentPoMyQtyTotal() {
+        return currentPoMyQtyTotal.get();
     }
 
-    public IntegerProperty duplicatePoMyQtyTotalProperty() {
-        return duplicatePoMyQtyTotal;
+    public IntegerProperty currentPoMyQtyTotalProperty() {
+        return currentPoMyQtyTotal;
     }
 
-    public void addDuplicatePoMyQtyTotal(int qty) {
-        duplicatePoMyQtyTotal.set(duplicatePoMyQtyTotal.intValue() + qty);
+    public void addCurrentPoMyQtyTotal(int qty) {
+        currentPoMyQtyTotal.set(currentPoMyQtyTotal.intValue() + qty);
     }
 
     public void addPurchaseItem(PurchaseItem item) {
         log.debug(String.format("Add purchase: %s, %s, %s, %s, %d",
                 item.getKitName(), item.getPartNumber(), item.getPo(), item.getGrDate(), item.getGrQty()));
-
-        purchaseGrQtyTotal.set(purchaseGrQtyTotal.get() + item.getGrQty());
-        purchaseApQtyTotal.set(purchaseApQtyTotal.get() + item.getMyQty());
-        purchaseApSetTotal.set(purchaseApSetTotal.get() + item.getApplySet());
-
-
-        rotateItem.setGrQtyTotal(rotateItem.getGrQtyTotal() + item.getGrQty());
 
         Date purchaseDate = DateUtil.parse(item.getGrDate());
         Date earliestDate = DateUtil.parse(earliestGrDate.get());
@@ -322,7 +314,8 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         }
 
         purchaseItems.add(item);
-        item.setStockItem(this);
+        item.setStock(this);
+        item.setRotate(rotateItem, false);
     }
 
     public List<StockItem> getDuplicateStockItems() {
@@ -330,6 +323,7 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     }
 
     public ObservableList<PurchaseItem> getPurchaseItems() {
+        purchaseItems.sort(Comparator.comparing(PurchaseItem::getGrDate));
         return purchaseItems;
     }
 
