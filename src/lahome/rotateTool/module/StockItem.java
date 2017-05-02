@@ -7,10 +7,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lahome.rotateTool.Util.DateUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +27,7 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     private IntegerProperty stockQty;
     private StringProperty lot;
     private StringProperty dc;
+    private StringProperty earliestGrDate;
     private IntegerProperty myQty;
     private StringProperty remark;
 
@@ -32,6 +35,7 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     private RotateItem rotateItem;
 
     private boolean isDuplicate;
+    private StockItem firstStockItem;
     private List<StockItem> duplicateStockItems;
     private IntegerProperty duplicatePoStockQtyTotal;
     private IntegerProperty duplicatePoMyQtyTotal;
@@ -54,6 +58,7 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.stockQty = new SimpleIntegerProperty(stockQty);
         this.lot = new SimpleStringProperty(lot);
         this.dc = new SimpleStringProperty(dc);
+        this.earliestGrDate = new SimpleStringProperty("");
         this.myQty = new SimpleIntegerProperty(myQty);
         this.remark = new SimpleStringProperty(remark);
 
@@ -80,8 +85,11 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     public void setDuplicate(StockItem firstItem) {
 
         this.isDuplicate = true;
+        this.firstStockItem = firstItem;
+
         this.duplicateStockItems = firstItem.getDuplicateStockItems();
         this.purchaseItems = firstItem.getPurchaseItems();
+        this.earliestGrDate = firstItem.earliestGrDateProperty();
         this.purchaseGrQtyTotal = firstItem.purchaseGrQtyTotalProperty();
         this.purchaseApQtyTotal = firstItem.purchaseApQtyTotalProperty();
         this.purchaseApSetTotal = firstItem.purchaseApSetTotalProperty();
@@ -97,6 +105,7 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     public void addDuplicate(StockItem item) {
 
         if (!isDuplicate) {
+            firstStockItem = this;
             this.myQty.addListener((observable, oldValue, newValue) -> {
                 this.addDuplicatePoMyQtyTotal(newValue.intValue() - oldValue.intValue());
             });
@@ -187,6 +196,18 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
 
     public void setDc(String dc) {
         this.dc.set(dc);
+    }
+
+    public String getEarliestGrDate() {
+        return earliestGrDate.get();
+    }
+
+    public StringProperty earliestGrDateProperty() {
+        return earliestGrDate;
+    }
+
+    public void setEarliestGrDate(String earliestGrDate) {
+        this.earliestGrDate.set(earliestGrDate);
     }
 
     public int getMyQty() {
@@ -289,10 +310,19 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         purchaseApQtyTotal.set(purchaseApQtyTotal.get() + item.getMyQty());
         purchaseApSetTotal.set(purchaseApSetTotal.get() + item.getApplySet());
 
-        purchaseItems.add(item);
-        item.setStockItem(this);
 
         rotateItem.setGrQtyTotal(rotateItem.getGrQtyTotal() + item.getGrQty());
+
+        Date purchaseDate = DateUtil.parse(item.getGrDate());
+        Date earliestDate = DateUtil.parse(earliestGrDate.get());
+        if (purchaseDate != null && earliestDate == null) {
+            earliestGrDate.set(item.getGrDate());
+        } else if (purchaseDate != null && purchaseDate.before(earliestDate)) {
+            earliestGrDate.set(item.getGrDate());
+        }
+
+        purchaseItems.add(item);
+        item.setStockItem(this);
     }
 
     public List<StockItem> getDuplicateStockItems() {
@@ -301,5 +331,9 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
 
     public ObservableList<PurchaseItem> getPurchaseItems() {
         return purchaseItems;
+    }
+
+    public StockItem getFirstStockItem() {
+        return firstStockItem;
     }
 }

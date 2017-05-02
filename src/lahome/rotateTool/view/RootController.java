@@ -6,11 +6,17 @@ import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import lahome.rotateTool.Main;
 import lahome.rotateTool.Util.DateUtil;
 import lahome.rotateTool.Util.ExcelParser;
@@ -45,12 +51,6 @@ public class RootController {
 
     @FXML
     private SplitPane editTabVRightSlitPane;
-
-    @FXML
-    private DatePicker grDateStart;
-
-    @FXML
-    private DatePicker grDateEnd;
 
     @FXML
     private JFXTextField pathAgingReport;
@@ -102,6 +102,9 @@ public class RootController {
 
     @FXML
     private JFXTreeTableColumn<StockItem, String> stockDcColumn;
+
+    @FXML
+    private JFXTreeTableColumn<StockItem, String> stockGrDateColumn;
 
     @FXML
     private JFXTreeTableColumn<StockItem, Number> stockQtyColumn;
@@ -186,6 +189,8 @@ public class RootController {
 
 
     private Main main;
+    private Stage primaryStage;
+
     private RotateCollection collection;
     private File latestDir = new File(System.getProperty("user.dir"));
     private String rotateSelectedKit = "";
@@ -199,12 +204,6 @@ public class RootController {
     public void saveSetting() {
         String path;
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
-
-        String dateStart = DateUtil.formatFromLocalDate(grDateStart.getValue());
-        prefs.put("GrDateStart", dateStart == null ? "" : dateStart);
-
-        String dateEnd = DateUtil.formatFromLocalDate(grDateEnd.getValue());
-        prefs.put("GrDateEnd", dateEnd == null ? "" : dateEnd);
 
         prefs.put("LatestDir", latestDir.getPath());
 
@@ -230,6 +229,7 @@ public class RootController {
         prefs.put("StockPoWidth", String.valueOf(stockPoColumn.getWidth()));
         prefs.put("StockLotWidth", String.valueOf(stockLotColumn.getWidth()));
         prefs.put("StockDcWidth", String.valueOf(stockDcColumn.getWidth()));
+        prefs.put("StockGrDateWidth", String.valueOf(stockGrDateColumn.getWidth()));
         prefs.put("StockQtyWidth", String.valueOf(stockQtyColumn.getWidth()));
         prefs.put("StockMyQtyWidth", String.valueOf(stockMyQtyColumn.getWidth()));
         prefs.put("StockRemarkWidth", String.valueOf(stockRemarkColumn.getWidth()));
@@ -250,20 +250,6 @@ public class RootController {
 
     public void loadSetting() {
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
-
-        LocalDate dateStart = DateUtil.parseToLocalDate(prefs.get("GrDateStart", ""));
-        if (dateStart != null) {
-            grDateStart.setValue(dateStart);
-        } else {
-            grDateStart.setValue(LocalDate.now());
-        }
-
-        LocalDate dateEnd = DateUtil.parseToLocalDate(prefs.get("GrDateEnd", ""));
-        if (dateEnd != null) {
-            grDateEnd.setValue(dateEnd);
-        } else {
-            grDateEnd.setValue(LocalDate.now());
-        }
 
         latestDir = new File(prefs.get("LatestDir", System.getProperty("user.dir")));
         if (!latestDir.exists())
@@ -286,8 +272,9 @@ public class RootController {
         rotateRemarkColumn.setPrefWidth(Double.valueOf(prefs.get("RotateRemarkWidth", "120")));
 
         stockPoColumn.setPrefWidth(Double.valueOf(prefs.get("StockPoWidth", "120")));
-        stockLotColumn.setPrefWidth(Double.valueOf(prefs.get("StockLotWidth", "50")));
-        stockDcColumn.setPrefWidth(Double.valueOf(prefs.get("StockDcWidth", "120")));
+        stockLotColumn.setPrefWidth(Double.valueOf(prefs.get("StockLotWidth", "120")));
+        stockDcColumn.setPrefWidth(Double.valueOf(prefs.get("StockDcWidth", "50")));
+        stockGrDateColumn.setPrefWidth(Double.valueOf(prefs.get("StockGrDateWidth", "50")));
         stockQtyColumn.setPrefWidth(Double.valueOf(prefs.get("StockQtyWidth", "63")));
         stockMyQtyColumn.setPrefWidth(Double.valueOf(prefs.get("StockMyQtyWidth", "50")));
         stockRemarkColumn.setPrefWidth(Double.valueOf(prefs.get("StockRemarkWidth", "150")));
@@ -308,7 +295,48 @@ public class RootController {
 
     public void setMainApp(Main main) {
         this.main = main;
+        this.primaryStage = main.getPrimaryStage();
         this.collection = main.getCollection();
+
+        initialHotkeys();
+    }
+
+
+    private void initialHotkeys() {
+        Scene scene = primaryStage.getScene();
+
+        scene.setOnKeyPressed(keyEvent -> {
+            Node focusNode = scene.getFocusOwner();
+
+            if (keyEvent.getCode() == KeyCode.F12) {
+                int row = rotateTreeTableView.getSelectionModel().getSelectedIndex();
+                row++;
+                if (row < rotateTreeTableView.getCurrentItemsCount()) {
+                    rotateTreeTableView.getSelectionModel().select(row);
+                    rotateTreeTableView.scrollTo(Math.max(row - 3, 0));
+                }
+
+                //Stop letting it do anything else
+                keyEvent.consume();
+            }
+
+            if (keyEvent.getCode() == KeyCode.F11) {
+
+                int row = rotateTreeTableView.getSelectionModel().getSelectedIndex();
+                row--;
+                if (row >= 0) {
+                    rotateTreeTableView.getSelectionModel().select(row);
+                    rotateTreeTableView.scrollTo(Math.max(row - 3, 0));
+                }
+
+                focusNode.requestFocus();
+
+                //Stop letting it do anything else
+                keyEvent.consume();
+            }
+
+            focusNode.requestFocus();
+        });
     }
 
 
@@ -385,7 +413,9 @@ public class RootController {
                 collection.getRotateObsList(), RecursiveTreeObject::getChildren);
         rotateTreeTableView.setRoot(rotateRoot);
         rotateTreeTableView.requestFocus();
-        rotateTreeTableView.getSelectionModel().select(0);
+        if (rotateTreeTableView.getCurrentItemsCount() > 0) {
+            rotateTreeTableView.getSelectionModel().select(0, rotatePmQtyColumn);
+        }
 
 //        rotateTreeTableView.group(rotateKitColumn);
 //        for(TreeItem<RotateItem> child:rotateTreeTableView.getRoot().getChildren()){
@@ -601,6 +631,14 @@ public class RootController {
             }
         });
 
+        stockGrDateColumn.setCellValueFactory(cellData -> {
+            if (stockGrDateColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().earliestGrDateProperty();
+            } else {
+                return stockGrDateColumn.getComputedValue(cellData);
+            }
+        });
+
         stockQtyColumn.setCellValueFactory(cellData -> {
             if (stockQtyColumn.validateValue(cellData)) {
                 return cellData.getValue().getValue().stockQtyProperty();
@@ -728,17 +766,17 @@ public class RootController {
                 (observable, oldValue, newValue) -> selectedPurchaseItem(oldValue, newValue)
         );
 
-        purchaseTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<PurchaseItem>() {
-            @Override
-            public void updateItem(PurchaseItem item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item != null && item.getPo().compareTo(purchaseSelectedPo) == 0) {
-                    setStyle("-fx-background-color: #FFF176;");
-                } else {
-                    setStyle("");
-                }
-            }
-        });
+//        purchaseTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<PurchaseItem>() {
+//            @Override
+//            public void updateItem(PurchaseItem item, boolean empty) {
+//                super.updateItem(item, empty);
+//                if (item != null && item.getPo().compareTo(purchaseSelectedPo) == 0) {
+//                    setStyle("-fx-background-color: #FFF176;");
+//                } else {
+//                    setStyle("");
+//                }
+//            }
+//        });
 
     }
 
@@ -877,8 +915,13 @@ public class RootController {
         noneStPurchaseApQtyTotal.textProperty().bind(rotateItem.noneStPurchaseApQtyTotalProperty().asString());
         noneStPurchaseApSetTotal.textProperty().bind(rotateItem.noneStPurchaseApSetTotalProperty().asString());
 
+        if (stockTreeTableView.getCurrentItemsCount() > 0) {
+            stockTreeTableView.getSelectionModel().select(0, stockMyQtyColumn);
+        }
 
-        //stockTreeTableView.getSelectionModel().select(0);
+        if (noneStPurchaseTreeTableView.getCurrentItemsCount() > 0) {
+            noneStPurchaseTreeTableView.getSelectionModel().select(0, noneStPurchaseMyQtyColumn);
+        }
     }
 
 
@@ -907,7 +950,10 @@ public class RootController {
         purchaseGrQtyTotal.textProperty().bind(stockItem.purchaseGrQtyTotalProperty().asString());
         purchaseApQtyTotal.textProperty().bind(stockItem.purchaseApQtyTotalProperty().asString());
         purchaseApSetTotal.textProperty().bind(stockItem.purchaseApSetTotalProperty().asString());
-        //purchaseTreeTableView.getSelectionModel().select(0);
+
+        if (purchaseTreeTableView.getCurrentItemsCount() > 0) {
+            purchaseTreeTableView.getSelectionModel().select(0, purchaseMyQtyColumn);
+        }
     }
 
 
