@@ -526,7 +526,7 @@
                                                       <Insets right="10.0" />
                                                    </HBox.margin>
                                                 </ImageView>
-                                                <JFXTextField fx:id="filterField" focusTraversable="false" prefColumnCount="200" prefWidth="200.0">
+                                                <JFXTextField fx:id="rotateFilterField" focusTraversable="false" prefColumnCount="200" prefWidth="200.0">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -694,7 +694,7 @@
                                                       <JFXTreeTableColumn fx:id="noneStPurchasePoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
                                                       <JFXTreeTableColumn fx:id="noneStPurchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
                                                       <JFXTreeTableColumn fx:id="noneStPurchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
-                                                      <JFXTreeTableColumn fx:id="noneStPurchaseMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                      <JFXTreeTableColumn fx:id="noneStPurchaseApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
                                                       <JFXTreeTableColumn fx:id="noneStPurchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
                                                       <JFXTreeTableColumn fx:id="noneStPurchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
                                                    </columns>
@@ -808,8 +808,8 @@
                                                             <JFXTreeTableColumn fx:id="stockLotColumn" minWidth="20.0" prefWidth="120.0" text="Lot" />
                                                             <JFXTreeTableColumn fx:id="stockDcColumn" minWidth="20.0" prefWidth="50.0" text="D/C" />
                                                             <JFXTreeTableColumn fx:id="stockGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
-                                                            <JFXTreeTableColumn fx:id="stockQtyColumn" minWidth="20.0" prefWidth="50.0" text="St Qty" />
-                                                            <JFXTreeTableColumn fx:id="stockMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                            <JFXTreeTableColumn fx:id="stockStQtyColumn" minWidth="20.0" prefWidth="50.0" text="St Qty" />
+                                                            <JFXTreeTableColumn fx:id="stockApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
                                                             <JFXTreeTableColumn fx:id="stockRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
                                                          </columns>
                                                       </JFXTreeTableView>
@@ -910,7 +910,7 @@
                                                                <columns>
                                                                   <JFXTreeTableColumn fx:id="purchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
                                                                   <JFXTreeTableColumn fx:id="purchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
                                                                   <JFXTreeTableColumn fx:id="purchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
                                                                   <JFXTreeTableColumn fx:id="purchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
                                                                </columns>

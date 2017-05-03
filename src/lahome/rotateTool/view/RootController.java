@@ -139,7 +139,7 @@ public class RootController {
     private ImageView filterIcon;
 
     @FXML
-    private JFXTextField filterField;
+    private JFXTextField rotateFilterField;
 
     @FXML
     private JFXTreeTableView<RotateItem> rotateTreeTableView;
@@ -190,10 +190,10 @@ public class RootController {
     private JFXTreeTableColumn<StockItem, String> stockGrDateColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, Number> stockQtyColumn;
+    private JFXTreeTableColumn<StockItem, Number> stockStQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, Number> stockMyQtyColumn;
+    private JFXTreeTableColumn<StockItem, Number> stockApQtyColumn;
 
     @FXML
     private JFXTreeTableColumn<StockItem, String> stockRemarkColumn;
@@ -226,7 +226,7 @@ public class RootController {
     private JFXTreeTableColumn<PurchaseItem, Number> purchaseGrQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, Number> purchaseMyQtyColumn;
+    private JFXTreeTableColumn<PurchaseItem, Number> purchaseApQtyColumn;
 
     @FXML
     private JFXTreeTableColumn<PurchaseItem, Number> purchaseApplySetColumn;
@@ -256,7 +256,7 @@ public class RootController {
     private JFXTreeTableColumn<PurchaseItem, Number> noneStPurchaseGrQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, Number> noneStPurchaseMyQtyColumn;
+    private JFXTreeTableColumn<PurchaseItem, Number> noneStPurchaseApQtyColumn;
 
     @FXML
     private JFXTreeTableColumn<PurchaseItem, Number> noneStPurchaseApplySetColumn;
@@ -345,20 +345,20 @@ public class RootController {
         prefs.put("StockLotWidth", String.valueOf(stockLotColumn.getWidth()));
         prefs.put("StockDcWidth", String.valueOf(stockDcColumn.getWidth()));
         prefs.put("StockGrDateWidth", String.valueOf(stockGrDateColumn.getWidth()));
-        prefs.put("StockQtyWidth", String.valueOf(stockQtyColumn.getWidth()));
-        prefs.put("StockMyQtyWidth", String.valueOf(stockMyQtyColumn.getWidth()));
+        prefs.put("StockQtyWidth", String.valueOf(stockStQtyColumn.getWidth()));
+        prefs.put("StockMyQtyWidth", String.valueOf(stockApQtyColumn.getWidth()));
         prefs.put("StockRemarkWidth", String.valueOf(stockRemarkColumn.getWidth()));
 
         prefs.put("PurchaseGrDateWidth", String.valueOf(purchaseGrDateColumn.getWidth()));
         prefs.put("PurchaseGrQtyWidth", String.valueOf(purchaseGrQtyColumn.getWidth()));
-        prefs.put("PurchaseMyQtyWidth", String.valueOf(purchaseMyQtyColumn.getWidth()));
+        prefs.put("PurchaseMyQtyWidth", String.valueOf(purchaseApQtyColumn.getWidth()));
         prefs.put("PurchaseApplySetWidth", String.valueOf(purchaseApplySetColumn.getWidth()));
         prefs.put("PurchaseRemarkWidth", String.valueOf(purchaseRemarkColumn.getWidth()));
 
         prefs.put("NoneStPurchasePoWidth", String.valueOf(noneStPurchasePoColumn.getWidth()));
         prefs.put("NoneStPurchaseGrDateWidth", String.valueOf(noneStPurchaseGrDateColumn.getWidth()));
         prefs.put("NoneStPurchaseGrQtyWidth", String.valueOf(noneStPurchaseGrQtyColumn.getWidth()));
-        prefs.put("NoneStPurchaseMyQtyWidth", String.valueOf(noneStPurchaseMyQtyColumn.getWidth()));
+        prefs.put("NoneStPurchaseMyQtyWidth", String.valueOf(noneStPurchaseApQtyColumn.getWidth()));
         prefs.put("NoneStPurchaseApplySetWidth", String.valueOf(noneStPurchaseApplySetColumn.getWidth()));
         prefs.put("NoneStPurchaseRemarkWidth", String.valueOf(noneStPurchaseRemarkColumn.getWidth()));
     }
@@ -419,20 +419,20 @@ public class RootController {
         stockLotColumn.setPrefWidth(Double.valueOf(prefs.get("StockLotWidth", "120")));
         stockDcColumn.setPrefWidth(Double.valueOf(prefs.get("StockDcWidth", "50")));
         stockGrDateColumn.setPrefWidth(Double.valueOf(prefs.get("StockGrDateWidth", "50")));
-        stockQtyColumn.setPrefWidth(Double.valueOf(prefs.get("StockQtyWidth", "63")));
-        stockMyQtyColumn.setPrefWidth(Double.valueOf(prefs.get("StockMyQtyWidth", "50")));
+        stockStQtyColumn.setPrefWidth(Double.valueOf(prefs.get("StockQtyWidth", "63")));
+        stockApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("StockMyQtyWidth", "50")));
         stockRemarkColumn.setPrefWidth(Double.valueOf(prefs.get("StockRemarkWidth", "150")));
 
         purchaseGrDateColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseGrDateWidth", "120")));
         purchaseGrQtyColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseGrQtyWidth", "50")));
-        purchaseMyQtyColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseMyQtyWidth", "50")));
+        purchaseApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseMyQtyWidth", "50")));
         purchaseApplySetColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseApplySetWidth", "50")));
         purchaseRemarkColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseRemarkWidth", "150")));
 
         noneStPurchasePoColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchasePoWidth", "120")));
         noneStPurchaseGrDateColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseGrDateWidth", "120")));
         noneStPurchaseGrQtyColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseGrQtyWidth", "50")));
-        noneStPurchaseMyQtyColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseMyQtyWidth", "50")));
+        noneStPurchaseApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseMyQtyWidth", "50")));
         noneStPurchaseApplySetColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseApplySetWidth", "50")));
         noneStPurchaseRemarkColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseRemarkWidth", "150")));
     }
@@ -460,6 +460,7 @@ public class RootController {
                     rotateTreeTableView.scrollTo(Math.max(row - 3, 0));
                     rotateTreeTableView.scrollToColumn(rotateApplySetColumn);
                 }
+                focusNode.requestFocus();
 
                 //Stop letting it do anything else
                 keyEvent.consume();
@@ -474,17 +475,13 @@ public class RootController {
                     rotateTreeTableView.scrollTo(Math.max(row - 3, 0));
                     rotateTreeTableView.scrollToColumn(rotateApplySetColumn);
                 }
-
                 focusNode.requestFocus();
 
                 //Stop letting it do anything else
                 keyEvent.consume();
             }
-
-            focusNode.requestFocus();
         });
     }
-
 
     @FXML
     void handleBrowseAgingReport() {
@@ -614,55 +611,6 @@ public class RootController {
                 return rotateKitColumn.getComputedValue(cellData);
             }
         });
-
-        rotatePartColumn.setCellValueFactory(cellData -> {
-            if (rotatePartColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().partNumberProperty();
-            } else {
-                return rotatePartColumn.getComputedValue(cellData);
-            }
-        });
-
-        rotatePmQtyColumn.setCellValueFactory(cellData -> {
-            if (rotatePmQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().pmQtyProperty();
-            } else {
-                return rotatePmQtyColumn.getComputedValue(cellData);
-            }
-        });
-
-        rotateMyQtyColumn.setCellValueFactory(cellData -> {
-            if (rotateMyQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().myQtyProperty();
-            } else {
-                return rotateMyQtyColumn.getComputedValue(cellData);
-            }
-        });
-
-        rotateRatioColumn.setCellValueFactory(cellData -> {
-            if (rotateRatioColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().ratioProperty();
-            } else {
-                return rotateRatioColumn.getComputedValue(cellData);
-            }
-        });
-
-        rotateApplySetColumn.setCellValueFactory(cellData -> {
-            if (rotateApplySetColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().applySetProperty();
-            } else {
-                return rotateApplySetColumn.getComputedValue(cellData);
-            }
-        });
-
-        rotateRemarkColumn.setCellValueFactory(cellData -> {
-            if (rotateRemarkColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().remarkProperty();
-            } else {
-                return rotateRemarkColumn.getComputedValue(cellData);
-            }
-        });
-
         rotateKitColumn.setCellFactory(cellData ->
                 new GenericEditableTreeTableCell<RotateItem, String>(new TextFieldEditorBuilder()) {
                     @Override
@@ -675,13 +623,19 @@ public class RootController {
                             setStyle("-fx-alignment: top-left; ");
                         }
                     }
-                });
-        rotateKitColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().kitNameProperty().set(cellData.getNewValue());
-            rotateTreeTableView.requestFocus();
-        });
 
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
+
+        rotatePartColumn.setCellValueFactory(cellData -> {
+            if (rotatePartColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().partNumberProperty();
+            } else {
+                return rotatePartColumn.getComputedValue(cellData);
+            }
+        });
         rotatePartColumn.setCellFactory(cellData ->
                 new GenericEditableTreeTableCell<RotateItem, String>(new TextFieldEditorBuilder()) {
                     @Override
@@ -696,34 +650,78 @@ public class RootController {
                             setStyle("-fx-alignment: top-left; ");
                         }
                     }
+
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
                 });
-        rotatePartColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().partNumberProperty().set(cellData.getNewValue());
-            rotateTreeTableView.requestFocus();
-        });
 
-        rotateMyQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<RotateItem, Number>(new IntegerTextFieldEditorBuilder()) {
-            @Override
-            public void updateItem(Number item, boolean empty) {
-                super.updateItem(item, empty);
-                // set same kit with same background
-                int rowIdx = getTreeTableRow().getIndex();
-                Number pmQty = rotatePmQtyColumn.getCellData(rowIdx);
-                if (pmQty == null || item == null) {
-                    setStyle("");
-                } else if (pmQty.intValue() == item.intValue()) {
-                    setStyle("-fx-background-color: #4CAF50;");
-                } else if (pmQty.intValue() < item.intValue()) {
-                    setStyle("-fx-background-color: #ef5350;");
-                } else {
-                    setStyle("");
-                }
-
-                setEditable(false);
+        rotatePmQtyColumn.setCellValueFactory(cellData -> {
+            if (rotatePmQtyColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().pmQtyProperty();
+            } else {
+                return rotatePmQtyColumn.getComputedValue(cellData);
             }
         });
+        rotatePmQtyColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<RotateItem, Number>(new IntegerTextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(Number newValue) {
+                    }
+                });
 
+        rotateMyQtyColumn.setCellValueFactory(cellData -> {
+            if (rotateMyQtyColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().myQtyProperty();
+            } else {
+                return rotateMyQtyColumn.getComputedValue(cellData);
+            }
+        });
+        rotateMyQtyColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<RotateItem, Number>(new IntegerTextFieldEditorBuilder()) {
+                    @Override
+                    public void updateItem(Number item, boolean empty) {
+                        super.updateItem(item, empty);
+                        // set same kit with same background
+                        int rowIdx = getTreeTableRow().getIndex();
+                        Number pmQty = rotatePmQtyColumn.getCellData(rowIdx);
+                        if (pmQty == null || item == null) {
+                            setStyle("");
+                        } else if (pmQty.intValue() == item.intValue()) {
+                            setStyle("-fx-background-color: #4CAF50;");
+                        } else if (pmQty.intValue() < item.intValue()) {
+                            setStyle("-fx-background-color: #ef5350;");
+                        } else {
+                            setStyle("");
+                        }
+                    }
+
+                    @Override
+                    public void commitEdit(Number newValue) {
+                    }
+                });
+
+        rotateRatioColumn.setCellValueFactory(cellData -> {
+            if (rotateRatioColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().ratioProperty();
+            } else {
+                return rotateRatioColumn.getComputedValue(cellData);
+            }
+        });
+        rotateRatioColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<RotateItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
+
+        rotateApplySetColumn.setCellValueFactory(cellData -> {
+            if (rotateApplySetColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().applySetProperty();
+            } else {
+                return rotateApplySetColumn.getComputedValue(cellData);
+            }
+        });
         rotateApplySetColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
         rotateApplySetColumn.setOnEditCommit(cellData -> {
             cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
@@ -731,6 +729,13 @@ public class RootController {
             rotateTreeTableView.requestFocus();
         });
 
+        rotateRemarkColumn.setCellValueFactory(cellData -> {
+            if (rotateRemarkColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().remarkProperty();
+            } else {
+                return rotateRemarkColumn.getComputedValue(cellData);
+            }
+        });
         rotateRemarkColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
         rotateRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
@@ -738,7 +743,7 @@ public class RootController {
             rotateTreeTableView.requestFocus();
         });
 
-        filterField.textProperty().addListener((o, oldVal, newVal) -> rotateTreeTableView.setPredicate(itemProp -> {
+        rotateFilterField.textProperty().addListener((o, oldVal, newVal) -> rotateTreeTableView.setPredicate(itemProp -> {
             final RotateItem item = itemProp.getValue();
             return item.kitNameProperty().get().contains(newVal) || item.partNumberProperty().get().contains(newVal);
         }));
@@ -765,7 +770,6 @@ public class RootController {
     private void initialStockTable() {
         stockTreeTableView.setPlaceholder(new Label("庫存找不到符合項目"));
         stockTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
-        //stockTreeTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         stockPoColumn.setStyle("-fx-alignment: top-left; ");
         stockLotColumn.setStyle("-fx-alignment: top-left; ");
@@ -778,6 +782,12 @@ public class RootController {
                 return stockPoColumn.getComputedValue(cellData);
             }
         });
+        stockPoColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
 
         stockLotColumn.setCellValueFactory(cellData -> {
             if (stockLotColumn.validateValue(cellData)) {
@@ -786,6 +796,12 @@ public class RootController {
                 return stockLotColumn.getComputedValue(cellData);
             }
         });
+        stockLotColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
 
         stockDcColumn.setCellValueFactory(cellData -> {
             if (stockDcColumn.validateValue(cellData)) {
@@ -794,6 +810,13 @@ public class RootController {
                 return stockDcColumn.getComputedValue(cellData);
             }
         });
+        stockDcColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
+
 
         stockGrDateColumn.setCellValueFactory(cellData -> {
             if (stockGrDateColumn.validateValue(cellData)) {
@@ -802,21 +825,39 @@ public class RootController {
                 return stockGrDateColumn.getComputedValue(cellData);
             }
         });
+        stockGrDateColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
 
-        stockQtyColumn.setCellValueFactory(cellData -> {
-            if (stockQtyColumn.validateValue(cellData)) {
+        stockStQtyColumn.setCellValueFactory(cellData -> {
+            if (stockStQtyColumn.validateValue(cellData)) {
                 return cellData.getValue().getValue().stockQtyProperty();
             } else {
-                return stockQtyColumn.getComputedValue(cellData);
+                return stockStQtyColumn.getComputedValue(cellData);
             }
         });
+        stockStQtyColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<StockItem, Number>(new IntegerTextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(Number newValue) {
+                    }
+                });
 
-        stockMyQtyColumn.setCellValueFactory(cellData -> {
-            if (stockMyQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().myQtyProperty();
+        stockApQtyColumn.setCellValueFactory(cellData -> {
+            if (stockApQtyColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().applyQtyProperty();
             } else {
-                return stockMyQtyColumn.getComputedValue(cellData);
+                return stockApQtyColumn.getComputedValue(cellData);
             }
+        });
+        stockApQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
+        stockApQtyColumn.setOnEditCommit(cellData -> {
+            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
+                    .getValue().applyQtyProperty().set(cellData.getNewValue().intValue());
+            stockTreeTableView.requestFocus();
         });
 
         stockRemarkColumn.setCellValueFactory(cellData -> {
@@ -826,14 +867,6 @@ public class RootController {
                 return stockRemarkColumn.getComputedValue(cellData);
             }
         });
-
-        stockMyQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
-        stockMyQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().myQtyProperty().set(cellData.getNewValue().intValue());
-            stockTreeTableView.requestFocus();
-        });
-
         stockRemarkColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
         stockRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
@@ -872,6 +905,12 @@ public class RootController {
                 return purchaseGrDateColumn.getComputedValue(cellData);
             }
         });
+        purchaseGrDateColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
 
         purchaseGrQtyColumn.setCellValueFactory(cellData -> {
             if (purchaseGrQtyColumn.validateValue(cellData)) {
@@ -880,13 +919,25 @@ public class RootController {
                 return purchaseGrQtyColumn.getComputedValue(cellData);
             }
         });
+        purchaseGrQtyColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<PurchaseItem, Number>(new IntegerTextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(Number newValue) {
+                    }
+                });
 
-        purchaseMyQtyColumn.setCellValueFactory(cellData -> {
-            if (purchaseMyQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().myQtyProperty();
+        purchaseApQtyColumn.setCellValueFactory(cellData -> {
+            if (purchaseApQtyColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().applyQtyProperty();
             } else {
-                return purchaseMyQtyColumn.getComputedValue(cellData);
+                return purchaseApQtyColumn.getComputedValue(cellData);
             }
+        });
+        purchaseApQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
+        purchaseApQtyColumn.setOnEditCommit(cellData -> {
+            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
+                    .getValue().applyQtyProperty().set(cellData.getNewValue().intValue());
+            purchaseTreeTableView.requestFocus();
         });
 
         purchaseApplySetColumn.setCellValueFactory(cellData -> {
@@ -896,6 +947,12 @@ public class RootController {
                 return purchaseApplySetColumn.getComputedValue(cellData);
             }
         });
+        purchaseApplySetColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
+        purchaseApplySetColumn.setOnEditCommit(cellData -> {
+            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
+                    .getValue().applySetProperty().set(cellData.getNewValue().intValue());
+            purchaseTreeTableView.requestFocus();
+        });
 
         purchaseRemarkColumn.setCellValueFactory(cellData -> {
             if (purchaseRemarkColumn.validateValue(cellData)) {
@@ -904,21 +961,6 @@ public class RootController {
                 return purchaseRemarkColumn.getComputedValue(cellData);
             }
         });
-
-        purchaseMyQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
-        purchaseMyQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().myQtyProperty().set(cellData.getNewValue().intValue());
-            purchaseTreeTableView.requestFocus();
-        });
-
-        purchaseApplySetColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
-        purchaseApplySetColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().applySetProperty().set(cellData.getNewValue().intValue());
-            purchaseTreeTableView.requestFocus();
-        });
-
         purchaseRemarkColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
         purchaseRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
@@ -958,6 +1000,12 @@ public class RootController {
                 return noneStPurchasePoColumn.getComputedValue(cellData);
             }
         });
+        noneStPurchasePoColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
 
         noneStPurchaseGrDateColumn.setCellValueFactory(cellData -> {
             if (noneStPurchaseGrDateColumn.validateValue(cellData)) {
@@ -966,6 +1014,12 @@ public class RootController {
                 return noneStPurchaseGrDateColumn.getComputedValue(cellData);
             }
         });
+        noneStPurchaseGrDateColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
 
         noneStPurchaseGrQtyColumn.setCellValueFactory(cellData -> {
             if (noneStPurchaseGrQtyColumn.validateValue(cellData)) {
@@ -974,13 +1028,25 @@ public class RootController {
                 return noneStPurchaseGrQtyColumn.getComputedValue(cellData);
             }
         });
+        noneStPurchaseGrQtyColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<PurchaseItem, Number>(new IntegerTextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(Number newValue) {
+                    }
+                });
 
-        noneStPurchaseMyQtyColumn.setCellValueFactory(cellData -> {
-            if (noneStPurchaseMyQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().myQtyProperty();
+        noneStPurchaseApQtyColumn.setCellValueFactory(cellData -> {
+            if (noneStPurchaseApQtyColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().applyQtyProperty();
             } else {
-                return noneStPurchaseMyQtyColumn.getComputedValue(cellData);
+                return noneStPurchaseApQtyColumn.getComputedValue(cellData);
             }
+        });
+        noneStPurchaseApQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
+        noneStPurchaseApQtyColumn.setOnEditCommit(cellData -> {
+            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
+                    .getValue().applyQtyProperty().set(cellData.getNewValue().intValue());
+            noneStPurchaseTreeTableView.requestFocus();
         });
 
         noneStPurchaseApplySetColumn.setCellValueFactory(cellData -> {
@@ -990,6 +1056,12 @@ public class RootController {
                 return noneStPurchaseApplySetColumn.getComputedValue(cellData);
             }
         });
+        noneStPurchaseApplySetColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
+        noneStPurchaseApplySetColumn.setOnEditCommit(cellData -> {
+            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
+                    .getValue().applySetProperty().set(cellData.getNewValue().intValue());
+            noneStPurchaseTreeTableView.requestFocus();
+        });
 
         noneStPurchaseRemarkColumn.setCellValueFactory(cellData -> {
             if (noneStPurchaseRemarkColumn.validateValue(cellData)) {
@@ -998,22 +1070,6 @@ public class RootController {
                 return noneStPurchaseRemarkColumn.getComputedValue(cellData);
             }
         });
-
-
-        noneStPurchaseMyQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
-        noneStPurchaseMyQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().myQtyProperty().set(cellData.getNewValue().intValue());
-            noneStPurchaseTreeTableView.requestFocus();
-        });
-
-        noneStPurchaseApplySetColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
-        noneStPurchaseApplySetColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().applySetProperty().set(cellData.getNewValue().intValue());
-            noneStPurchaseTreeTableView.requestFocus();
-        });
-
         noneStPurchaseRemarkColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
         noneStPurchaseRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
@@ -1085,14 +1141,13 @@ public class RootController {
         noneStPurchaseApSetTotal.textProperty().bind(rotateItem.noneStPurchaseApSetTotalProperty().asString());
 
         if (stockTreeTableView.getCurrentItemsCount() > 0) {
-            stockTreeTableView.getSelectionModel().select(0, stockMyQtyColumn);
+            stockTreeTableView.getSelectionModel().select(0, stockApQtyColumn);
         }
 
         if (noneStPurchaseTreeTableView.getCurrentItemsCount() > 0) {
-            noneStPurchaseTreeTableView.getSelectionModel().select(0, noneStPurchaseMyQtyColumn);
+            noneStPurchaseTreeTableView.getSelectionModel().select(0, noneStPurchaseApQtyColumn);
         }
     }
-
 
     private void selectedStockItem(TreeItem<StockItem> oldValue, TreeItem<StockItem> newValue) {
         if (newValue == null || !newValue.isLeaf()) {
@@ -1121,7 +1176,7 @@ public class RootController {
         purchaseApSetTotal.textProperty().bind(stockItem.purchaseApSetTotalProperty().asString());
 
         if (purchaseTreeTableView.getCurrentItemsCount() > 0) {
-            purchaseTreeTableView.getSelectionModel().select(0, purchaseMyQtyColumn);
+            purchaseTreeTableView.getSelectionModel().select(0, purchaseApQtyColumn);
         }
     }
 

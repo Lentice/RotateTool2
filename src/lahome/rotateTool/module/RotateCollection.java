@@ -43,23 +43,25 @@ public class RotateCollection {
         partCount++;
     }
 
-    public void addStock(StockItem item) {
-        String key = getRotateKey(item.getKitName(), item.getPartNumber());
+    public void addStock(String kitName, String partNum, StockItem item) {
+        String key = getRotateKey(kitName, partNum);
         RotateItem rotateItem = rotateItems.get(key);
         if (rotateItem == null) {
-            log.trace(String.format("Ignore no needed stock item %s, %s", item.getKitName(), item.getPartNumber()));
+            log.trace(String.format("Ignore no needed stock item %s, %s", kitName, partNum));
+            item.close();
             return;
         }
 
         rotateItem.addStockItem(item);
     }
 
-    public void addPurchase(PurchaseItem item) {
+    public void addPurchase(String kitName, String partNum, PurchaseItem item) {
 
-        String key = getRotateKey(item.getKitName(), item.getPartNumber());
+        String key = getRotateKey(kitName, partNum);
         RotateItem rotateItem = rotateItems.get(key);
         if (rotateItem == null) {
-            log.trace(String.format("Ignore no needed purchase item %s, %s", item.getKitName(), item.getPartNumber()));
+            log.trace(String.format("Ignore no needed purchase item %s, %s", kitName, partNum));
+            item.close();
             return;
         }
 
@@ -75,10 +77,6 @@ public class RotateCollection {
         String key = getRotateKey(kitName, partNum);
         RotateItem rotateItem = rotateItems.get(key);
         return (rotateItem != null);
-    }
-
-    public int getPartCount() {
-        return partCount;
     }
 
     public ObservableList<RotateItem> getRotateObsList() {

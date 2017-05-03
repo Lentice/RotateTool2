@@ -33,7 +33,6 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private IntegerProperty purchaseAllGrQtyTotal;
     private IntegerProperty purchaseAllApSetTotal;
 
-
     private boolean isKit;
     private boolean isDuplicate;
     private int rowNum;
@@ -120,25 +119,17 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         return pmQty;
     }
 
-    public String getRatio() {
-        return ratio.get();
-    }
-
     public StringProperty ratioProperty() {
         return ratio;
-    }
-
-    public void setRatio(String ratio) {
-        this.ratio.set(ratio);
     }
 
     public void addStockItem(StockItem item) {
 
         log.debug(String.format("Add stock: %s, %s, %s, %d, %s, %d",
-                item.getKitName(), item.getPartNumber(), item.getPo(), item.getStockQty(), item.getDc(),
-                item.getMyQty()));
+                getKitName(), getPartNumber(), item.getPo(), item.getStockQty(), item.getDc(),
+                item.getApplyQty()));
 
-        addMyQty(item.getMyQty());
+        addMyQty(item.getApplyQty());
 
         String key = item.getPo();
         item.setRotateItem(this);
@@ -155,7 +146,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     public ObservableList<StockItem> getStockItemObsList() {
 
-        Collections.sort(stockItemObsList, (o1, o2) -> {
+        stockItemObsList.sort((o1, o2) -> {
             if (o2.getEarliestGrDate().isEmpty()) {
                 return -1;
             } else if (o1.getEarliestGrDate().isEmpty()) {
@@ -165,10 +156,6 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
             }
         });
         return stockItemObsList;
-    }
-
-    public int getMyQty() {
-        return myQty.get();
     }
 
     public IntegerProperty myQtyProperty() {
@@ -183,104 +170,40 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         return stockItems.get(po);
     }
 
-    public int getApplySet() {
-        return applySet.get();
-    }
-
     public IntegerProperty applySetProperty() {
         return applySet;
-    }
-
-    public void setApplySet(int applySet) {
-        this.applySet.set(applySet);
-    }
-
-    public String getRemark() {
-        return remark.get();
     }
 
     public StringProperty remarkProperty() {
         return remark;
     }
 
-    public void setRemark(String remark) {
-        this.remark.set(remark);
-    }
-
-    public int getStockQtyTotal() {
-        return stockQtyTotal.get();
-    }
-
     public IntegerProperty stockQtyTotalProperty() {
         return stockQtyTotal;
-    }
-
-    public void setStockQtyTotal(int stockQtyTotal) {
-        this.stockQtyTotal.set(stockQtyTotal);
-    }
-
-    public int getStockGrQtyTotal() {
-        return stockGrQtyTotal.get();
-    }
-
-    public IntegerProperty stockGrQtyTotalProperty() {
-        return stockGrQtyTotal;
-    }
-
-    public void setStockGrQtyTotal(int stockGrQtyTotal) {
-        this.stockGrQtyTotal.set(stockGrQtyTotal);
     }
 
     public void addStockGrQtyTotal(int qty) {
         stockGrQtyTotal.set(stockGrQtyTotal.intValue() + qty);
     }
 
-    public int getNoneStPurchaseGrQtyTotal() {
-        return noneStPurchaseGrQtyTotal.get();
-    }
-
     public IntegerProperty noneStPurchaseGrQtyTotalProperty() {
         return noneStPurchaseGrQtyTotal;
-    }
-
-    public void setNoneStPurchaseGrQtyTotal(int noneStPurchaseGrQtyTotal) {
-        this.noneStPurchaseGrQtyTotal.set(noneStPurchaseGrQtyTotal);
-    }
-
-    public int getNoneStPurchaseApQtyTotal() {
-        return noneStPurchaseApQtyTotal.get();
     }
 
     public IntegerProperty noneStPurchaseApQtyTotalProperty() {
         return noneStPurchaseApQtyTotal;
     }
 
-    public void setNoneStPurchaseApQtyTotal(int noneStPurchaseApQtyTotal) {
-        this.noneStPurchaseApQtyTotal.set(noneStPurchaseApQtyTotal);
-    }
-
     public void addNoneStPurchaseApQtyTotal(int qty) {
         noneStPurchaseApQtyTotal.set(noneStPurchaseApQtyTotal.intValue() + qty);
-    }
-
-    public int getNoneStPurchaseApSetTotal() {
-        return noneStPurchaseApSetTotal.get();
     }
 
     public IntegerProperty noneStPurchaseApSetTotalProperty() {
         return noneStPurchaseApSetTotal;
     }
 
-    public void setNoneStPurchaseApSetTotal(int noneStPurchaseApSetTotal) {
-        this.noneStPurchaseApSetTotal.set(noneStPurchaseApSetTotal);
-    }
-
     public void addNoneStPurchaseApSetTotal(int qty) {
         noneStPurchaseApSetTotal.set(noneStPurchaseApSetTotal.intValue() + qty);
-    }
-
-    public int getPurchaseAllGrQtyTotal() {
-        return purchaseAllGrQtyTotal.get();
     }
 
     public IntegerProperty purchaseAllGrQtyTotalProperty() {
@@ -289,10 +212,6 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     public void addPurchaseAllGrQtyTotal(int qty) {
         purchaseAllGrQtyTotal.set(purchaseAllGrQtyTotal.intValue() + qty);
-    }
-
-    public int getPurchaseAllApSetTotal() {
-        return purchaseAllApSetTotal.get();
     }
 
     public IntegerProperty purchaseAllApSetTotalProperty() {
@@ -305,7 +224,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     public void addNoneStockPurchase(PurchaseItem purchaseItem) {
         noneStPurchaseGrQtyTotal.set(noneStPurchaseGrQtyTotal.get() + purchaseItem.getGrQty());
-        noneStPurchaseApQtyTotal.set(noneStPurchaseApQtyTotal.get() + purchaseItem.getMyQty());
+        noneStPurchaseApQtyTotal.set(noneStPurchaseApQtyTotal.get() + purchaseItem.getApplyQty());
         noneStPurchaseApSetTotal.set(noneStPurchaseApSetTotal.get() + purchaseItem.getApplySet());
 
         noneStockPurchaseItemObsList.add(purchaseItem);

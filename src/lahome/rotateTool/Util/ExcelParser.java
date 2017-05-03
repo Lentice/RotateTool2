@@ -13,10 +13,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Date;
 
 public class ExcelParser {
@@ -26,9 +23,13 @@ public class ExcelParser {
 
     private RotateCollection collection;
 
+    private InputStream is;
+    private Workbook wb;
+
     public ExcelParser(RotateCollection collection) {
         this.collection = collection;
     }
+
 
     private String getKitName(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
@@ -146,7 +147,7 @@ public class ExcelParser {
         return (int) cellGetValue(cell);
     }
 
-    private Workbook getSheet(File file) {
+    private Sheet getSheet(File file) {
 
         if (!file.exists()) {
             log.warn(String.format("%s(%d) file is not exists",
@@ -155,7 +156,6 @@ public class ExcelParser {
             return null;
         }
 
-        InputStream is;
         try {
             is = new FileInputStream(file);
         } catch (FileNotFoundException e) {
@@ -163,10 +163,9 @@ public class ExcelParser {
             return null;
         }
 
-        Workbook wb;
         wb = StreamingReader.builder()
-                .rowCacheSize(100)    // number of rows to keep in memory (defaults to 10)
-                .bufferSize(4096)     // buffer size to use when reading InputStream to file (defaults to 1024)
+                .rowCacheSize(10)     // number of rows to keep in memory (defaults to 10)
+                .bufferSize(1024)     // buffer size to use when reading InputStream to file (defaults to 1024)
                 .open(is);            // InputStream or File for XLSX file (required)
         if (wb == null) {
             log.warn(String.format("%s(%d) wb is null",
@@ -175,7 +174,22 @@ public class ExcelParser {
             return null;
         }
 
-        return wb;
+        return wb.getSheetAt(sheetIdx);
+    }
+
+    private void close() {
+
+        try {
+            if (is != null) {
+                is.close();
+            }
+            if (wb != null) {
+                wb.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private String cellGetString(Cell cell) {
@@ -281,8 +295,7 @@ public class ExcelParser {
 
         int maxColumnUsed = Math.max(Math.max(kitColumn, partColumn), pmQtyColumn);
 
-        Workbook wb = getSheet(file);
-        Sheet sheet = wb.getSheetAt(sheetIdx);
+        Sheet sheet = getSheet(file);
         if (sheet == null) {
             log.error("open sheet failed");
             return;
@@ -318,6 +331,8 @@ public class ExcelParser {
                 log.error("failed!", e);
             }
         }
+
+        close();
     }
 
     public void loadStockExcel(File file, int firstDataRow, String kitColStr, String partColStr,
@@ -337,9 +352,7 @@ public class ExcelParser {
         int maxColumnUsed = Math.max(kitColumn, Math.max(partColumn, Math.max(poColumn, Math.max(stockQtyColumn,
                 Math.max(stockQtyColumn, Math.max(dcColumn, myQtyColumn))))));
 
-
-        Workbook wb = getSheet(file);
-        Sheet sheet = wb.getSheetAt(sheetIdx);
+        Sheet sheet = getSheet(file);
         if (sheet == null) {
             log.error("open sheet failed");
             return;
@@ -373,12 +386,15 @@ public class ExcelParser {
                 int myQty = getMyQty(row, myQtyColumn);
                 String remark = getRemark(row, remarkColumn);
 
-                collection.addStock(new StockItem(rowNum, kitName, partNum, po, stockQty, lot, dc, myQty, remark));
+                collection.addStock(kitName, partNum,
+                        new StockItem(rowNum, po, stockQty, lot, dc, myQty, remark));
 
             } catch (Exception e) {
                 log.error("failed!", e);
             }
         }
+
+        close();
     }
 
     public void loadPurchaseExcel(File file, int firstDataRow, String kitColStr, String partColStr,
@@ -398,9 +414,7 @@ public class ExcelParser {
         int maxColumnUsed = Math.max(kitColumn, Math.max(partColumn, Math.max(poColumn, Math.max(grDateColumn,
                 grQtyColumn))));
 
-
-        Workbook wb = getSheet(file);
-        Sheet sheet = wb.getSheetAt(sheetIdx);
+        Sheet sheet = getSheet(file);
         if (sheet == null) {
             log.error("open sheet failed");
             return;
@@ -428,19 +442,21 @@ public class ExcelParser {
                 if (po.isEmpty())
                     continue;
 
-                String date = getGrDateQty(row, grDateColumn);
+                String grDate = getGrDateQty(row, grDateColumn);
                 int grQty = getGrQty(row, grQtyColumn);
 
                 int myQty = getMyQty(row, myQtyColumn);
                 int applySet = getApplySet(row, setColumn);
                 String remark = getRemark(row, remarkColumn);
 
-                collection.addPurchase(new PurchaseItem(rowNum, kitName, partNum, po, date, grQty,
-                        myQty, applySet, remark));
+                collection.addPurchase(kitName, partNum,
+                        new PurchaseItem(rowNum, po, grDate, grQty, myQty, applySet, remark));
 
             } catch (Exception e) {
                 log.error("failed!", e);
             }
         }
+
+        close();
     }
 }
