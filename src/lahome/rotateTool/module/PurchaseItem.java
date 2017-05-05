@@ -19,8 +19,8 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
     private StringProperty remark;
 
     private int rowNum;
-    private StockItem stockItem;
-    private RotateItem rotateItem;
+    public StockItem stockItem;
+    public RotateItem rotateItem;
     private boolean isNoneStock;
 
     public PurchaseItem(int rowNum, String po, String grDate, int grQty,
@@ -67,12 +67,9 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
         this.isNoneStock = isNoneStock;
         this.rotateItem = rotateItem;
 
-        rotateItem.addPurchaseAllGrQtyTotal(getGrQty());
         rotateItem.addPurchaseAllApSetTotal(getApplySet());
         this.applySet.addListener((observable, oldValue, newValue) ->
                 rotateItem.addPurchaseAllApSetTotal(newValue.intValue() - oldValue.intValue()));
-        this.grQty.addListener((observable, oldValue, newValue) ->
-                rotateItem.addPurchaseAllGrQtyTotal(newValue.intValue() - oldValue.intValue()));
 
         if (isNoneStock) {
             rotateItem.addNoneStPurchaseApQtyTotal(getApplyQty());
@@ -84,10 +81,18 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
             this.applySet.addListener((observable, oldValue, newValue) ->
                     rotateItem.addNoneStPurchaseApSetTotal(newValue.intValue() - oldValue.intValue()));
         } else {
-            rotateItem.addStockGrQtyTotal(getGrQty());
-            this.grQty.addListener((observable, oldValue, newValue) ->
-                    rotateItem.addStockGrQtyTotal(newValue.intValue() - oldValue.intValue()));
+//            rotateItem.addStockGrQtyTotal(getGrQty());
+//            this.grQty.addListener((observable, oldValue, newValue) ->
+//                    rotateItem.addStockGrQtyTotal(newValue.intValue() - oldValue.intValue()));
         }
+    }
+
+    public RotateItem getRotateItem() {
+        return rotateItem;
+    }
+
+    public int getRowNum() {
+        return rowNum;
     }
 
     public String getPo() {

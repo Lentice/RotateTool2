@@ -28,17 +28,19 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     private StringProperty remark;
 
     private int rowNum;
-    private RotateItem rotateItem;
+    public RotateItem rotateItem;
 
     private boolean isDuplicate;
-    private StockItem firstStockItem;
+    private StockItem firstStockItem = this;
+    private boolean isMainStockItem = true;
     private List<StockItem> duplicateStockItems;
     private IntegerProperty currentPoStockQtyTotal;
-    private IntegerProperty currentPoMyQtyTotal;
+    private IntegerProperty currentPoApQtyTotal;
 
     private IntegerProperty purchaseGrQtyTotal;
     private IntegerProperty purchaseApQtyTotal;
     private IntegerProperty purchaseApSetTotal;
+
 
     private ObservableList<PurchaseItem> purchaseItems = FXCollections.observableArrayList();
 
@@ -58,9 +60,9 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.purchaseApSetTotal = new SimpleIntegerProperty(0);
 
         this.currentPoStockQtyTotal = new SimpleIntegerProperty(stockQty);
-        this.currentPoMyQtyTotal = new SimpleIntegerProperty(applyQty);
+        this.currentPoApQtyTotal = new SimpleIntegerProperty(applyQty);
         this.applyQty.addListener((observable, oldValue, newValue) ->
-                this.addCurrentPoMyQtyTotal(newValue.intValue() - oldValue.intValue()));
+                this.addCurrentPoApQtyTotal(newValue.intValue() - oldValue.intValue()));
 
         this.rowNum = rowNum;
     }
@@ -80,23 +82,37 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.purchaseApSetTotal = null;
 
         this.currentPoStockQtyTotal = null;
-        this.currentPoMyQtyTotal = null;
+        this.currentPoApQtyTotal = null;
     }
 
     public void setRotateItem(RotateItem rotateItem) {
         this.rotateItem = rotateItem;
 
+        rotateItem.addStockApplyQtyTotal(getApplyQty());
         this.applyQty.addListener((observable, oldValue, newValue) -> {
             if (this.rotateItem != null) {
-                this.rotateItem.addMyQty(newValue.intValue() - oldValue.intValue());
+                this.rotateItem.addStockApplyQtyTotal(newValue.intValue() - oldValue.intValue());
             }
         });
+    }
+
+    public void addDuplicate(StockItem item) {
+
+        assert isMainStockItem;
+        if (!isDuplicate) {
+            isDuplicate = true;
+            duplicateStockItems = new ArrayList<>();
+            duplicateStockItems.add(this);
+        }
+
+        item.setDuplicate(this);
     }
 
     public void setDuplicate(StockItem firstItem) {
 
         this.isDuplicate = true;
         this.firstStockItem = firstItem;
+        this.isMainStockItem = false;
 
         this.duplicateStockItems = firstItem.getDuplicateStockItems();
         this.purchaseItems = firstItem.getPurchaseItems();
@@ -105,27 +121,28 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.purchaseApQtyTotal = firstItem.purchaseApQtyTotalProperty();
         this.purchaseApSetTotal = firstItem.purchaseApSetTotalProperty();
         this.currentPoStockQtyTotal = firstItem.currentPoStockQtyTotalProperty();
-        this.currentPoMyQtyTotal = firstItem.currentPoMyQtyTotalProperty();
+        this.currentPoApQtyTotal = firstItem.currentPoApQtyTotalProperty();
         this.duplicateStockItems.add(this);
 
-        addCurrentPoMyQtyTotal(getApplyQty());
+        addCurrentPoStockQtyTotal(getStockQty());
         this.applyQty.addListener((observable, oldValue, newValue) ->
-                addCurrentPoMyQtyTotal(newValue.intValue() - oldValue.intValue()));
+                addCurrentPoStockQtyTotal(newValue.intValue() - oldValue.intValue()));
+
+        addCurrentPoApQtyTotal(getApplyQty());
+        this.applyQty.addListener((observable, oldValue, newValue) ->
+                addCurrentPoApQtyTotal(newValue.intValue() - oldValue.intValue()));
     }
 
-    public void addDuplicate(StockItem item) {
+    public boolean isMainStockItem() {
+        return isMainStockItem;
+    }
 
-        if (!isDuplicate) {
-            firstStockItem = this;
-        }
+    public RotateItem getRotateItem() {
+        return rotateItem;
+    }
 
-        isDuplicate = true;
-
-        currentPoStockQtyTotal.set(currentPoStockQtyTotal.get() + item.getStockQty());
-        duplicateStockItems = new ArrayList<>();
-        duplicateStockItems.add(this);
-
-        item.setDuplicate(this);
+    public int getRowNum() {
+        return rowNum;
     }
 
     public String getPo() {
@@ -203,13 +220,16 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     public IntegerProperty currentPoStockQtyTotalProperty() {
         return currentPoStockQtyTotal;
     }
-
-    public IntegerProperty currentPoMyQtyTotalProperty() {
-        return currentPoMyQtyTotal;
+    public void addCurrentPoStockQtyTotal(int qty) {
+        currentPoStockQtyTotal.set(currentPoStockQtyTotal.intValue() + qty);
     }
 
-    public void addCurrentPoMyQtyTotal(int qty) {
-        currentPoMyQtyTotal.set(currentPoMyQtyTotal.intValue() + qty);
+    public IntegerProperty currentPoApQtyTotalProperty() {
+        return currentPoApQtyTotal;
+    }
+
+    public void addCurrentPoApQtyTotal(int qty) {
+        currentPoApQtyTotal.set(currentPoApQtyTotal.intValue() + qty);
     }
 
     public void addPurchaseItem(PurchaseItem item) {

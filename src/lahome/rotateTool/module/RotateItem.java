@@ -15,35 +15,35 @@ import java.util.*;
 public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private static final Logger log = LogManager.getLogger(RotateItem.class.getName());
 
+    private boolean isKit;
+    private KitNode kitNode;
+    private boolean isDuplicate;
+    private int rowNum;
+
     private StringProperty kitName;
     private StringProperty partNumber;
     private IntegerProperty pmQty;
-    private IntegerProperty myQty;
+    private IntegerProperty stockApplyQtyTotal;
     private StringProperty ratio;
     private IntegerProperty applySet;
     private StringProperty remark;
 
     private IntegerProperty stockQtyTotal;
-    private IntegerProperty stockGrQtyTotal;
 
     private IntegerProperty noneStPurchaseGrQtyTotal;
     private IntegerProperty noneStPurchaseApQtyTotal;
     private IntegerProperty noneStPurchaseApSetTotal;
 
-    private IntegerProperty purchaseAllGrQtyTotal;
     private IntegerProperty purchaseAllApSetTotal;
 
-    private boolean isKit;
-    private boolean isDuplicate;
-    private int rowNum;
+    private StringProperty serialNo;
 
     private List<RotateItem> duplicateRotateItems;
 
     private HashMap<String, StockItem> stockItems = new HashMap<>();
-
     private ObservableList<StockItem> stockItemObsList = FXCollections.observableArrayList();
-
     private ObservableList<PurchaseItem> noneStockPurchaseItemObsList = FXCollections.observableArrayList();
+
 
     public RotateItem(int rowNum, String kitName, String partNum, int pmQty, String ratio, int applySet, String remark) {
         if (kitName == null)
@@ -52,32 +52,24 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         this.kitName = new SimpleStringProperty(kitName);
         this.partNumber = new SimpleStringProperty(partNum);
         this.pmQty = new SimpleIntegerProperty(pmQty);
-        this.myQty = new SimpleIntegerProperty(0);
+        this.stockApplyQtyTotal = new SimpleIntegerProperty(0);
         this.ratio = new SimpleStringProperty(ratio);
         this.applySet = new SimpleIntegerProperty(applySet);
         this.remark = new SimpleStringProperty(remark);
 
         this.stockQtyTotal = new SimpleIntegerProperty(0);
-        this.stockGrQtyTotal = new SimpleIntegerProperty(0);
 
         this.noneStPurchaseGrQtyTotal = new SimpleIntegerProperty(0);
         this.noneStPurchaseApQtyTotal = new SimpleIntegerProperty(0);
         this.noneStPurchaseApSetTotal = new SimpleIntegerProperty(0);
 
-        this.purchaseAllGrQtyTotal = new SimpleIntegerProperty(0);
         this.purchaseAllApSetTotal = new SimpleIntegerProperty(0);
+
+        this.serialNo = new SimpleStringProperty("A");
 
         this.isKit = !kitName.isEmpty();
         this.isDuplicate = false;
         this.rowNum = rowNum;
-    }
-
-    public boolean isKit() {
-        return isKit;
-    }
-
-    public boolean isDuplicate() {
-        return isDuplicate;
     }
 
     public void setDuplicate(List<RotateItem> duplicateRotateItems, ObservableList<StockItem> stockItemObsList) {
@@ -88,11 +80,55 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     }
 
     public void addDuplicate(RotateItem item) {
-        isDuplicate = true;
-        duplicateRotateItems = new ArrayList<>();
-        duplicateRotateItems.add(this);
+        if (!isDuplicate) {
+            isDuplicate = true;
+            duplicateRotateItems = new ArrayList<>();
+            duplicateRotateItems.add(this);
+        }
 
         item.setDuplicate(duplicateRotateItems, stockItemObsList);
+    }
+
+
+    public void addStockItem(StockItem item) {
+
+        log.debug(String.format("Add stock: %s, %s, %s, %d, %s, %d",
+                getKitName(), getPartNumber(), item.getPo(), item.getStockQty(), item.getDc(),
+                item.getApplyQty()));
+
+        item.setRotateItem(this);
+
+        String key = item.getPo();
+        StockItem stItem = stockItems.get(key);
+        if (stItem != null) {
+            stItem.addDuplicate(item);
+        } else {
+            stockItems.put(key, item);
+        }
+
+        addStockQtyTotal(item.getStockQty());
+        stockItemObsList.add(item);
+    }
+
+    public void addNoneStockPurchase(PurchaseItem purchaseItem) {
+        noneStPurchaseGrQtyTotal.set(noneStPurchaseGrQtyTotal.get() + purchaseItem.getGrQty());
+        noneStPurchaseApQtyTotal.set(noneStPurchaseApQtyTotal.get() + purchaseItem.getApplyQty());
+        noneStPurchaseApSetTotal.set(noneStPurchaseApSetTotal.get() + purchaseItem.getApplySet());
+
+        noneStockPurchaseItemObsList.add(purchaseItem);
+        purchaseItem.setRotate(this, true);
+    }
+
+    public int getRowNum() {
+        return rowNum;
+    }
+
+    public boolean isKit() {
+        return isKit;
+    }
+
+    public boolean isDuplicate() {
+        return isDuplicate;
     }
 
     public String getKitName() {
@@ -123,50 +159,38 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         return ratio;
     }
 
-    public void addStockItem(StockItem item) {
-
-        log.debug(String.format("Add stock: %s, %s, %s, %d, %s, %d",
-                getKitName(), getPartNumber(), item.getPo(), item.getStockQty(), item.getDc(),
-                item.getApplyQty()));
-
-        addMyQty(item.getApplyQty());
-
-        String key = item.getPo();
-        item.setRotateItem(this);
-        StockItem stItem = stockItems.get(key);
-        if (stItem != null) {
-            stItem.addDuplicate(item);
-        } else {
-            stockItems.put(key, item);
-        }
-
-        stockQtyTotal.set(stockQtyTotal.intValue() + item.getStockQty());
-        stockItemObsList.add(item);
-    }
 
     public ObservableList<StockItem> getStockItemObsList() {
-
+        // sort by Gr Date by default
         stockItemObsList.sort((o1, o2) -> {
             if (o2.getEarliestGrDate().isEmpty()) {
                 return -1;
             } else if (o1.getEarliestGrDate().isEmpty()) {
                 return 1;
             } else {
-                return o1.getEarliestGrDate().compareTo(o2.getEarliestGrDate());
+                int value = o1.getEarliestGrDate().compareTo(o2.getEarliestGrDate());
+                if (value != 0)
+                    return value;
+
+                return o1.getPo().compareTo(o2.getPo());
             }
         });
         return stockItemObsList;
     }
 
-    public IntegerProperty myQtyProperty() {
-        return myQty;
+    public int getStockApplyQtyTotal() {
+        return stockApplyQtyTotal.get();
     }
 
-    public void addMyQty(int qty) {
-        myQty.set(myQty.intValue() + qty);
+    public IntegerProperty stockApplyQtyTotalProperty() {
+        return stockApplyQtyTotal;
     }
 
-    public StockItem getStock(String po) {
+    public void addStockApplyQtyTotal(int qty) {
+        stockApplyQtyTotal.set(stockApplyQtyTotal.intValue() + qty);
+    }
+
+    public StockItem getStockByPo(String po) {
         return stockItems.get(po);
     }
 
@@ -182,8 +206,12 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         return stockQtyTotal;
     }
 
-    public void addStockGrQtyTotal(int qty) {
-        stockGrQtyTotal.set(stockGrQtyTotal.intValue() + qty);
+    public void addStockQtyTotal(int qty) {
+        stockQtyTotal.set(stockQtyTotal.intValue() + qty);
+        if (isKit) {
+            assert kitNode != null;
+            kitNode.addStockQtyTotal(qty);
+        }
     }
 
     public IntegerProperty noneStPurchaseGrQtyTotalProperty() {
@@ -206,34 +234,41 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         noneStPurchaseApSetTotal.set(noneStPurchaseApSetTotal.intValue() + qty);
     }
 
-    public IntegerProperty purchaseAllGrQtyTotalProperty() {
-        return purchaseAllGrQtyTotal;
-    }
-
-    public void addPurchaseAllGrQtyTotal(int qty) {
-        purchaseAllGrQtyTotal.set(purchaseAllGrQtyTotal.intValue() + qty);
-    }
-
     public IntegerProperty purchaseAllApSetTotalProperty() {
         return purchaseAllApSetTotal;
     }
 
     public void addPurchaseAllApSetTotal(int set) {
         purchaseAllApSetTotal.set(purchaseAllApSetTotal.intValue() + set);
-    }
-
-    public void addNoneStockPurchase(PurchaseItem purchaseItem) {
-        noneStPurchaseGrQtyTotal.set(noneStPurchaseGrQtyTotal.get() + purchaseItem.getGrQty());
-        noneStPurchaseApQtyTotal.set(noneStPurchaseApQtyTotal.get() + purchaseItem.getApplyQty());
-        noneStPurchaseApSetTotal.set(noneStPurchaseApSetTotal.get() + purchaseItem.getApplySet());
-
-        noneStockPurchaseItemObsList.add(purchaseItem);
-        purchaseItem.setRotate(this, true);
+        if (isKit) {
+            assert kitNode != null;
+            kitNode.addPurchaseAllApSetTotal(set);
+        }
     }
 
     public ObservableList<PurchaseItem> getNoneStockPurchaseItemObsList() {
-        noneStockPurchaseItemObsList.sort(Comparator.comparing(PurchaseItem::getGrDate));
+        noneStockPurchaseItemObsList.sort((o1, o2) -> {
+            int value = o1.getGrDate().compareTo(o2.getGrDate());
+            if (value != 0)
+                return value;
+            return o1.getPo().compareTo(o2.getPo());
+        });
         return noneStockPurchaseItemObsList;
     }
 
+    public KitNode getKitNode() {
+        return kitNode;
+    }
+
+    public void setKitNode(KitNode kitNode) {
+        this.kitNode = kitNode;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo.set(serialNo);
+    }
+
+    public StringProperty serialNoProperty() {
+        return serialNo;
+    }
 }

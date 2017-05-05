@@ -6,6 +6,7 @@
 <?import com.jfoenix.controls.JFXTreeTableColumn?>
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
@@ -57,6 +58,14 @@
                                        </children>
                                     </GridPane>
                                     <JFXButton fx:id="startEdit" focusTraversable="false" layoutX="363.0" layoutY="489.0" onAction="#handleStartEdit" prefHeight="35.0" prefWidth="93.0" ripplerFill="#1dd023" style="-fx-background-color: #1E88E5;" text="開始編輯" textFill="WHITE" textOverrun="CLIP" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
+                                       <font>
+                                          <Font size="17.0" />
+                                       </font>
+                                       <effect>
+                                          <DropShadow />
+                                       </effect>
+                                    </JFXButton>
+                                    <JFXButton fx:id="saveFiles" focusTraversable="false" layoutX="486.0" layoutY="596.0" onMouseClicked="#handleSaveFiles" prefHeight="35.0" prefWidth="93.0" ripplerFill="#1dd023" style="-fx-background-color: #2E7D32;" text="存檔" textFill="WHITE" textOverrun="CLIP">
                                        <font>
                                           <Font size="17.0" />
                                        </font>
@@ -566,7 +575,7 @@
                                                 </HBox>
                                                 <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #FFF176;">
                                                    <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Part:">
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Kit:">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -575,7 +584,7 @@
                                                          </HBox.margin>
                                                       </Text>
                                                       <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Gr Qty:">
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ZMM Sets">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -583,20 +592,7 @@
                                                             <Insets />
                                                          </HBox.margin>
                                                       </Text>
-                                                      <Label fx:id="rotateCurrPartGrQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Set">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Label fx:id="rotateCurrPartSetTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                      <Label fx:id="rotateCurrKitZmmSetTotal" focusTraversable="false" minWidth="45.0" text="0">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -610,8 +606,9 @@
                                                    <columns>
                                                       <JFXTreeTableColumn fx:id="rotateKitColumn" minWidth="20.0" prefWidth="140.0" text="KitName" />
                                                       <JFXTreeTableColumn fx:id="rotatePartColumn" minWidth="20.0" prefWidth="140.0" text="PartNum" />
+                                                      <JFXTreeTableColumn fx:id="rotateNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
                                                       <JFXTreeTableColumn fx:id="rotatePmQtyColumn" minWidth="20.0" prefWidth="50.0" text="PM Qty" />
-                                                      <JFXTreeTableColumn fx:id="rotateMyQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                      <JFXTreeTableColumn fx:id="rotateApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
                                                       <JFXTreeTableColumn fx:id="rotateRatioColumn" minWidth="20.0" prefWidth="50.0" text="Ratio" />
                                                       <JFXTreeTableColumn fx:id="rotateApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
                                                       <JFXTreeTableColumn fx:id="rotateRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
@@ -691,6 +688,8 @@
                                                 </HBox>
                                                 <JFXTreeTableView fx:id="noneStPurchaseTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
                                                    <columns>
+                                                      <JFXTreeTableColumn fx:id="noneStPurchaseNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
+                                                      <JFXTreeTableColumn fx:id="noneStPurchasePartNumColumn" minWidth="20.0" prefWidth="120.0" text="PartNum" />
                                                       <JFXTreeTableColumn fx:id="noneStPurchasePoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
                                                       <JFXTreeTableColumn fx:id="noneStPurchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
                                                       <JFXTreeTableColumn fx:id="noneStPurchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
@@ -804,6 +803,8 @@
                                                       </HBox>
                                                       <JFXTreeTableView fx:id="stockTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
                                                          <columns>
+                                                            <JFXTreeTableColumn fx:id="stockNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
+                                                            <JFXTreeTableColumn fx:id="stockPartNumColumn" minWidth="20.0" prefWidth="120.0" text="PartNum" />
                                                             <JFXTreeTableColumn fx:id="stockPoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
                                                             <JFXTreeTableColumn fx:id="stockLotColumn" minWidth="20.0" prefWidth="120.0" text="Lot" />
                                                             <JFXTreeTableColumn fx:id="stockDcColumn" minWidth="20.0" prefWidth="50.0" text="D/C" />
@@ -835,13 +836,14 @@
                                                       <Insets left="10.0" right="10.0" />
                                                    </padding>
                                                 </HBox>
+                                                <ComboBox fx:id="stockPartNumCombo" editable="true" focusTraversable="false" layoutX="80.0" layoutY="5.0" prefWidth="200.0" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="5.0" />
                                              </children>
                                           </AnchorPane>
                                           <AnchorPane SplitPane.resizableWithParent="false">
                                              <children>
                                                 <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <Label focusTraversable="false" text="ZMM">
+                                                      <Label fx:id="purchaseTableTile" focusTraversable="false" text="ZMM">
                                                          <font>
                                                             <Font name="System Bold" size="18.0" />
                                                          </font>
@@ -908,11 +910,13 @@
                                                             </HBox>
                                                             <JFXTreeTableView fx:id="purchaseTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
                                                                <columns>
-                                                                  <JFXTreeTableColumn fx:id="purchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
+                                                                  <JFXTreeTableColumn fx:id="purchasePartNumColumn" minWidth="20.0" prefWidth="143.0" text="PartNum" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseGrDateColumn" minWidth="20.0" prefWidth="143.0" text="GR Date" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseGrQtyColumn" minWidth="20.0" prefWidth="64.0" text="GR Qty" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseApQtyColumn" minWidth="20.0" prefWidth="72.0" text="Ap Qty" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseApplySetColumn" minWidth="20.0" prefWidth="76.0" text="Ap Set" />
+                                                                  <JFXTreeTableColumn fx:id="purchaseRemarkColumn" minWidth="0.0" prefWidth="8.0" text="Remark" />
                                                                </columns>
                                                             </JFXTreeTableView>
                                                          </children>

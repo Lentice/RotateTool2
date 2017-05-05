@@ -4,22 +4,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Row;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class RotateCollection {
     private static final Logger log = LogManager.getLogger(RotateCollection.class.getName());
 
+    private HashMap<String, KitNode> kitNodeList = new HashMap<>();
     private HashMap<String, RotateItem> rotateItems = new HashMap<>();
 
     private ObservableList<RotateItem> rotateObsList = FXCollections.observableArrayList();
-
-    private int partCount = 0;
-
-    public RotateCollection() {
-    }
+    private List<StockItem> stockItemList = new ArrayList<>();
+    private List<PurchaseItem> purchaseItemList = new ArrayList<>();
 
     private String getRotateKey(String kitName, String partNum) {
         return kitName.replaceAll("-", "") + partNum.replaceAll("-", "");
@@ -40,7 +39,10 @@ public class RotateCollection {
 
         rotateObsList.add(item);
 
-        partCount++;
+        if (item.isKit() && !item.isDuplicate()) {
+            KitNode kitNode = kitNodeList.computeIfAbsent(item.getKitName(), k -> new KitNode());
+            kitNode.addPart(item);
+        }
     }
 
     public void addStock(String kitName, String partNum, StockItem item) {
@@ -52,6 +54,7 @@ public class RotateCollection {
             return;
         }
 
+        stockItemList.add(item);
         rotateItem.addStockItem(item);
     }
 
@@ -65,15 +68,16 @@ public class RotateCollection {
             return;
         }
 
-        StockItem stockitem = rotateItem.getStock(item.getPo());
+        StockItem stockitem = rotateItem.getStockByPo(item.getPo());
         if (stockitem == null) {
             rotateItem.addNoneStockPurchase(item);
         } else {
             stockitem.addPurchaseItem(item);
         }
+        purchaseItemList.add(item);
     }
 
-    public boolean isRotateItem(String kitName, String partNum) {
+    public boolean belongToRotateItem(String kitName, String partNum) {
         String key = getRotateKey(kitName, partNum);
         RotateItem rotateItem = rotateItems.get(key);
         return (rotateItem != null);
@@ -81,5 +85,13 @@ public class RotateCollection {
 
     public ObservableList<RotateItem> getRotateObsList() {
         return rotateObsList;
+    }
+
+    public List<StockItem> getStockItemList() {
+        return stockItemList;
+    }
+
+    public List<PurchaseItem> getPurchaseItemList() {
+        return purchaseItemList;
     }
 }

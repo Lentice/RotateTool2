@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -24,6 +26,7 @@ import lahome.rotateTool.module.StockItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.*;
 import java.io.File;
 import java.util.prefs.Preferences;
 
@@ -151,10 +154,13 @@ public class RootController {
     private JFXTreeTableColumn<RotateItem, String> rotatePartColumn;
 
     @FXML
+    private JFXTreeTableColumn<RotateItem, String> rotateNoColumn;
+
+    @FXML
     private JFXTreeTableColumn<RotateItem, Number> rotatePmQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<RotateItem, Number> rotateMyQtyColumn;
+    private JFXTreeTableColumn<RotateItem, Number> rotateApQtyColumn;
 
     @FXML
     private JFXTreeTableColumn<RotateItem, String> rotateRatioColumn;
@@ -169,13 +175,19 @@ public class RootController {
     private Label rotatePartCount;
 
     @FXML
-    private Label rotateCurrPartGrQtyTotal;
+    private Label rotateCurrKitZmmSetTotal;
 
     @FXML
-    private Label rotateCurrPartSetTotal;
+    private ComboBox<String> stockPartNumCombo;
 
     @FXML
     private JFXTreeTableView<StockItem> stockTreeTableView;
+
+    @FXML
+    private JFXTreeTableColumn<StockItem, String> stockNoColumn;
+
+    @FXML
+    private JFXTreeTableColumn<StockItem, String> stockPartNumColumn;
 
     @FXML
     private JFXTreeTableColumn<StockItem, String> stockPoColumn;
@@ -217,7 +229,16 @@ public class RootController {
     private Label stockCurrPoApQtyTotal;
 
     @FXML
+    private Label purchaseTableTile;
+
+    @FXML
     private JFXTreeTableView<PurchaseItem> purchaseTreeTableView;
+
+    @FXML
+    private JFXTreeTableColumn<PurchaseItem, String> purchaseNoColumn;
+
+    @FXML
+    private JFXTreeTableColumn<PurchaseItem, String> purchasePartNumColumn;
 
     @FXML
     private JFXTreeTableColumn<PurchaseItem, String> purchaseGrDateColumn;
@@ -245,6 +266,12 @@ public class RootController {
 
     @FXML
     private JFXTreeTableView<PurchaseItem> noneStPurchaseTreeTableView;
+
+    @FXML
+    private JFXTreeTableColumn<PurchaseItem, String> noneStPurchaseNoColumn;
+
+    @FXML
+    private JFXTreeTableColumn<PurchaseItem, String> noneStPurchasePartNumColumn;
 
     @FXML
     private JFXTreeTableColumn<PurchaseItem, String> noneStPurchasePoColumn;
@@ -276,13 +303,18 @@ public class RootController {
 
     private Main main;
     private Stage primaryStage;
-
     private RotateCollection collection;
+    private ExcelParser excelParser;
+
     private File latestDir = new File(System.getProperty("user.dir"));
     private String rotateSelectedKit = "";
     private String stockSelectedPo = "";
     private String purchaseSelectedPo = "";
     private String noneStPurchaseSelectedPo = "";
+    private boolean showAllParts = true;
+
+    private final String ALL_PARTS = "All_Parts";
+    private RotateItem currentRotateItem;
 
     public RootController() {
     }
@@ -335,30 +367,37 @@ public class RootController {
 
         prefs.put("RotateKitWidth", String.valueOf(rotateKitColumn.getWidth()));
         prefs.put("RotatePartWidth", String.valueOf(rotatePartColumn.getWidth()));
+        prefs.put("RotateNoWidth", String.valueOf(rotateNoColumn.getWidth()));
         prefs.put("RotatePmQtyWidth", String.valueOf(rotatePmQtyColumn.getWidth()));
-        prefs.put("RotateMyQtyWidth", String.valueOf(rotateMyQtyColumn.getWidth()));
+        prefs.put("RotateApQtyWidth", String.valueOf(rotateApQtyColumn.getWidth()));
         prefs.put("RotateRatioWidth", String.valueOf(rotateRatioColumn.getWidth()));
         prefs.put("RotateApplySetWidth", String.valueOf(rotateApplySetColumn.getWidth()));
         prefs.put("RotateRemarkWidth", String.valueOf(rotateRemarkColumn.getWidth()));
 
+        prefs.put("StockNoWidth", String.valueOf(stockNoColumn.getWidth()));
+        prefs.put("StockPartNumWidth", String.valueOf(stockPartNumColumn.getWidth()));
         prefs.put("StockPoWidth", String.valueOf(stockPoColumn.getWidth()));
         prefs.put("StockLotWidth", String.valueOf(stockLotColumn.getWidth()));
         prefs.put("StockDcWidth", String.valueOf(stockDcColumn.getWidth()));
         prefs.put("StockGrDateWidth", String.valueOf(stockGrDateColumn.getWidth()));
         prefs.put("StockQtyWidth", String.valueOf(stockStQtyColumn.getWidth()));
-        prefs.put("StockMyQtyWidth", String.valueOf(stockApQtyColumn.getWidth()));
+        prefs.put("StockApQtyWidth", String.valueOf(stockApQtyColumn.getWidth()));
         prefs.put("StockRemarkWidth", String.valueOf(stockRemarkColumn.getWidth()));
 
+        prefs.put("PurchaseNoColumnWidth", String.valueOf(purchaseNoColumn.getWidth()));
+        prefs.put("PurchasePartNumWidth", String.valueOf(purchasePartNumColumn.getWidth()));
         prefs.put("PurchaseGrDateWidth", String.valueOf(purchaseGrDateColumn.getWidth()));
         prefs.put("PurchaseGrQtyWidth", String.valueOf(purchaseGrQtyColumn.getWidth()));
-        prefs.put("PurchaseMyQtyWidth", String.valueOf(purchaseApQtyColumn.getWidth()));
+        prefs.put("PurchaseApQtyWidth", String.valueOf(purchaseApQtyColumn.getWidth()));
         prefs.put("PurchaseApplySetWidth", String.valueOf(purchaseApplySetColumn.getWidth()));
         prefs.put("PurchaseRemarkWidth", String.valueOf(purchaseRemarkColumn.getWidth()));
 
+        prefs.put("NoneStPurchaseNoColumnWidth", String.valueOf(noneStPurchaseNoColumn.getWidth()));
+        prefs.put("NoneStPurchasePartNumWidth", String.valueOf(noneStPurchasePartNumColumn.getWidth()));
         prefs.put("NoneStPurchasePoWidth", String.valueOf(noneStPurchasePoColumn.getWidth()));
         prefs.put("NoneStPurchaseGrDateWidth", String.valueOf(noneStPurchaseGrDateColumn.getWidth()));
         prefs.put("NoneStPurchaseGrQtyWidth", String.valueOf(noneStPurchaseGrQtyColumn.getWidth()));
-        prefs.put("NoneStPurchaseMyQtyWidth", String.valueOf(noneStPurchaseApQtyColumn.getWidth()));
+        prefs.put("NoneStPurchaseApQtyWidth", String.valueOf(noneStPurchaseApQtyColumn.getWidth()));
         prefs.put("NoneStPurchaseApplySetWidth", String.valueOf(noneStPurchaseApplySetColumn.getWidth()));
         prefs.put("NoneStPurchaseRemarkWidth", String.valueOf(noneStPurchaseRemarkColumn.getWidth()));
     }
@@ -409,30 +448,37 @@ public class RootController {
 
         rotateKitColumn.setPrefWidth(Double.valueOf(prefs.get("RotateKitWidth", "140")));
         rotatePartColumn.setPrefWidth(Double.valueOf(prefs.get("RotatePartWidth", "140")));
+        rotateNoColumn.setPrefWidth(Double.valueOf(prefs.get("RotateNoWidth", "30")));
         rotatePmQtyColumn.setPrefWidth(Double.valueOf(prefs.get("RotatePmQtyWidth", "50")));
-        rotateMyQtyColumn.setPrefWidth(Double.valueOf(prefs.get("RotateMyQtyWidth", "50")));
+        rotateApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("RotateApQtyWidth", "50")));
         rotateRatioColumn.setPrefWidth(Double.valueOf(prefs.get("RotateRatioWidth", "50")));
         rotateApplySetColumn.setPrefWidth(Double.valueOf(prefs.get("RotateApplySetWidth", "50")));
         rotateRemarkColumn.setPrefWidth(Double.valueOf(prefs.get("RotateRemarkWidth", "120")));
 
+        stockNoColumn.setPrefWidth(Double.valueOf(prefs.get("StockNoWidth", "30")));
+        stockPartNumColumn.setPrefWidth(Double.valueOf(prefs.get("StockPartNumWidth", "120")));
         stockPoColumn.setPrefWidth(Double.valueOf(prefs.get("StockPoWidth", "120")));
         stockLotColumn.setPrefWidth(Double.valueOf(prefs.get("StockLotWidth", "120")));
         stockDcColumn.setPrefWidth(Double.valueOf(prefs.get("StockDcWidth", "50")));
         stockGrDateColumn.setPrefWidth(Double.valueOf(prefs.get("StockGrDateWidth", "50")));
         stockStQtyColumn.setPrefWidth(Double.valueOf(prefs.get("StockQtyWidth", "63")));
-        stockApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("StockMyQtyWidth", "50")));
+        stockApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("StockApQtyWidth", "50")));
         stockRemarkColumn.setPrefWidth(Double.valueOf(prefs.get("StockRemarkWidth", "150")));
 
+        purchaseNoColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseNoColumnWidth", "30")));
+        purchasePartNumColumn.setPrefWidth(Double.valueOf(prefs.get("PurchasePartNumWidth", "120")));
         purchaseGrDateColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseGrDateWidth", "120")));
         purchaseGrQtyColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseGrQtyWidth", "50")));
-        purchaseApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseMyQtyWidth", "50")));
+        purchaseApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseApQtyWidth", "50")));
         purchaseApplySetColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseApplySetWidth", "50")));
         purchaseRemarkColumn.setPrefWidth(Double.valueOf(prefs.get("PurchaseRemarkWidth", "150")));
 
+        noneStPurchaseNoColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseNoColumnWidth", "30")));
+        noneStPurchasePartNumColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchasePartNumWidth", "120")));
         noneStPurchasePoColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchasePoWidth", "120")));
         noneStPurchaseGrDateColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseGrDateWidth", "120")));
         noneStPurchaseGrQtyColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseGrQtyWidth", "50")));
-        noneStPurchaseApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseMyQtyWidth", "50")));
+        noneStPurchaseApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseApQtyWidth", "50")));
         noneStPurchaseApplySetColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseApplySetWidth", "50")));
         noneStPurchaseRemarkColumn.setPrefWidth(Double.valueOf(prefs.get("NoneStPurchaseRemarkWidth", "150")));
     }
@@ -441,7 +487,7 @@ public class RootController {
         this.main = main;
         this.primaryStage = main.getPrimaryStage();
         this.collection = main.getCollection();
-
+        excelParser = new ExcelParser(collection);
         initialHotkeys();
     }
 
@@ -533,22 +579,20 @@ public class RootController {
 
     @FXML
     void handleStartEdit() {
-        File file;
-        ExcelParser excelParser = new ExcelParser(collection);
 
-        file = new File(pathAgingReport.getText());
-        excelParser.loadRotateExcel(file,
+        excelParser.setRotateConfig(
+                pathAgingReport.getText(),
                 Integer.valueOf(settingRotateFirstRow.getText()),
                 settingRotateKitNameCol.getText(),
                 settingRotatePartNumCol.getText(),
                 settingRotatePmQtyCol.getText(),
+                settingRotateApQtyCol.getText(),
                 settingRotateRatioCol.getText(),
                 settingRotateApSetCol.getText(),
                 settingRotateRemarkCol.getText());
-        log.info("Process rotate table: Done");
 
-        file = new File(pathStockFile.getText());
-        excelParser.loadStockExcel(file,
+        excelParser.setStockConfig(
+                pathStockFile.getText(),
                 Integer.valueOf(settingStockFirstRow.getText()),
                 settingStockKitNameCol.getText(),
                 settingStockPartNumCol.getText(),
@@ -558,10 +602,9 @@ public class RootController {
                 settingStockDcCol.getText(),
                 settingStockApQtyCol.getText(),
                 settingStockRemarkCol.getText());
-        log.info("Process stock table: Done");
 
-        file = new File(pathPurchaseFile.getText());
-        excelParser.loadPurchaseExcel(file,
+        excelParser.setPurchaseConfig(
+                pathPurchaseFile.getText(),
                 Integer.valueOf(settingPurchaseFirstRow.getText()),
                 settingPurchaseKitNameCol.getText(),
                 settingPurchasePartNumCol.getText(),
@@ -571,8 +614,15 @@ public class RootController {
                 settingPurchaseApQtyCol.getText(),
                 settingPurchaseApSetCol.getText(),
                 settingPurchaseRemarkCol.getText());
-        log.info("Process purchase table: Done");
 
+        excelParser.loadRotateExcel();
+        log.info("Process rotate table: Done");
+
+        excelParser.loadStockExcel();
+        log.info("Process stock table: Done");
+
+        excelParser.loadPurchaseExcel();
+        log.info("Process purchase table: Done");
 
         final TreeItem<RotateItem> rotateRoot = new RecursiveTreeItem<>(
                 collection.getRotateObsList(), RecursiveTreeObject::getChildren);
@@ -584,6 +634,17 @@ public class RootController {
         rotatePartCount.setText(String.valueOf(collection.getRotateObsList().size()));
 
         mainTab.getSelectionModel().select(editTab);
+
+    }
+
+    @FXML
+    void handleSaveFiles() {
+        log.warn("Save File clicked");
+        //excelParser.saveRotateExcel();
+        //log.info("Save rotate table: Done");
+//        excelParser.savePurchaseExcel();
+//        log.info("Save purchase table: Done");
+        excelParser.test();
     }
 
     @FXML
@@ -602,6 +663,7 @@ public class RootController {
 
         rotateKitColumn.setStyle("-fx-alignment: top-left; ");
         rotatePartColumn.setStyle("-fx-alignment: top-left; ");
+        rotateNoColumn.setStyle("-fx-alignment: top-left; ");
         rotateRemarkColumn.setStyle("-fx-alignment: top-left; ");
 
         rotateKitColumn.setCellValueFactory(cellData -> {
@@ -656,6 +718,33 @@ public class RootController {
                     }
                 });
 
+        rotateNoColumn.setCellValueFactory(cellData -> {
+            if (rotateNoColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().serialNoProperty();
+            } else {
+                return rotateNoColumn.getComputedValue(cellData);
+            }
+        });
+        rotateNoColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<RotateItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        // set same kit with same background
+                        int rowIdx = getTreeTableRow().getIndex();
+                        String kit = rotateKitColumn.getCellData(rowIdx);
+                        if (item != null && !kit.isEmpty() && kit.compareTo(rotateSelectedKit) == 0) {
+                            setStyle("-fx-alignment: top-left; -fx-background-color: #FFEB3B;");
+                        } else {
+                            setStyle("-fx-alignment: top-left; ");
+                        }
+                    }
+
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
+
         rotatePmQtyColumn.setCellValueFactory(cellData -> {
             if (rotatePmQtyColumn.validateValue(cellData)) {
                 return cellData.getValue().getValue().pmQtyProperty();
@@ -670,14 +759,14 @@ public class RootController {
                     }
                 });
 
-        rotateMyQtyColumn.setCellValueFactory(cellData -> {
-            if (rotateMyQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().myQtyProperty();
+        rotateApQtyColumn.setCellValueFactory(cellData -> {
+            if (rotateApQtyColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().stockApplyQtyTotalProperty();
             } else {
-                return rotateMyQtyColumn.getComputedValue(cellData);
+                return rotateApQtyColumn.getComputedValue(cellData);
             }
         });
-        rotateMyQtyColumn.setCellFactory(cellData ->
+        rotateApQtyColumn.setCellFactory(cellData ->
                 new GenericEditableTreeTableCell<RotateItem, Number>(new IntegerTextFieldEditorBuilder()) {
                     @Override
                     public void updateItem(Number item, boolean empty) {
@@ -748,9 +837,16 @@ public class RootController {
             return item.kitNameProperty().get().contains(newVal) || item.partNumberProperty().get().contains(newVal);
         }));
 
-        rotateTreeTableView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> selectedRotateItem(oldValue, newValue)
-        );
+        rotateTreeTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || !newValue.isLeaf()) {
+                stockTreeTableView.setRoot(null);
+                return;
+            }
+
+            showAllParts = true;
+            RotateItem rotateItem = newValue.getValue();
+            selectedRotateItem(rotateItem, true);
+        });
 
         rotateTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<RotateItem>() {
             @Override
@@ -765,15 +861,42 @@ public class RootController {
                 }
             }
         });
+
+        stockPartNumCombo.autosize();
+        stockPartNumCombo.setOnAction(e -> stockPartNumComboChanged());
     }
 
     private void initialStockTable() {
         stockTreeTableView.setPlaceholder(new Label("庫存找不到符合項目"));
         stockTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
 
+        stockNoColumn.setStyle("-fx-alignment: top-left; ");
+        stockPartNumColumn.setStyle("-fx-alignment: top-left; ");
         stockPoColumn.setStyle("-fx-alignment: top-left; ");
         stockLotColumn.setStyle("-fx-alignment: top-left; ");
         stockRemarkColumn.setStyle("-fx-alignment: top-left; ");
+
+        stockNoColumn.setCellValueFactory(cellData -> {
+            if (stockNoColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().getRotateItem().serialNoProperty();
+            } else {
+                return stockNoColumn.getComputedValue(cellData);
+            }
+        });
+
+        stockPartNumColumn.setCellValueFactory(cellData -> {
+            if (stockPartNumColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().getRotateItem().partNumberProperty();
+            } else {
+                return stockPartNumColumn.getComputedValue(cellData);
+            }
+        });
+        stockPartNumColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
 
         stockPoColumn.setCellValueFactory(cellData -> {
             if (stockPoColumn.validateValue(cellData)) {
@@ -874,9 +997,15 @@ public class RootController {
             stockTreeTableView.requestFocus();
         });
 
-        stockTreeTableView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> selectedStockItem(oldValue, newValue)
-        );
+        stockTreeTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || !newValue.isLeaf()) {
+                purchaseTreeTableView.setRoot(null);
+                return;
+            }
+
+            StockItem stockItem = newValue.getValue();
+            selectedStockItem(stockItem);
+        });
 
         stockTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<StockItem>() {
             @Override
@@ -897,6 +1026,30 @@ public class RootController {
         purchaseTreeTableView.setPlaceholder(new Label("ZMM 找不到符合項目"));
         purchaseTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
         //purchaseTreeTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        purchaseNoColumn.setStyle("-fx-alignment: top-left; ");
+        purchaseNoColumn.setCellValueFactory(cellData -> {
+            if (purchaseNoColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().getRotateItem().serialNoProperty();
+            } else {
+                return purchaseNoColumn.getComputedValue(cellData);
+            }
+        });
+
+        purchasePartNumColumn.setStyle("-fx-alignment: top-left; ");
+        purchasePartNumColumn.setCellValueFactory(cellData -> {
+            if (purchasePartNumColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().getRotateItem().partNumberProperty();
+            } else {
+                return purchasePartNumColumn.getComputedValue(cellData);
+            }
+        });
+        purchasePartNumColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
 
         purchaseGrDateColumn.setCellValueFactory(cellData -> {
             if (purchaseGrDateColumn.validateValue(cellData)) {
@@ -968,21 +1121,26 @@ public class RootController {
             purchaseTreeTableView.requestFocus();
         });
 
-        purchaseTreeTableView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> selectedPurchaseItem(oldValue, newValue)
-        );
-
-        purchaseTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<PurchaseItem>() {
-            @Override
-            public void updateItem(PurchaseItem item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item != null && item.getPo().compareTo(purchaseSelectedPo) == 0) {
-                    setStyle("-fx-background-color: #FFF176;");
-                } else {
-                    setStyle("");
-                }
+        purchaseTreeTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || !newValue.isLeaf()) {
+                return;
             }
+
+            PurchaseItem purchaseItem = newValue.getValue();
+            selectedPurchaseItem(purchaseItem);
         });
+
+//        purchaseTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<PurchaseItem>() {
+//            @Override
+//            public void updateItem(PurchaseItem item, boolean empty) {
+//                super.updateItem(item, empty);
+//                if (item != null && item.getPo().compareTo(purchaseSelectedPo) == 0) {
+//                    setStyle("-fx-background-color: #FFF176;");
+//                } else {
+//                    setStyle("");
+//                }
+//            }
+//        });
 
     }
 
@@ -991,8 +1149,31 @@ public class RootController {
         noneStPurchaseTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
         //noneStPurchaseTreeTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        noneStPurchasePoColumn.setStyle("-fx-alignment: top-left; ");
+        noneStPurchaseNoColumn.setStyle("-fx-alignment: top-left; ");
+        noneStPurchaseNoColumn.setCellValueFactory(cellData -> {
+            if (noneStPurchaseNoColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().getRotateItem().serialNoProperty();
+            } else {
+                return noneStPurchaseNoColumn.getComputedValue(cellData);
+            }
+        });
 
+        noneStPurchasePartNumColumn.setStyle("-fx-alignment: top-left; ");
+        noneStPurchasePartNumColumn.setCellValueFactory(cellData -> {
+            if (noneStPurchasePartNumColumn.validateValue(cellData)) {
+                return cellData.getValue().getValue().getRotateItem().partNumberProperty();
+            } else {
+                return noneStPurchasePartNumColumn.getComputedValue(cellData);
+            }
+        });
+        noneStPurchasePartNumColumn.setCellFactory(cellData ->
+                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
+                    @Override
+                    public void commitEdit(String newValue) {
+                    }
+                });
+
+        noneStPurchasePoColumn.setStyle("-fx-alignment: top-left; ");
         noneStPurchasePoColumn.setCellValueFactory(cellData -> {
             if (noneStPurchasePoColumn.validateValue(cellData)) {
                 return cellData.getValue().getValue().poProperty();
@@ -1094,47 +1275,64 @@ public class RootController {
         });
     }
 
-    private void selectedRotateItem(TreeItem<RotateItem> oldValue, TreeItem<RotateItem> newValue) {
+    private void selectedRotateItem(RotateItem rotateItem, boolean updateSelectCombo) {
 
-        if (newValue == null || !newValue.isLeaf()) {
-            stockTreeTableView.setRoot(null);
-            return;
-        }
-
-        RotateItem rotateItem = newValue.getValue();
+        currentRotateItem = rotateItem;
         rotateSelectedKit = rotateItem.getKitName();
         rotateKitColumn.setVisible(false);
         rotateKitColumn.setVisible(true);
 
-        ObservableList<StockItem> obsList = rotateItem.getStockItemObsList();
-        TreeItem<StockItem> root = new RecursiveTreeItem<>(
-                obsList, RecursiveTreeObject::getChildren);
+        TreeItem<StockItem> root = null;
 
         if (rotateItem.isDuplicate()) {
             root = null;
             stockTreeTableView.setPlaceholder(new Label("重複的項目!! 我無法幫妳了 orz...."));
-        } else if (obsList.size() == 0) {
-            stockTreeTableView.setPlaceholder(new Label("庫存找不到符合項目"));
-            root = null;
+        } else {
+            ObservableList<StockItem> obsList;
+            if (rotateItem.isKit() && showAllParts) {
+                obsList = rotateItem.getKitNode().getStockItemList();
+            } else {
+                obsList = rotateItem.getStockItemObsList();
+            }
+            if (obsList.size() == 0) {
+                stockTreeTableView.setPlaceholder(new Label("庫存找不到符合項目"));
+            } else {
+                root = new RecursiveTreeItem<>(obsList, RecursiveTreeObject::getChildren);
+            }
         }
 
         stockTreeTableView.setRoot(root);
 
-        stockStQtyTotal.textProperty().bind(rotateItem.stockQtyTotalProperty().asString());
 //        stockGrQtyTotal.textProperty().bind(rotateItem.stockGrQtyTotalProperty().asString());
-        stockApQtyTotal.textProperty().bind(rotateItem.myQtyProperty().asString());
+        stockStQtyTotal.textProperty().bind(rotateItem.stockQtyTotalProperty().asString());
+        stockApQtyTotal.textProperty().bind(rotateItem.stockApplyQtyTotalProperty().asString());
 
 
-        ObservableList<PurchaseItem> noneStockObsList = rotateItem.getNoneStockPurchaseItemObsList();
-        TreeItem<PurchaseItem> noneStockRoot = new RecursiveTreeItem<>(
-                noneStockObsList, RecursiveTreeObject::getChildren);
+        TreeItem<PurchaseItem> noneStockRoot = null;
+        if (rotateItem.isDuplicate()) {
+            noneStockRoot = null;
+        } else {
+            ObservableList<PurchaseItem> noneStockObsList;
+            if (rotateItem.isKit() && showAllParts) {
+                noneStockObsList = rotateItem.getKitNode().getNoneStPurchaseItemList();
+            } else {
+                noneStockObsList = rotateItem.getNoneStockPurchaseItemObsList();
+            }
+
+            if (noneStockObsList.size() > 0) {
+                noneStockRoot = new RecursiveTreeItem<>(noneStockObsList, RecursiveTreeObject::getChildren);
+            }
+        }
 
         noneStPurchaseTreeTableView.setRoot(noneStockRoot);
 
         stockPmQty.textProperty().bind(rotateItem.pmQtyProperty().asString());
 
-        rotateCurrPartGrQtyTotal.textProperty().bind(rotateItem.purchaseAllGrQtyTotalProperty().asString());
-        rotateCurrPartSetTotal.textProperty().bind(rotateItem.purchaseAllApSetTotalProperty().asString());
+        if (rotateItem.isKit() && showAllParts) {
+            rotateCurrKitZmmSetTotal.textProperty().bind(rotateItem.getKitNode().purchaseAllApSetTotalProperty().asString());
+        } else {
+            rotateCurrKitZmmSetTotal.textProperty().bind(rotateItem.purchaseAllApSetTotalProperty().asString());
+        }
 
         noneStPurchaseGrQtyTotal.textProperty().bind(rotateItem.noneStPurchaseGrQtyTotalProperty().asString());
         noneStPurchaseApQtyTotal.textProperty().bind(rotateItem.noneStPurchaseApQtyTotalProperty().asString());
@@ -1147,46 +1345,77 @@ public class RootController {
         if (noneStPurchaseTreeTableView.getCurrentItemsCount() > 0) {
             noneStPurchaseTreeTableView.getSelectionModel().select(0, noneStPurchaseApQtyColumn);
         }
+
+        if (updateSelectCombo) {
+            if (rotateItem.isKit() && showAllParts) {
+
+                stockPartNumCombo.getItems().clear();
+                stockPartNumCombo.getItems().add(ALL_PARTS);
+                stockPartNumCombo.setValue(ALL_PARTS);
+                for (RotateItem part : rotateItem.getKitNode().getPartsList()) {
+                    stockPartNumCombo.getItems().add(part.getPartNumber());
+                }
+
+            } else {
+                stockPartNumCombo.setValue(rotateItem.getPartNumber());
+            }
+        }
     }
 
-    private void selectedStockItem(TreeItem<StockItem> oldValue, TreeItem<StockItem> newValue) {
-        if (newValue == null || !newValue.isLeaf()) {
-            purchaseTreeTableView.setRoot(null);
+    private void stockPartNumComboChanged() {
+        if (currentRotateItem == null)
             return;
+
+        if (stockPartNumCombo.getItems().size() == 0)
+            return;
+
+        String name = stockPartNumCombo.getSelectionModel().getSelectedItem().trim();
+        if (name.isEmpty())
+            return;
+
+        RotateItem rotateItem = currentRotateItem.getKitNode().getPart(name);
+        if (rotateItem != null) {
+            showAllParts = false;
+            selectedRotateItem(rotateItem, false);
+        } else {
+            showAllParts = true;
+            selectedRotateItem(currentRotateItem, false);
         }
 
-        StockItem stockItem = newValue.getValue();
+    }
+
+    private void selectedStockItem(StockItem stockItem) {
         stockSelectedPo = stockItem.getPo();
 
-        ObservableList<PurchaseItem> obsList = stockItem.getPurchaseItems();
+        ObservableList<PurchaseItem> obsList;
+        if (stockItem.getRotateItem().isKit() && showAllParts) {
+            obsList = stockItem.getRotateItem().getKitNode().getPurchaseItemListWithPo(stockItem.getPo());
+        } else {
+            obsList = stockItem.getPurchaseItems();
+        }
+
         TreeItem<PurchaseItem> root = new RecursiveTreeItem<>(
                 obsList, RecursiveTreeObject::getChildren);
-
         if (obsList.size() == 0) {
             root = null;
         }
 
         purchaseTreeTableView.setRoot(root);
+        if (purchaseTreeTableView.getCurrentItemsCount() > 0) {
+            purchaseTreeTableView.getSelectionModel().select(0, purchaseApQtyColumn);
+        }
 
         stockCurrPoStQtyTotal.textProperty().bind(stockItem.currentPoStockQtyTotalProperty().asString());
-        stockCurrPoApQtyTotal.textProperty().bind(stockItem.currentPoMyQtyTotalProperty().asString());
+        stockCurrPoApQtyTotal.textProperty().bind(stockItem.currentPoApQtyTotalProperty().asString());
 
+        purchaseTableTile.setText("PO:" + stockItem.getPo() + " in ZMM");
         purchaseGrQtyTotal.textProperty().bind(stockItem.purchaseGrQtyTotalProperty().asString());
         purchaseApQtyTotal.textProperty().bind(stockItem.purchaseApQtyTotalProperty().asString());
         purchaseApSetTotal.textProperty().bind(stockItem.purchaseApSetTotalProperty().asString());
 
-        if (purchaseTreeTableView.getCurrentItemsCount() > 0) {
-            purchaseTreeTableView.getSelectionModel().select(0, purchaseApQtyColumn);
-        }
     }
 
-
-    private void selectedPurchaseItem(TreeItem<PurchaseItem> oldValue, TreeItem<PurchaseItem> newValue) {
-        if (newValue == null || !newValue.isLeaf()) {
-            return;
-        }
-
-        PurchaseItem purchaseItem = newValue.getValue();
+    private void selectedPurchaseItem(PurchaseItem purchaseItem) {
         purchaseSelectedPo = purchaseItem.getPo();
     }
 

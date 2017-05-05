@@ -40,13 +40,6 @@ public class Main extends Application {
         controller.saveSetting();
     }
 
-    private void saveSetting() {
-
-    }
-
-    private void loadSetting() {
-
-    }
 
     public RotateCollection getCollection() {
         return collection;
