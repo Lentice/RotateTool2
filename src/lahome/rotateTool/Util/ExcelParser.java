@@ -30,99 +30,13 @@ import java.util.List;
 public class ExcelParser {
     private static final Logger log = LogManager.getLogger(ExcelParser.class.getName());
 
-    private static final int sheetIdx = 0;
 
     private RotateCollection collection;
 
     private InputStream is;
 
-    private String rotateFilePath;
-    private int rotateFirstDataRow;
-    private int rotateKitColumn;
-    private int rotatePartColumn;
-    private int rotatePmQtyColumn;
-    private int rotateApQtyColumn;
-    private int rotateRatioColumn;
-    private int rotateApplySetColumn;
-    private int rotateRemarkColumn;
-
-
-    private String stockFilePath;
-    private int stockFirstDataRow;
-    private int stockKitColumn;
-    private int stockPartColumn;
-    private int stockPoColumn;
-    private int stockStQtyColumn;
-    private int stockLotColumn;
-    private int stockDcColumn;
-    private int stockApQtyColumn;
-    private int stockRemarkColumn;
-
-
-    private String purchaseFilePath;
-    private int purchaseFirstDataRow;
-    private int purchaseKitColumn;
-    private int purchasePartColumn;
-    private int purchasePoColumn;
-    private int purchaseGrDateColumn;
-    private int purchaseGrQtyColumn;
-    private int purchaseApQtyColumn;
-    private int purchaseApSetColumn;
-    private int purchaseRemarkColumn;
-
-
     public ExcelParser(RotateCollection collection) {
         this.collection = collection;
-    }
-
-    public void setRotateConfig(String filePath, int firstDataRow, String kitColStr, String partColStr,
-                                String pmQtyColStr, String apQtyColStr, String ratioColStr, String applySetColStr,
-                                String remarkColStr) {
-
-        this.rotateFilePath = filePath;
-        this.rotateFirstDataRow = firstDataRow - 1;
-
-        rotateKitColumn = CellReference.convertColStringToIndex(kitColStr.toUpperCase());
-        rotatePartColumn = CellReference.convertColStringToIndex(partColStr.toLowerCase());
-        rotatePmQtyColumn = CellReference.convertColStringToIndex(pmQtyColStr.toUpperCase());
-        rotateApQtyColumn = CellReference.convertColStringToIndex(apQtyColStr.toUpperCase());
-        rotateRatioColumn = CellReference.convertColStringToIndex(ratioColStr.toUpperCase());
-        rotateApplySetColumn = CellReference.convertColStringToIndex(applySetColStr.toUpperCase());
-        rotateRemarkColumn = CellReference.convertColStringToIndex(remarkColStr.toUpperCase());
-    }
-
-    public void setStockConfig(String filePath, int firstDataRow, String kitColStr, String partColStr,
-                               String poColStr, String stQtyColStr, String lotColStr, String dcColStr,
-                               String apQtyColStr, String remarkColStr) {
-
-        this.stockFilePath = filePath;
-        this.stockFirstDataRow = firstDataRow - 1;
-
-        stockKitColumn = CellReference.convertColStringToIndex(kitColStr);
-        stockPartColumn = CellReference.convertColStringToIndex(partColStr);
-        stockPoColumn = CellReference.convertColStringToIndex(poColStr);
-        stockStQtyColumn = CellReference.convertColStringToIndex(stQtyColStr);
-        stockLotColumn = CellReference.convertColStringToIndex(lotColStr);
-        stockDcColumn = CellReference.convertColStringToIndex(dcColStr);
-        stockApQtyColumn = CellReference.convertColStringToIndex(apQtyColStr);
-        stockRemarkColumn = CellReference.convertColStringToIndex(remarkColStr);
-    }
-
-    public void setPurchaseConfig(String filePath, int firstDataRow, String kitColStr, String partColStr,
-                                  String poColStr, String grDateColStr, String grQtyColStr,
-                                  String apQtyColStr, String setColStr, String remarkColStr) {
-
-        this.purchaseFilePath = filePath;
-        this.purchaseFirstDataRow = firstDataRow - 1;
-
-        purchaseKitColumn = CellReference.convertColStringToIndex(kitColStr);
-        purchasePartColumn = CellReference.convertColStringToIndex(partColStr);
-        purchasePoColumn = CellReference.convertColStringToIndex(poColStr);
-        purchaseGrDateColumn = CellReference.convertColStringToIndex(grDateColStr);
-        purchaseGrQtyColumn = CellReference.convertColStringToIndex(grQtyColStr);
-        purchaseApQtyColumn = CellReference.convertColStringToIndex(apQtyColStr);
-        purchaseApSetColumn = CellReference.convertColStringToIndex(setColStr);
-        purchaseRemarkColumn = CellReference.convertColStringToIndex(remarkColStr);
     }
 
     private String getKitName(Row row, int column) throws Exception {
@@ -393,13 +307,13 @@ public class ExcelParser {
 
     public void loadRotateExcel() {
 
-        Workbook wb = getWorkbook(rotateFilePath);
+        Workbook wb = getWorkbook(ExcelCommon.rotateFilePath);
         if (wb == null) {
             log.error("workbook is null. Open sheet failed");
             return;
         }
 
-        Sheet sheet = wb.getSheetAt(sheetIdx);
+        Sheet sheet = wb.getSheetAt(ExcelCommon.rotateSheetIndex - 1);
         if (sheet == null) {
             log.error("sheet is null. Open sheet failed");
             return;
@@ -407,24 +321,24 @@ public class ExcelParser {
 
         for (Row row : sheet) {
             int rowNum = row.getRowNum();
-            if (rowNum < rotateFirstDataRow)
+            if (rowNum < ExcelCommon.rotateFirstDataRow)
                 continue;
 
             //int columnCount = row.getPhysicalNumberOfCells();
 
             try {
-                String kitName = getKitName(row, rotateKitColumn);
-                String partNum = getPartNumber(row, rotatePartColumn);
+                String kitName = getKitName(row, ExcelCommon.rotateKitColumn);
+                String partNum = getPartNumber(row, ExcelCommon.rotatePartColumn);
                 if (kitName.isEmpty() && partNum.isEmpty())
                     continue;
 
-                int pmQty = getExpectQty(row, rotatePmQtyColumn);
+                int pmQty = getExpectQty(row, ExcelCommon.rotatePmQtyColumn);
                 if (pmQty == 0)
                     continue;
 
-                String ratio = getRatio(row, rotateRatioColumn);
-                int applySet = getApplySet(row, rotateApplySetColumn);
-                String remark = getRemark(row, rotateRemarkColumn);
+                String ratio = getRatio(row, ExcelCommon.rotateRatioColumn);
+                int applySet = getApplySet(row, ExcelCommon.rotateApplySetColumn);
+                String remark = getRemark(row, ExcelCommon.rotateRemarkColumn);
 
                 collection.addRotate(new RotateItem(rowNum, kitName, partNum, pmQty, ratio, applySet, remark));
 
@@ -438,13 +352,13 @@ public class ExcelParser {
 
     public void loadStockExcel() {
 
-        Workbook wb = getWorkbook(stockFilePath);
+        Workbook wb = getWorkbook(ExcelCommon.stockFilePath);
         if (wb == null) {
             log.error("workbook is null. Open sheet failed");
             return;
         }
 
-        Sheet sheet = wb.getSheetAt(sheetIdx);
+        Sheet sheet = wb.getSheetAt(ExcelCommon.stockSheetIndex - 1);
         if (sheet == null) {
             log.error("sheet is null. Open sheet failed");
             return;
@@ -452,29 +366,29 @@ public class ExcelParser {
 
         for (Row row : sheet) {
             int rowNum = row.getRowNum();
-            if (rowNum < stockFirstDataRow)
+            if (rowNum < ExcelCommon.stockFirstDataRow)
                 continue;
 
             //int columnCount = row.getPhysicalNumberOfCells();
 
             try {
-                String kitName = getKitName(row, stockKitColumn);
-                String partNum = getPartNumber(row, stockPartColumn);
+                String kitName = getKitName(row, ExcelCommon.stockKitColumn);
+                String partNum = getPartNumber(row, ExcelCommon.stockPartColumn);
                 if (kitName.isEmpty() && partNum.isEmpty())
                     continue;
 
                 if (!collection.belongToRotateItem(kitName, partNum))
                     continue;
 
-                String po = getPo(row, stockPoColumn);
+                String po = getPo(row, ExcelCommon.stockPoColumn);
                 if (po.isEmpty())
                     continue;
 
-                int stockQty = getStockQty(row, stockStQtyColumn);
-                String lot = getLot(row, stockLotColumn);
-                String dc = getDc(row, stockDcColumn);
-                int applyQty = getApQty(row, stockApQtyColumn);
-                String remark = getRemark(row, stockRemarkColumn);
+                int stockQty = getStockQty(row, ExcelCommon.stockStQtyColumn);
+                String lot = getLot(row, ExcelCommon.stockLotColumn);
+                String dc = getDc(row, ExcelCommon.stockDcColumn);
+                int applyQty = getApQty(row, ExcelCommon.stockApQtyColumn);
+                String remark = getRemark(row, ExcelCommon.stockRemarkColumn);
 
                 collection.addStock(kitName, partNum,
                         new StockItem(rowNum, po, stockQty, lot, dc, applyQty, remark));
@@ -489,42 +403,42 @@ public class ExcelParser {
 
     public void loadPurchaseExcel() {
 
-        Workbook wb = getWorkbook(purchaseFilePath);
+        Workbook wb = getWorkbook(ExcelCommon.purchaseFilePath);
         if (wb == null) {
             log.error("workbook is null. Open sheet failed");
             return;
         }
 
-        Sheet sheet = wb.getSheetAt(sheetIdx);
+        Sheet sheet = wb.getSheetAt(ExcelCommon.purchaseSheetIndex - 1);
         if (sheet == null) {
             log.error("sheet is null. Open sheet failed");
             return;
         }
         for (Row row : sheet) {
             int rowNum = row.getRowNum();
-            if (rowNum < purchaseFirstDataRow)
+            if (rowNum < ExcelCommon.purchaseFirstDataRow)
                 continue;
 
             //int columnCount = row.getPhysicalNumberOfCells();
             try {
-                String kitName = getKitName(row, purchaseKitColumn);
-                String partNum = getPartNumber(row, purchasePartColumn);
+                String kitName = getKitName(row, ExcelCommon.purchaseKitColumn);
+                String partNum = getPartNumber(row, ExcelCommon.purchasePartColumn);
                 if (kitName.isEmpty() && partNum.isEmpty())
                     continue;
 
                 if (!collection.belongToRotateItem(kitName, partNum))
                     continue;
 
-                String po = getPo(row, purchasePoColumn);
+                String po = getPo(row, ExcelCommon.purchasePoColumn);
                 if (po.isEmpty())
                     continue;
 
-                String grDate = getGrDateQty(row, purchaseGrDateColumn);
-                int grQty = getGrQty(row, purchaseGrQtyColumn);
+                String grDate = getGrDateQty(row, ExcelCommon.purchaseGrDateColumn);
+                int grQty = getGrQty(row, ExcelCommon.purchaseGrQtyColumn);
 
-                int applyQty = getApQty(row, purchaseApQtyColumn);
-                int applySet = getApplySet(row, purchaseApSetColumn);
-                String remark = getRemark(row, purchaseRemarkColumn);
+                int applyQty = getApQty(row, ExcelCommon.purchaseApQtyColumn);
+                int applySet = getApplySet(row, ExcelCommon.purchaseApSetColumn);
+                String remark = getRemark(row, ExcelCommon.purchaseRemarkColumn);
 
                 collection.addPurchase(kitName, partNum,
                         new PurchaseItem(rowNum, po, grDate, grQty, applyQty, applySet, remark));
@@ -542,11 +456,11 @@ public class ExcelParser {
         rotateItemList.sort(Comparator.comparing(RotateItem::getRowNum));
 
         try {
-            OPCPackage pkg = OPCPackage.open(new File(rotateFilePath));
+            OPCPackage pkg = OPCPackage.open(new File(ExcelCommon.rotateFilePath));
             XSSFWorkbook wb = new XSSFWorkbook(pkg);
             //Workbook wb = getWorkbook(rotateFilePath);
 
-            Sheet sheet = wb.getSheetAt(sheetIdx);
+            Sheet sheet = wb.getSheetAt(ExcelCommon.rotateSheetIndex - 1);
             if (sheet == null) {
                 log.error("sheet is null. Open sheet failed");
                 return;
@@ -558,9 +472,9 @@ public class ExcelParser {
             for (Row row : sheet) {
                 int rowNum = row.getRowNum();
                 if (rowNum == rotateItem.getRowNum()) {
-                    cell = row.getCell(rotateApQtyColumn);
+                    cell = row.getCell(ExcelCommon.rotateApQtyColumn);
                     if (cell == null)
-                        cell = row.createCell(rotateApQtyColumn, CellType.NUMERIC);
+                        cell = row.createCell(ExcelCommon.rotateApQtyColumn, CellType.NUMERIC);
 
                     cell.setCellValue(rotateItem.getStockApplyQtyTotal());
 
@@ -717,9 +631,9 @@ public class ExcelParser {
 //        }
 
 //
-            OPCPackage pkg = OPCPackage.open(new File(purchaseFilePath));
+            OPCPackage pkg = OPCPackage.open(new File(ExcelCommon.purchaseFilePath));
             XSSFWorkbook wb = new XSSFWorkbook(pkg);
-            Sheet sheet = wb.getSheetAt(sheetIdx);
+            Sheet sheet = wb.getSheetAt(ExcelCommon.purchaseSheetIndex - 1);
             if (sheet == null) {
                 log.error("sheet is null. Open sheet failed");
                 return;
@@ -731,9 +645,9 @@ public class ExcelParser {
             for (Row row : sheet) {
                 int rowNum = row.getRowNum();
                 if (rowNum == item.getRowNum()) {
-                    cell = row.getCell(purchaseApQtyColumn);
+                    cell = row.getCell(ExcelCommon.purchaseApQtyColumn);
                     if (cell == null)
-                        cell = row.createCell(purchaseApQtyColumn, CellType.NUMERIC);
+                        cell = row.createCell(ExcelCommon.purchaseApQtyColumn, CellType.NUMERIC);
 
                     cell.setCellValue(item.getApplyQty());
 
@@ -783,84 +697,8 @@ public class ExcelParser {
         return workbookNames;
     }
 
-    public String excelColumnToLetter(int col) {
-
-        int excelColNum = col + 1;
-        StringBuilder colRef = new StringBuilder(2);
-        int colRemain = excelColNum;
-
-        while(colRemain > 0) {
-            int thisPart = colRemain % 26;
-            if(thisPart == 0) {
-                thisPart = 26;
-            }
-
-            colRemain = (colRemain - thisPart) / 26;
-            char colChar = (char)(thisPart + 64);
-            colRef.insert(0, colChar);
-        }
-
-        return colRef.toString();
-    }
-
-    public void writeCell(Dispatch sheet, int row, int col, String data) {
-        String pos = excelColumnToLetter(col) + row;
-        Dispatch cell = Dispatch.invoke(sheet, "Range", Dispatch.Get, new Object[]{pos}, new int[1]).toDispatch();
-        Dispatch.put(cell, "Value", data);
-    }
-
-    public void test() {
-        List<PurchaseItem> itemList = collection.getPurchaseItemList();
-        itemList.sort(Comparator.comparing(PurchaseItem::getRowNum));
 
 
-        ComThread.InitSTA(true);
-        final ActiveXComponent excel = new ActiveXComponent("Excel.Application");
-        try {
-            //excel.setProperty("EnableEvents", new Variant(false));
-            Dispatch.put(excel, "Visible", new Variant(true));
 
-            Dispatch workbooks = excel.getProperty("Workbooks").toDispatch();
-            Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant("D:\\RotateFiles\\ZMMPO006_130307-131104.xlsx")).toDispatch();
-            getOpenedWorkbooks();
-            Dispatch sheets = Dispatch.get(workbook, "Worksheets").toDispatch();//獲得所有的Sheet
-            int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
-            Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{1}, new int[1]).toDispatch();
-            String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
-            Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
-            Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
-            int rowCount = Dispatch.get(row, "Count").getInt();//excel的使用的行數
 
-            Dispatch a1 = Dispatch.invoke(sheet, "Range", Dispatch.Get, new Object[]{"A1"}, new int[1]).toDispatch();
-            Dispatch.put(a1, "Value", "123.456");
-
-            String a = CellReference.convertNumToColString(27);
-            String b = excelColumnToLetter(27);
-
-            int itemIdx = 0;
-            PurchaseItem item = itemList.get(itemIdx);
-            for (int rowNum = 1; rowNum < rowCount; rowNum++) {
-                if (rowNum == item.getRowNum()) {
-                    writeCell(sheet, rowNum, purchaseApQtyColumn, String.valueOf(item.getApplyQty()));
-
-                    itemIdx++;
-                    if (itemIdx >= itemList.size())
-                        break;
-
-                    item = itemList.get(itemIdx);
-                }
-            }
-            // Saves and closes
-//            Dispatch.call(workBook, "Save");
-//            com.jacob.com.Variant f = new com.jacob.com.Variant(true);
-//            Dispatch.call(workBook, "Close", f);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            //excel.invoke("Quit", new Variant[0]);
-            ComThread.Release();
-        }
-
-    }
 }

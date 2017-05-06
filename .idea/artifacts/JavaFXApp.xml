@@ -31,7 +31,11 @@
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/poi-ooxml-schemas-3.16.jar" path-in-jar="/" />
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/xmlbeans-2.6.0.jar" path-in-jar="/" />
         <element id="file-copy" path="$PROJECT_DIR$/src/log4j2.xml" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/jacob.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/xlsx-streamer-1.1.0.jar" path-in-jar="/" />
       </element>
+      <element id="file-copy" path="$PROJECT_DIR$/resources/jacob-1.18-x64.dll" />
+      <element id="file-copy" path="$PROJECT_DIR$/resources/jacob-1.18-x86.dll" />
     </root>
   </artifact>
 </component>

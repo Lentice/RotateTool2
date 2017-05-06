@@ -48,43 +48,23 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
 
     public void setStock(StockItem stockItem) {
         this.stockItem = stockItem;
-
-        stockItem.addPurchaseGrQtyTotal(getGrQty());
-        stockItem.addPurchaseApQtyTotal(getApplyQty());
-        stockItem.addPurchaseApSetTotal(getApplySet());
-
-        this.grQty.addListener((observable, oldValue, newValue) ->
-                stockItem.addPurchaseGrQtyTotal(newValue.intValue() - oldValue.intValue()));
-
-        this.applyQty.addListener((observable, oldValue, newValue) ->
-                stockItem.addPurchaseApQtyTotal(newValue.intValue() - oldValue.intValue()));
-
-        this.applySet.addListener((observable, oldValue, newValue) ->
-                stockItem.addPurchaseApSetTotal(newValue.intValue() - oldValue.intValue()));
     }
 
     public void setRotate(RotateItem rotateItem, boolean isNoneStock) {
         this.isNoneStock = isNoneStock;
         this.rotateItem = rotateItem;
+    }
 
-        rotateItem.addPurchaseAllApSetTotal(getApplySet());
-        this.applySet.addListener((observable, oldValue, newValue) ->
-                rotateItem.addPurchaseAllApSetTotal(newValue.intValue() - oldValue.intValue()));
+    public int compareTo(PurchaseItem item) {
+        int value = this.getGrDate().compareTo(item.getGrDate());
+        if (value != 0)
+            return value;
 
-        if (isNoneStock) {
-            rotateItem.addNoneStPurchaseApQtyTotal(getApplyQty());
-            rotateItem.addNoneStPurchaseApSetTotal(getApplySet());
+        value = this.getPo().compareTo(item.getPo());
+        if (value != 0)
+            return value;
 
-            this.applyQty.addListener((observable, oldValue, newValue) ->
-                    rotateItem.addNoneStPurchaseApQtyTotal(newValue.intValue() - oldValue.intValue()));
-
-            this.applySet.addListener((observable, oldValue, newValue) ->
-                    rotateItem.addNoneStPurchaseApSetTotal(newValue.intValue() - oldValue.intValue()));
-        } else {
-//            rotateItem.addStockGrQtyTotal(getGrQty());
-//            this.grQty.addListener((observable, oldValue, newValue) ->
-//                    rotateItem.addStockGrQtyTotal(newValue.intValue() - oldValue.intValue()));
-        }
+        return this.getRotateItem().getPartNumber().compareTo(item.getRotateItem().getPartNumber());
     }
 
     public RotateItem getRotateItem() {
@@ -133,6 +113,10 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
 
     public IntegerProperty applySetProperty() {
         return applySet;
+    }
+
+    public String getRemark() {
+        return remark.get();
     }
 
     public StringProperty remarkProperty() {

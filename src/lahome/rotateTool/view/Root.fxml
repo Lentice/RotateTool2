@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXToggleButton?>
 <?import com.jfoenix.controls.JFXTreeTableColumn?>
 <?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.geometry.Insets?>
@@ -65,7 +66,7 @@
                                           <DropShadow />
                                        </effect>
                                     </JFXButton>
-                                    <JFXButton fx:id="saveFiles" focusTraversable="false" layoutX="486.0" layoutY="596.0" onMouseClicked="#handleSaveFiles" prefHeight="35.0" prefWidth="93.0" ripplerFill="#1dd023" style="-fx-background-color: #2E7D32;" text="存檔" textFill="WHITE" textOverrun="CLIP">
+                                    <JFXButton fx:id="saveFilesButton" focusTraversable="false" layoutX="486.0" layoutY="596.0" onMouseClicked="#handleSaveFiles" prefHeight="35.0" prefWidth="93.0" ripplerFill="#1dd023" style="-fx-background-color: #2E7D32;" text="存檔" textFill="WHITE" textOverrun="CLIP" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="149.0">
                                        <font>
                                           <Font size="17.0" />
                                        </font>
@@ -620,17 +621,13 @@
                                     </AnchorPane>
                                     <AnchorPane SplitPane.resizableWithParent="false">
                                        <children>
-                                          <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Label focusTraversable="false" text="ZMM &quot;NOT&quot; in stock" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                             <font>
+                                                <Font name="System Bold" size="18.0" />
+                                             </font>
+                                          </Label>
+                                          <VBox maxHeight="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
                                              <children>
-                                                <Label focusTraversable="false" text="ZMM &quot;NOT&quot; in stock">
-                                                   <font>
-                                                      <Font name="System Bold" size="18.0" />
-                                                   </font>
-                                                   <VBox.margin>
-                                                      <Insets bottom="5.0" left="5.0" top="5.0" />
-                                                   </VBox.margin>
-                                                </Label>
-                                                <VBox />
                                                 <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
                                                    <children>
                                                       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
@@ -761,7 +758,7 @@
                                                       </HBox>
                                                       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #FFF176;">
                                                          <children>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current PO:">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current PO &amp; Part:">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -841,86 +838,81 @@
                                           </AnchorPane>
                                           <AnchorPane SplitPane.resizableWithParent="false">
                                              <children>
-                                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <Label fx:id="purchaseTableTitle" focusTraversable="false" text="ZMM" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <JFXToggleButton fx:id="purchaseShowAllToggle" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="24.0" text="Show All" toggleColor="#009485" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0" />
+                                                <VBox maxHeight="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
                                                    <children>
-                                                      <Label fx:id="purchaseTableTile" focusTraversable="false" text="ZMM">
-                                                         <font>
-                                                            <Font name="System Bold" size="18.0" />
-                                                         </font>
-                                                         <VBox.margin>
-                                                            <Insets bottom="5.0" left="5.0" top="5.0" />
-                                                         </VBox.margin>
-                                                      </Label>
-                                                      <VBox>
+                                                      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
                                                          <children>
-                                                            <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
-                                                               <children>
-                                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                     <HBox.margin>
-                                                                        <Insets />
-                                                                     </HBox.margin>
-                                                                  </Text>
-                                                                  <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
-                                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GR Qty:">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                     <HBox.margin>
-                                                                        <Insets />
-                                                                     </HBox.margin>
-                                                                  </Text>
-                                                                  <Label fx:id="purchaseGrQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                  </Label>
-                                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Qty:">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                     <HBox.margin>
-                                                                        <Insets />
-                                                                     </HBox.margin>
-                                                                  </Text>
-                                                                  <Label fx:id="purchaseApQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                  </Label>
-                                                                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Set:">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                     <HBox.margin>
-                                                                        <Insets />
-                                                                     </HBox.margin>
-                                                                  </Text>
-                                                                  <Label fx:id="purchaseApSetTotal" focusTraversable="false" minWidth="45.0" text="0">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                  </Label>
-                                                               </children>
-                                                               <padding>
-                                                                  <Insets left="10.0" right="10.0" />
-                                                               </padding>
-                                                            </HBox>
-                                                            <JFXTreeTableView fx:id="purchaseTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
-                                                               <columns>
-                                                                  <JFXTreeTableColumn fx:id="purchaseNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
-                                                                  <JFXTreeTableColumn fx:id="purchasePartNumColumn" minWidth="20.0" prefWidth="143.0" text="PartNum" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseGrDateColumn" minWidth="20.0" prefWidth="143.0" text="GR Date" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseGrQtyColumn" minWidth="20.0" prefWidth="64.0" text="GR Qty" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseApQtyColumn" minWidth="20.0" prefWidth="72.0" text="Ap Qty" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseApplySetColumn" minWidth="20.0" prefWidth="76.0" text="Ap Set" />
-                                                                  <JFXTreeTableColumn fx:id="purchaseRemarkColumn" minWidth="0.0" prefWidth="8.0" text="Remark" />
-                                                               </columns>
-                                                            </JFXTreeTableView>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GR Qty:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="purchaseGrQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Qty:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="purchaseApQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Set:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="purchaseApSetTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
                                                          </children>
-                                                      </VBox>
+                                                         <padding>
+                                                            <Insets left="10.0" right="10.0" />
+                                                         </padding>
+                                                      </HBox>
+                                                      <JFXTreeTableView fx:id="purchaseTreeTableView" editable="true" prefHeight="9999.0" showRoot="false">
+                                                         <columns>
+                                                            <JFXTreeTableColumn fx:id="purchaseNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
+                                                            <JFXTreeTableColumn fx:id="purchasePartNumColumn" minWidth="20.0" prefWidth="143.0" text="PartNum" />
+                                                            <JFXTreeTableColumn fx:id="purchasePoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
+                                                            <JFXTreeTableColumn fx:id="purchaseGrDateColumn" minWidth="20.0" prefWidth="143.0" text="GR Date" />
+                                                            <JFXTreeTableColumn fx:id="purchaseGrQtyColumn" minWidth="20.0" prefWidth="64.0" text="GR Qty" />
+                                                            <JFXTreeTableColumn fx:id="purchaseApQtyColumn" minWidth="20.0" prefWidth="72.0" text="Ap Qty" />
+                                                            <JFXTreeTableColumn fx:id="purchaseApplySetColumn" minWidth="20.0" prefWidth="76.0" text="Ap Set" />
+                                                            <JFXTreeTableColumn fx:id="purchaseRemarkColumn" minWidth="0.0" prefWidth="8.0" text="Remark" />
+                                                         </columns>
+                                                      </JFXTreeTableView>
                                                    </children>
                                                 </VBox>
                                              </children>

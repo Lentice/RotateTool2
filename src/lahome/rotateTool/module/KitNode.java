@@ -12,14 +12,6 @@ public class KitNode {
 
     private ObservableList<RotateItem> PartsList = FXCollections.observableArrayList();
 
-    private IntegerProperty purchaseAllApSetTotal = new SimpleIntegerProperty(0);
-
-    private IntegerProperty stockQtyTotal = new SimpleIntegerProperty(0);
-
-    public KitNode() {
-
-    }
-
     public void addPart(RotateItem item) {
         if (item.isDuplicate())
             return;
@@ -28,22 +20,6 @@ public class KitNode {
 
         PartsList.add(item);
         item.setKitNode(this);
-    }
-
-    public IntegerProperty purchaseAllApSetTotalProperty() {
-        return purchaseAllApSetTotal;
-    }
-
-    public void addPurchaseAllApSetTotal(int set) {
-        purchaseAllApSetTotal.set(purchaseAllApSetTotal.intValue() + set);
-    }
-
-    public IntegerProperty stockQtyTotalProperty() {
-        return stockQtyTotal;
-    }
-
-    public void addStockQtyTotal(int qty) {
-        stockQtyTotal.set(stockQtyTotal.intValue() + qty);
     }
 
     public RotateItem getPart(String partNum) {
@@ -64,25 +40,7 @@ public class KitNode {
         for (RotateItem rotateItem : PartsList) {
             list.addAll(rotateItem.getStockItemObsList());
         }
-
-        // sort by Gr Date by default
-        list.sort((o1, o2) -> {
-            if (o2.getEarliestGrDate().isEmpty()) {
-                return -1;
-            } else if (o1.getEarliestGrDate().isEmpty()) {
-                return 1;
-            } else {
-                int value = o1.getEarliestGrDate().compareTo(o2.getEarliestGrDate());
-                if (value != 0)
-                    return value;
-
-                value = o1.getPo().compareTo(o2.getPo());
-                if (value != 0)
-                    return value;
-
-                return o1.getRotateItem().getPartNumber().compareTo(o2.getRotateItem().getPartNumber());
-            }
-        });
+        list.sort(StockItem::compareTo);
 
         return list;
     }
@@ -90,25 +48,10 @@ public class KitNode {
     public ObservableList<PurchaseItem> getPurchaseItemList() {
         ObservableList<PurchaseItem> list = FXCollections.observableArrayList();
         for (RotateItem rotateItem : PartsList) {
-            for (StockItem stockItem : rotateItem.getStockItemObsList()) {
-                if (stockItem.isMainStockItem()) {
-                    list.addAll(stockItem.getPurchaseItems());
-                }
-            }
+            list.addAll(rotateItem.getPurchaseItemList());
         }
 
-        // sort by Gr Date by default
-        list.sort((o1, o2) -> {
-            int value = o1.getGrDate().compareTo(o2.getGrDate());
-            if (value != 0)
-                return value;
-
-            value = o1.getPo().compareTo(o2.getPo());
-            if (value != 0)
-                return value;
-
-            return o1.getRotateItem().getPartNumber().compareTo(o2.getRotateItem().getPartNumber());
-        });
+        list.sort(PurchaseItem::compareTo);
 
 
         return list;
@@ -124,18 +67,7 @@ public class KitNode {
             }
         }
 
-        // sort by Gr Date by default
-        list.sort((o1, o2) -> {
-            int value = o1.getGrDate().compareTo(o2.getGrDate());
-            if (value != 0)
-                return value;
-
-            value = o1.getPo().compareTo(o2.getPo());
-            if (value != 0)
-                return value;
-
-            return o1.getRotateItem().getPartNumber().compareTo(o2.getRotateItem().getPartNumber());
-        });
+        list.sort(PurchaseItem::compareTo);
 
 
         return list;
@@ -147,27 +79,34 @@ public class KitNode {
             list.addAll(rotateItem.getNoneStockPurchaseItemObsList());
         }
 
-        // sort by Gr Date by default
-        list.sort((o1, o2) -> {
-            int value = o1.getGrDate().compareTo(o2.getGrDate());
-            if (value != 0)
-                return value;
-
-            value = o1.getPo().compareTo(o2.getPo());
-            if (value != 0)
-                return value;
-
-            return o1.getRotateItem().getPartNumber().compareTo(o2.getRotateItem().getPartNumber());
-        });
+        list.sort(PurchaseItem::compareTo);
 
         return list;
     }
 
-    public IntegerProperty getPmQtyProperty() {
+    public ObservableList<PurchaseItem> getStAndNoneStPurchaseItemList() {
+        ObservableList<PurchaseItem> list = FXCollections.observableArrayList();
+        for (RotateItem rotateItem : PartsList) {
+            for (StockItem stockItem : rotateItem.getStockItemObsList()) {
+                if (stockItem.isMainStockItem()) {
+                    list.addAll(stockItem.getPurchaseItems());
+                }
+            }
+        }
+        for (RotateItem rotateItem : PartsList) {
+            list.addAll(rotateItem.getNoneStockPurchaseItemObsList());
+        }
+
+        list.sort(PurchaseItem::compareTo);
+
+        return list;
+    }
+
+    public int pmQtyProperty() {
         int pmQtyTotal = 0;
         for (RotateItem rotateItem : PartsList) {
             pmQtyTotal += rotateItem.getPmQty();
         }
-        return new SimpleIntegerProperty(pmQtyTotal);
+        return pmQtyTotal;
     }
 }
