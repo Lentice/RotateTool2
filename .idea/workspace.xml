@@ -8,11 +8,7 @@
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lahome/rotateTool/module/StockItem.java" afterPath="$PROJECT_DIR$/src/lahome/rotateTool/module/StockItem.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lahome/rotateTool/view/Root.fxml" afterPath="$PROJECT_DIR$/src/lahome/rotateTool/view/Root.fxml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lahome/rotateTool/view/RootController.java" afterPath="$PROJECT_DIR$/src/lahome/rotateTool/view/RootController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lahome/rotateTool/view/RotateTool.css" afterPath="$PROJECT_DIR$/src/lahome/rotateTool/view/RotateTool.css" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -79,16 +75,16 @@
       <file leaf-file-name="RootController.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/view/RootController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="254">
-              <caret line="1171" column="40" lean-forward="true" selection-start-line="1171" selection-start-column="40" selection-end-line="1171" selection-end-column="40" />
+            <state relative-caret-position="313">
+              <caret line="1402" column="48" lean-forward="false" selection-start-line="1402" selection-start-column="48" selection-end-line="1402" selection-end-column="48" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#39089#39572#0" expanded="true" />
                 <element signature="e#39571#39572#0" expanded="true" />
                 <element signature="e#43404#43896#0" expanded="true" />
                 <element signature="e#43895#43896#0" expanded="true" />
-                <element signature="e#47613#48111#0" expanded="true" />
-                <element signature="e#48110#48111#0" expanded="true" />
+                <element signature="e#47631#48129#0" expanded="true" />
+                <element signature="e#48128#48129#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -97,9 +93,10 @@
       <file leaf-file-name="RotateItem.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/module/RotateItem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
-              <caret line="106" column="0" lean-forward="false" selection-start-line="106" selection-start-column="0" selection-end-line="106" selection-end-column="0" />
+            <state relative-caret-position="172">
+              <caret line="142" column="60" lean-forward="true" selection-start-line="142" selection-start-column="60" selection-end-line="142" selection-end-column="60" />
               <folding>
+                <element signature="e#3545#3546#0" expanded="true" />
                 <element signature="e#3573#3574#0" expanded="true" />
               </folding>
             </state>
@@ -152,16 +149,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IntegerTextFieldEditorBuilder.class" pinned="false" current-in-tab="false">
-        <entry file="jar://$PROJECT_DIR$/Libs/jfoenix.jar!/com/jfoenix/controls/cells/editors/IntegerTextFieldEditorBuilder.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="18" column="58" lean-forward="false" selection-start-line="18" selection-start-column="58" selection-end-line="18" selection-end-column="58" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="StockItem.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/module/StockItem.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -189,14 +176,24 @@
       </file>
       <file leaf-file-name="Root.fxml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/view/Root.fxml">
-          <provider selected="true" editor-type-id="text-editor">
+          <provider editor-type-id="text-editor">
             <state relative-caret-position="14">
               <caret line="687" column="130" lean-forward="false" selection-start-line="687" selection-start-column="130" selection-end-line="687" selection-end-column="130" />
               <folding />
             </state>
           </provider>
-          <provider editor-type-id="JavaFX-Scene-Builder">
+          <provider selected="true" editor-type-id="JavaFX-Scene-Builder">
             <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="KitNode.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/module/KitNode.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="380">
+              <caret line="42" column="40" lean-forward="true" selection-start-line="42" selection-start-column="40" selection-end-line="42" selection-end-column="40" />
+              <folding />
+            </state>
           </provider>
         </entry>
       </file>
@@ -211,7 +208,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>noneStPurchasePartNumColumn</find>
       <find>stockPartNumCombo</find>
       <find>selectedRotateItem</find>
       <find>selectedStockItem</find>
@@ -238,9 +234,10 @@
       <find>fill</find>
       <find>commitEdit</find>
       <find>TableView</find>
+      <find>stockTableView.getItems().clear();</find>
+      <find>stockTableView.getItems().clear();</find>
       <find>JFXTreeTableView</find>
-      <find>stockTableView.getItems().clear();</find>
-      <find>stockTableView.getItems().clear();</find>
+      <find>getItems().clear();</find>
     </findStrings>
   </component>
   <component name="FindManager">
@@ -249,6 +246,11 @@
     </FindUsagesManager>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Lentice &lt;lentice@gmail.com&gt;" />
+      </list>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GradleLocalSettings">
@@ -277,8 +279,6 @@
         <option value="$PROJECT_DIR$/src/lahome/rotateTool/module/PurchaseItem.java" />
         <option value="$PROJECT_DIR$/src/lahome/rotateTool/Util/ExcelCommon.java" />
         <option value="$PROJECT_DIR$/Libs/jfoenix.jar!/com/jfoenix/controls/JFXTreeTableView.class" />
-        <option value="$PROJECT_DIR$/src/lahome/rotateTool/module/RotateItem.java" />
-        <option value="$PROJECT_DIR$/src/lahome/rotateTool/module/KitNode.java" />
         <option value="$PROJECT_DIR$/src/lahome/rotateTool/Util/ExcelParser.java" />
         <option value="$PROJECT_DIR$/src/log4j2.xml" />
         <option value="$PROJECT_DIR$/src/lahome/rotateTool/Util/ExcelSaver.java" />
@@ -288,6 +288,8 @@
         <option value="$PROJECT_DIR$/src/lahome/rotateTool/view/RotateTool.css" />
         <option value="$PROJECT_DIR$/src/lahome/rotateTool/module/StockItem.java" />
         <option value="$PROJECT_DIR$/src/lahome/rotateTool/view/Root.fxml" />
+        <option value="$PROJECT_DIR$/src/lahome/rotateTool/module/KitNode.java" />
+        <option value="$PROJECT_DIR$/src/lahome/rotateTool/module/RotateItem.java" />
         <option value="$PROJECT_DIR$/src/lahome/rotateTool/view/RootController.java" />
       </list>
     </option>
@@ -611,20 +613,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="RotateTool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="RotateTool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Libs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
     </panes>
@@ -923,7 +911,14 @@
       <option name="project" value="LOCAL" />
       <updated>1494089910517</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Change JFXTreeTableView to Table View.&#10;Rotate table is not changed yet.">
+      <created>1494129501140</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1494129501140</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -1019,7 +1014,8 @@
     <MESSAGE value="First version" />
     <MESSAGE value="change UI" />
     <MESSAGE value="implement data needed." />
-    <option name="LAST_COMMIT_MESSAGE" value="implement data needed." />
+    <MESSAGE value="Change JFXTreeTableView to Table View.&#10;Rotate table is not changed yet." />
+    <option name="LAST_COMMIT_MESSAGE" value="Change JFXTreeTableView to Table View.&#10;Rotate table is not changed yet." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1345,14 +1341,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/module/KitNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="50" column="0" lean-forward="false" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/Util/ExcelParser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="253">
@@ -1484,17 +1472,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/view/Root.fxml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14">
-          <caret line="687" column="130" lean-forward="false" selection-start-line="687" selection-start-column="130" selection-end-line="687" selection-end-column="130" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="JavaFX-Scene-Builder">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-34">
@@ -1503,11 +1480,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/view/Root.fxml">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="14">
+          <caret line="687" column="130" lean-forward="false" selection-start-line="687" selection-start-column="130" selection-end-line="687" selection-end-column="130" />
+          <folding />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="JavaFX-Scene-Builder">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/module/KitNode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="42" column="40" lean-forward="true" selection-start-line="42" selection-start-column="40" selection-end-line="42" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/module/RotateItem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="106" column="0" lean-forward="false" selection-start-line="106" selection-start-column="0" selection-end-line="106" selection-end-column="0" />
+        <state relative-caret-position="172">
+          <caret line="142" column="60" lean-forward="true" selection-start-line="142" selection-start-column="60" selection-end-line="142" selection-end-column="60" />
           <folding>
+            <element signature="e#3545#3546#0" expanded="true" />
             <element signature="e#3573#3574#0" expanded="true" />
           </folding>
         </state>
@@ -1515,16 +1512,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/view/RootController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="1171" column="40" lean-forward="true" selection-start-line="1171" selection-start-column="40" selection-end-line="1171" selection-end-column="40" />
+        <state relative-caret-position="313">
+          <caret line="1402" column="48" lean-forward="false" selection-start-line="1402" selection-start-column="48" selection-end-line="1402" selection-end-column="48" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#39089#39572#0" expanded="true" />
             <element signature="e#39571#39572#0" expanded="true" />
             <element signature="e#43404#43896#0" expanded="true" />
             <element signature="e#43895#43896#0" expanded="true" />
-            <element signature="e#47613#48111#0" expanded="true" />
-            <element signature="e#48110#48111#0" expanded="true" />
+            <element signature="e#47631#48129#0" expanded="true" />
+            <element signature="e#48128#48129#0" expanded="true" />
           </folding>
         </state>
       </provider>

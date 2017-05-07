@@ -1084,8 +1084,8 @@ public class RootController {
         });
 
         noneStPurchaseApplySetColumn.setCellValueFactory(cellData -> cellData.getValue().applySetProperty());
-        noneStPurchaseApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
-        noneStPurchaseApQtyColumn.setOnEditCommit(cellData -> {
+        noneStPurchaseApplySetColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
+        noneStPurchaseApplySetColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .applySetProperty().set(cellData.getNewValue().intValue());
             updateNoneStPurchaseTableTotal();
@@ -1093,8 +1093,8 @@ public class RootController {
         });
 
         noneStPurchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
-        purchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        purchaseRemarkColumn.setOnEditCommit(cellData -> {
+        noneStPurchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        noneStPurchaseRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .remarkProperty().set(cellData.getNewValue());
             stockTableView.requestFocus();
