@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
+Class-Path: dll/*
 Main-Class: lahome.rotateTool.Main
 

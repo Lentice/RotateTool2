@@ -12,11 +12,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.converter.DefaultStringConverter;
+import javafx.util.converter.NumberStringConverter;
 import lahome.rotateTool.Main;
 import lahome.rotateTool.Util.ExcelParser;
 import lahome.rotateTool.Util.ExcelCommon;
@@ -146,7 +150,7 @@ public class RootController {
     private JFXTextField rotateFilterField;
 
     @FXML
-    private JFXTreeTableView<RotateItem> rotateTreeTableView;
+    private JFXTreeTableView<RotateItem> rotateTableView;
 
     @FXML
     private JFXTreeTableColumn<RotateItem, String> rotateKitColumn;
@@ -182,34 +186,34 @@ public class RootController {
     private ComboBox<String> stockPartNumCombo;
 
     @FXML
-    private JFXTreeTableView<StockItem> stockTreeTableView;
+    private TableView<StockItem> stockTableView;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, String> stockNoColumn;
+    private TableColumn<StockItem, String> stockNoColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, String> stockPartNumColumn;
+    private TableColumn<StockItem, String> stockPartNumColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, String> stockPoColumn;
+    private TableColumn<StockItem, String> stockPoColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, String> stockLotColumn;
+    private TableColumn<StockItem, String> stockLotColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, String> stockDcColumn;
+    private TableColumn<StockItem, String> stockDcColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, String> stockGrDateColumn;
+    private TableColumn<StockItem, String> stockGrDateColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, Number> stockStQtyColumn;
+    private TableColumn<StockItem, Number> stockStQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, Number> stockApQtyColumn;
+    private TableColumn<StockItem, Number> stockApQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<StockItem, String> stockRemarkColumn;
+    private TableColumn<StockItem, String> stockRemarkColumn;
 
     @FXML
     private Label stockPmQty;
@@ -236,31 +240,31 @@ public class RootController {
     private JFXToggleButton purchaseShowAllToggle;
 
     @FXML
-    private JFXTreeTableView<PurchaseItem> purchaseTreeTableView;
+    private TableView<PurchaseItem> purchaseTableView;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> purchaseNoColumn;
+    private TableColumn<PurchaseItem, String> purchaseNoColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> purchasePartNumColumn;
+    private TableColumn<PurchaseItem, String> purchasePartNumColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> purchasePoColumn;
+    private TableColumn<PurchaseItem, String> purchasePoColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> purchaseGrDateColumn;
+    private TableColumn<PurchaseItem, String> purchaseGrDateColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, Number> purchaseGrQtyColumn;
+    private TableColumn<PurchaseItem, Number> purchaseGrQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, Number> purchaseApQtyColumn;
+    private TableColumn<PurchaseItem, Number> purchaseApQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, Number> purchaseApplySetColumn;
+    private TableColumn<PurchaseItem, Number> purchaseApplySetColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> purchaseRemarkColumn;
+    private TableColumn<PurchaseItem, String> purchaseRemarkColumn;
 
     @FXML
     private Label purchaseGrQtyTotal;
@@ -272,31 +276,31 @@ public class RootController {
     private Label purchaseApSetTotal;
 
     @FXML
-    private JFXTreeTableView<PurchaseItem> noneStPurchaseTreeTableView;
+    private TableView<PurchaseItem> noneStPurchaseTreeTableView;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> noneStPurchaseNoColumn;
+    private TableColumn<PurchaseItem, String> noneStPurchaseNoColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> noneStPurchasePartNumColumn;
+    private TableColumn<PurchaseItem, String> noneStPurchasePartNumColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> noneStPurchasePoColumn;
+    private TableColumn<PurchaseItem, String> noneStPurchasePoColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> noneStPurchaseGrDateColumn;
+    private TableColumn<PurchaseItem, String> noneStPurchaseGrDateColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, Number> noneStPurchaseGrQtyColumn;
+    private TableColumn<PurchaseItem, Number> noneStPurchaseGrQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, Number> noneStPurchaseApQtyColumn;
+    private TableColumn<PurchaseItem, Number> noneStPurchaseApQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, Number> noneStPurchaseApplySetColumn;
+    private TableColumn<PurchaseItem, Number> noneStPurchaseApplySetColumn;
 
     @FXML
-    private JFXTreeTableColumn<PurchaseItem, String> noneStPurchaseRemarkColumn;
+    private TableColumn<PurchaseItem, String> noneStPurchaseRemarkColumn;
 
     @FXML
     private Label noneStPurchaseGrQtyTotal;
@@ -510,12 +514,12 @@ public class RootController {
             Node focusNode = scene.getFocusOwner();
 
             if (keyEvent.getCode() == KeyCode.F12) {
-                int row = rotateTreeTableView.getSelectionModel().getSelectedIndex();
+                int row = rotateTableView.getSelectionModel().getSelectedIndex();
                 row++;
-                if (row < rotateTreeTableView.getCurrentItemsCount()) {
-                    rotateTreeTableView.getSelectionModel().select(row, rotateApplySetColumn);
-                    rotateTreeTableView.scrollTo(Math.max(row - 3, 0));
-                    rotateTreeTableView.scrollToColumn(rotateApplySetColumn);
+                if (row < rotateTableView.getCurrentItemsCount()) {
+                    rotateTableView.getSelectionModel().select(row, rotateApplySetColumn);
+                    rotateTableView.scrollTo(Math.max(row - 3, 0));
+                    rotateTableView.scrollToColumn(rotateApplySetColumn);
                 }
                 focusNode.requestFocus();
 
@@ -525,12 +529,12 @@ public class RootController {
 
             if (keyEvent.getCode() == KeyCode.F11) {
 
-                int row = rotateTreeTableView.getSelectionModel().getSelectedIndex();
+                int row = rotateTableView.getSelectionModel().getSelectedIndex();
                 row--;
                 if (row >= 0) {
-                    rotateTreeTableView.getSelectionModel().select(row, rotateApplySetColumn);
-                    rotateTreeTableView.scrollTo(Math.max(row - 3, 0));
-                    rotateTreeTableView.scrollToColumn(rotateApplySetColumn);
+                    rotateTableView.getSelectionModel().select(row, rotateApplySetColumn);
+                    rotateTableView.scrollTo(Math.max(row - 3, 0));
+                    rotateTableView.scrollToColumn(rotateApplySetColumn);
                 }
                 focusNode.requestFocus();
 
@@ -637,10 +641,10 @@ public class RootController {
 
         final TreeItem<RotateItem> rotateRoot = new RecursiveTreeItem<>(
                 collection.getRotateObsList(), RecursiveTreeObject::getChildren);
-        rotateTreeTableView.setRoot(rotateRoot);
-        rotateTreeTableView.requestFocus();
-        if (rotateTreeTableView.getCurrentItemsCount() > 0) {
-            rotateTreeTableView.getSelectionModel().select(0, rotatePmQtyColumn);
+        rotateTableView.setRoot(rotateRoot);
+        rotateTableView.requestFocus();
+        if (rotateTableView.getCurrentItemsCount() > 0) {
+            rotateTableView.getSelectionModel().select(0, rotatePmQtyColumn);
         }
         rotatePartCount.setText(String.valueOf(collection.getRotateObsList().size()));
 
@@ -651,10 +655,6 @@ public class RootController {
     @FXML
     void handleSaveFiles() {
         log.info("Save File clicked");
-        //excelParser.saveRotateExcel();
-        //log.info("Save rotate table: Done");
-//        excelParser.savePurchaseExcel();
-//        log.info("Save purchase table: Done");
         ExcelSaver excelSaver = new ExcelSaver(collection);
 
         excelSaver.saveRotateToExcel();
@@ -677,7 +677,7 @@ public class RootController {
     }
 
     private void initialRotateTable() {
-        rotateTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
+        rotateTableView.getSelectionModel().setCellSelectionEnabled(true);
 
         rotateKitColumn.setStyle("-fx-alignment: top-left; ");
         rotatePartColumn.setStyle("-fx-alignment: top-left; ");
@@ -833,7 +833,7 @@ public class RootController {
         rotateApplySetColumn.setOnEditCommit(cellData -> {
             cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
                     .getValue().applySetProperty().set(cellData.getNewValue().intValue());
-            rotateTreeTableView.requestFocus();
+            rotateTableView.requestFocus();
         });
 
         rotateRemarkColumn.setCellValueFactory(cellData -> {
@@ -847,18 +847,18 @@ public class RootController {
         rotateRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
                     .getValue().remarkProperty().set(cellData.getNewValue());
-            rotateTreeTableView.requestFocus();
+            rotateTableView.requestFocus();
         });
 
-        rotateFilterField.textProperty().addListener((o, oldVal, newVal) -> rotateTreeTableView.setPredicate(itemProp -> {
+        rotateFilterField.textProperty().addListener((o, oldVal, newVal) -> rotateTableView.setPredicate(itemProp -> {
             final RotateItem item = itemProp.getValue();
             return item.kitNameProperty().get().contains(newVal) || item.partNumberProperty().get().contains(newVal);
         }));
 
-        rotateTreeTableView.getSelectionModel().selectedItemProperty().addListener(
+        rotateTableView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> selectedRotateItem(newValue));
 
-        rotateTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<RotateItem>() {
+        rotateTableView.setRowFactory(tv -> new JFXTreeTableRow<RotateItem>() {
             @Override
             public void updateItem(RotateItem item, boolean empty) {
                 super.updateItem(item, empty);
@@ -877,151 +877,74 @@ public class RootController {
     }
 
     private void initialStockTable() {
-        stockTreeTableView.setPlaceholder(new Label("庫存找不到符合項目"));
-        stockTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
+        stockTableView.setPlaceholder(new Label("庫存找不到符合項目"));
+        stockTableView.getSelectionModel().setCellSelectionEnabled(true);
+        stockTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        stockTableView.setEditable(true);
 
-        stockNoColumn.setStyle("-fx-alignment: top-left; ");
-        stockPartNumColumn.setStyle("-fx-alignment: top-left; ");
-        stockPoColumn.setStyle("-fx-alignment: top-left; ");
-        stockLotColumn.setStyle("-fx-alignment: top-left; ");
-        stockRemarkColumn.setStyle("-fx-alignment: top-left; ");
-
-        stockNoColumn.setCellValueFactory(cellData -> {
-            if (stockNoColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().getRotateItem().serialNoProperty();
-            } else {
-                return stockNoColumn.getComputedValue(cellData);
+        Callback<TableColumn<StockItem, String>, TableCell<StockItem, String>> readOnlyStringCell
+                = p -> new TextFieldTableCell<StockItem, String>(new DefaultStringConverter()) {
+            @Override
+            public void commitEdit(String newValue) {
             }
-        });
-        stockNoColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        };
 
-        stockPartNumColumn.setCellValueFactory(cellData -> {
-            if (stockPartNumColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().getRotateItem().partNumberProperty();
-            } else {
-                return stockPartNumColumn.getComputedValue(cellData);
+        Callback<TableColumn<StockItem, Number>, TableCell<StockItem, Number>> readOnlyNumberCell
+                = p -> new TextFieldTableCell<StockItem, Number>(new NumberStringConverter()) {
+            @Override
+            public void commitEdit(Number newValue) {
             }
-        });
-        stockPartNumColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        };
 
-        stockPoColumn.setCellValueFactory(cellData -> {
-            if (stockPoColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().poProperty();
-            } else {
-                return stockPoColumn.getComputedValue(cellData);
-            }
-        });
-        stockPoColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        stockNoColumn.setCellValueFactory(cellData -> cellData.getValue().getRotateItem().serialNoProperty());
+        stockNoColumn.setCellFactory(readOnlyStringCell);
 
-        stockLotColumn.setCellValueFactory(cellData -> {
-            if (stockLotColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().lotProperty();
-            } else {
-                return stockLotColumn.getComputedValue(cellData);
-            }
-        });
-        stockLotColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        stockPartNumColumn.setCellValueFactory(cellData -> cellData.getValue().getRotateItem().partNumberProperty());
+        stockPartNumColumn.setCellFactory(readOnlyStringCell);
 
-        stockDcColumn.setCellValueFactory(cellData -> {
-            if (stockDcColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().dcProperty();
-            } else {
-                return stockDcColumn.getComputedValue(cellData);
-            }
-        });
-        stockDcColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        stockPoColumn.setCellValueFactory(cellData -> cellData.getValue().poProperty());
+        stockPoColumn.setCellFactory(readOnlyStringCell);
+
+        stockLotColumn.setCellValueFactory(cellData -> cellData.getValue().lotProperty());
+        stockLotColumn.setCellFactory(readOnlyStringCell);
+
+        stockDcColumn.setCellValueFactory(cellData -> cellData.getValue().dcProperty());
+        stockDcColumn.setCellFactory(readOnlyStringCell);
 
 
-        stockGrDateColumn.setCellValueFactory(cellData -> {
-            if (stockGrDateColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().earliestGrDateProperty();
-            } else {
-                return stockGrDateColumn.getComputedValue(cellData);
-            }
-        });
-        stockGrDateColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<StockItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        stockGrDateColumn.setCellValueFactory(cellData -> cellData.getValue().earliestGrDateProperty());
+        stockGrDateColumn.setCellFactory(readOnlyStringCell);
 
-        stockStQtyColumn.setCellValueFactory(cellData -> {
-            if (stockStQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().stockQtyProperty();
-            } else {
-                return stockStQtyColumn.getComputedValue(cellData);
-            }
-        });
-        stockStQtyColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<StockItem, Number>(new IntegerTextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(Number newValue) {
-                    }
-                });
+        stockStQtyColumn.getStyleClass().add("my-table-column-right");
+        stockStQtyColumn.setCellValueFactory(cellData -> cellData.getValue().stockQtyProperty());
+        stockStQtyColumn.setCellFactory(readOnlyNumberCell);
 
-        stockApQtyColumn.setCellValueFactory(cellData -> {
-            if (stockApQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().applyQtyProperty();
-            } else {
-                return stockApQtyColumn.getComputedValue(cellData);
-            }
-        });
-        stockApQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
+        stockApQtyColumn.getStyleClass().add("my-table-column-right");
+        stockApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
+        stockApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         stockApQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().applyQtyProperty().set(cellData.getNewValue().intValue());
+            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
+                    .applyQtyProperty().set(cellData.getNewValue().intValue());
             updateStockTableTotal();
-            stockTreeTableView.requestFocus();
+            stockTableView.requestFocus();
         });
 
-        stockRemarkColumn.setCellValueFactory(cellData -> {
-            if (stockRemarkColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().remarkProperty();
-            } else {
-                return stockRemarkColumn.getComputedValue(cellData);
-            }
-        });
-        stockRemarkColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
+        stockRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
+        stockRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         stockRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().remarkProperty().set(cellData.getNewValue());
-            stockTreeTableView.requestFocus();
+            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
+                    .remarkProperty().set(cellData.getNewValue());
+            stockTableView.requestFocus();
         });
 
-        stockTreeTableView.getSelectionModel().selectedItemProperty().addListener(
+        stockTableView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> selectedStockItem(newValue));
 
-        stockTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<StockItem>() {
+        stockTableView.setRowFactory(param -> new TableRow<StockItem>() {
             @Override
             public void updateItem(StockItem item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item == null) {
+                if (item == null || empty) {
                     setStyle("");
                 } else if (item.getPo().compareTo(stockSelectedPo) == 0) {
                     setStyle("-fx-background-color: #FFF176;");
@@ -1033,269 +956,161 @@ public class RootController {
     }
 
     private void initialPurchaseTable() {
-        purchaseTreeTableView.setPlaceholder(new Label("ZMM 找不到符合項目"));
-        purchaseTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
-        //purchaseTreeTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        purchaseTableView.setPlaceholder(new Label("ZMM 找不到符合項目"));
+        purchaseTableView.getSelectionModel().setCellSelectionEnabled(true);
+        purchaseTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        purchaseTableView.setEditable(true);
 
-        purchaseNoColumn.setStyle("-fx-alignment: top-left; ");
-        purchaseNoColumn.setCellValueFactory(cellData -> {
-            if (purchaseNoColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().getRotateItem().serialNoProperty();
-            } else {
-                return purchaseNoColumn.getComputedValue(cellData);
+        Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> readOnlyStringCell
+                = p -> new TextFieldTableCell<PurchaseItem, String>(new DefaultStringConverter()) {
+            @Override
+            public void commitEdit(String newValue) {
             }
-        });
+        };
 
-        purchasePartNumColumn.setStyle("-fx-alignment: top-left; ");
-        purchasePartNumColumn.setCellValueFactory(cellData -> {
-            if (purchasePartNumColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().getRotateItem().partNumberProperty();
-            } else {
-                return purchasePartNumColumn.getComputedValue(cellData);
+        Callback<TableColumn<PurchaseItem, Number>, TableCell<PurchaseItem, Number>> readOnlyNumberCell
+                = p -> new TextFieldTableCell<PurchaseItem, Number>(new NumberStringConverter()) {
+            @Override
+            public void commitEdit(Number newValue) {
             }
-        });
-        purchasePartNumColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        };
 
-        purchasePoColumn.setStyle("-fx-alignment: top-left; ");
-        purchasePoColumn.setCellValueFactory(cellData -> {
-            if (purchasePoColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().poProperty();
-            } else {
-                return purchasePoColumn.getComputedValue(cellData);
-            }
-        });
-        purchasePoColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        purchaseNoColumn.setCellValueFactory(cellData -> cellData.getValue().getRotateItem().serialNoProperty());
+        purchaseNoColumn.setCellFactory(readOnlyStringCell);
 
-        purchaseGrDateColumn.setCellValueFactory(cellData -> {
-            if (purchaseGrDateColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().grDateProperty();
-            } else {
-                return purchaseGrDateColumn.getComputedValue(cellData);
-            }
-        });
-        purchaseGrDateColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        purchasePartNumColumn.setCellValueFactory(cellData -> cellData.getValue().getRotateItem().partNumberProperty());
+        purchasePartNumColumn.setCellFactory(readOnlyStringCell);
 
-        purchaseGrQtyColumn.setCellValueFactory(cellData -> {
-            if (purchaseGrQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().grQtyProperty();
-            } else {
-                return purchaseGrQtyColumn.getComputedValue(cellData);
-            }
-        });
-        purchaseGrQtyColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<PurchaseItem, Number>(new IntegerTextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(Number newValue) {
-                    }
-                });
+        purchasePoColumn.setCellValueFactory(cellData -> cellData.getValue().poProperty());
+        purchasePoColumn.setCellFactory(readOnlyStringCell);
 
-        purchaseApQtyColumn.setCellValueFactory(cellData -> {
-            if (purchaseApQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().applyQtyProperty();
-            } else {
-                return purchaseApQtyColumn.getComputedValue(cellData);
-            }
-        });
-        purchaseApQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
+        purchaseGrDateColumn.setCellValueFactory(cellData -> cellData.getValue().grDateProperty());
+        purchaseGrDateColumn.setCellFactory(readOnlyStringCell);
+
+        purchaseGrQtyColumn.getStyleClass().add("my-table-column-right");
+        purchaseGrQtyColumn.setCellValueFactory(cellData -> cellData.getValue().grQtyProperty());
+        purchaseGrQtyColumn.setCellFactory(readOnlyNumberCell);
+
+        purchaseApQtyColumn.getStyleClass().add("my-table-column-right");
+        purchaseApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
+        purchaseApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         purchaseApQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().applyQtyProperty().set(cellData.getNewValue().intValue());
+            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
+                    .applyQtyProperty().set(cellData.getNewValue().intValue());
             updatePurchaseTableTotal();
-            purchaseTreeTableView.requestFocus();
+            stockTableView.requestFocus();
         });
 
-        purchaseApplySetColumn.setCellValueFactory(cellData -> {
-            if (purchaseApplySetColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().applySetProperty();
-            } else {
-                return purchaseApplySetColumn.getComputedValue(cellData);
-            }
-        });
-        purchaseApplySetColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
+        purchaseApplySetColumn.getStyleClass().add("my-table-column-right");
+        purchaseApplySetColumn.setCellValueFactory(cellData -> cellData.getValue().applySetProperty());
+        purchaseApplySetColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         purchaseApplySetColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().applySetProperty().set(cellData.getNewValue().intValue());
+            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
+                    .applySetProperty().set(cellData.getNewValue().intValue());
             updatePurchaseTableTotal();
-            updateRotateTableTotal();
-            purchaseTreeTableView.requestFocus();
+            stockTableView.requestFocus();
         });
 
-        purchaseRemarkColumn.setCellValueFactory(cellData -> {
-            if (purchaseRemarkColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().remarkProperty();
-            } else {
-                return purchaseRemarkColumn.getComputedValue(cellData);
-            }
-        });
-        purchaseRemarkColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
+        purchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
+        purchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         purchaseRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().remarkProperty().set(cellData.getNewValue());
-            purchaseTreeTableView.requestFocus();
+            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
+                    .remarkProperty().set(cellData.getNewValue());
+            stockTableView.requestFocus();
         });
 
-        purchaseTreeTableView.getSelectionModel().selectedItemProperty().addListener(
+        purchaseTableView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> selectedPurchaseItem(newValue));
 
-        purchaseShowAllToggle.setOnAction(a -> {
-            purchaseShowAllChanged();
+        purchaseShowAllToggle.setOnAction(a -> purchaseShowAllChanged());
+
+        purchaseTableView.setRowFactory(param -> new TableRow<PurchaseItem>() {
+            @Override
+            public void updateItem(PurchaseItem item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setStyle("");
+                } else if (item.getPo().compareTo(purchaseSelectedPo) == 0) {
+                    setStyle("-fx-background-color: #FFF176;");
+                } else {
+                    setStyle("");
+                }
+            }
         });
-
-//        purchaseTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<PurchaseItem>() {
-//            @Override
-//            public void updateItem(PurchaseItem item, boolean empty) {
-//                super.updateItem(item, empty);
-//                if (item != null && item.getPo().compareTo(purchaseSelectedPo) == 0) {
-//                    setStyle("-fx-background-color: #FFF176;");
-//                } else {
-//                    setStyle("");
-//                }
-//            }
-//        });
-
     }
 
     private void initialNoneStockPurchaseTable() {
         noneStPurchaseTreeTableView.setPlaceholder(new Label("ZMM 找不到符合項目"));
         noneStPurchaseTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
-        //noneStPurchaseTreeTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        noneStPurchaseTreeTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        purchaseTableView.setEditable(true);
 
-        noneStPurchaseNoColumn.setStyle("-fx-alignment: top-left; ");
-        noneStPurchaseNoColumn.setCellValueFactory(cellData -> {
-            if (noneStPurchaseNoColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().getRotateItem().serialNoProperty();
-            } else {
-                return noneStPurchaseNoColumn.getComputedValue(cellData);
+        Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> readOnlyStringCell
+                = p -> new TextFieldTableCell<PurchaseItem, String>(new DefaultStringConverter()) {
+            @Override
+            public void commitEdit(String newValue) {
             }
-        });
+        };
 
-        noneStPurchasePartNumColumn.setStyle("-fx-alignment: top-left; ");
-        noneStPurchasePartNumColumn.setCellValueFactory(cellData -> {
-            if (noneStPurchasePartNumColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().getRotateItem().partNumberProperty();
-            } else {
-                return noneStPurchasePartNumColumn.getComputedValue(cellData);
+        Callback<TableColumn<PurchaseItem, Number>, TableCell<PurchaseItem, Number>> readOnlyNumberCell
+                = p -> new TextFieldTableCell<PurchaseItem, Number>(new NumberStringConverter()) {
+            @Override
+            public void commitEdit(Number newValue) {
             }
-        });
-        noneStPurchasePartNumColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        };
 
-        noneStPurchasePoColumn.setStyle("-fx-alignment: top-left; ");
-        noneStPurchasePoColumn.setCellValueFactory(cellData -> {
-            if (noneStPurchasePoColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().poProperty();
-            } else {
-                return noneStPurchasePoColumn.getComputedValue(cellData);
-            }
-        });
-        noneStPurchasePoColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        noneStPurchaseNoColumn.setCellValueFactory(cellData -> cellData.getValue().getRotateItem().serialNoProperty());
+        noneStPurchaseNoColumn.setCellFactory(readOnlyStringCell);
 
-        noneStPurchaseGrDateColumn.setCellValueFactory(cellData -> {
-            if (noneStPurchaseGrDateColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().grDateProperty();
-            } else {
-                return noneStPurchaseGrDateColumn.getComputedValue(cellData);
-            }
-        });
-        noneStPurchaseGrDateColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<PurchaseItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        noneStPurchasePartNumColumn.setCellValueFactory(cellData -> cellData.getValue().getRotateItem().partNumberProperty());
+        noneStPurchasePartNumColumn.setCellFactory(readOnlyStringCell);
 
-        noneStPurchaseGrQtyColumn.setCellValueFactory(cellData -> {
-            if (noneStPurchaseGrQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().grQtyProperty();
-            } else {
-                return noneStPurchaseGrQtyColumn.getComputedValue(cellData);
-            }
-        });
-        noneStPurchaseGrQtyColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<PurchaseItem, Number>(new IntegerTextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(Number newValue) {
-                    }
-                });
+        noneStPurchasePoColumn.setCellValueFactory(cellData -> cellData.getValue().poProperty());
+        noneStPurchasePoColumn.setCellFactory(readOnlyStringCell);
 
-        noneStPurchaseApQtyColumn.setCellValueFactory(cellData -> {
-            if (noneStPurchaseApQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().applyQtyProperty();
-            } else {
-                return noneStPurchaseApQtyColumn.getComputedValue(cellData);
-            }
-        });
-        noneStPurchaseApQtyColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
+        noneStPurchaseGrDateColumn.setCellValueFactory(cellData -> cellData.getValue().grDateProperty());
+        noneStPurchaseGrDateColumn.setCellFactory(readOnlyStringCell);
+
+        noneStPurchaseGrQtyColumn.setCellValueFactory(cellData -> cellData.getValue().grQtyProperty());
+        noneStPurchaseGrQtyColumn.setCellFactory(readOnlyNumberCell);
+
+        noneStPurchaseApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
+        noneStPurchaseApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         noneStPurchaseApQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().applyQtyProperty().set(cellData.getNewValue().intValue());
+            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
+                    .applyQtyProperty().set(cellData.getNewValue().intValue());
             updateNoneStPurchaseTableTotal();
-            noneStPurchaseTreeTableView.requestFocus();
+            stockTableView.requestFocus();
         });
 
-        noneStPurchaseApplySetColumn.setCellValueFactory(cellData -> {
-            if (noneStPurchaseApplySetColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().applySetProperty();
-            } else {
-                return noneStPurchaseApplySetColumn.getComputedValue(cellData);
-            }
-        });
-        noneStPurchaseApplySetColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
-        noneStPurchaseApplySetColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().applySetProperty().set(cellData.getNewValue().intValue());
+        noneStPurchaseApplySetColumn.setCellValueFactory(cellData -> cellData.getValue().applySetProperty());
+        noneStPurchaseApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
+        noneStPurchaseApQtyColumn.setOnEditCommit(cellData -> {
+            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
+                    .applySetProperty().set(cellData.getNewValue().intValue());
             updateNoneStPurchaseTableTotal();
-            updateRotateTableTotal();
-            noneStPurchaseTreeTableView.requestFocus();
+            stockTableView.requestFocus();
         });
 
-        noneStPurchaseRemarkColumn.setCellValueFactory(cellData -> {
-            if (noneStPurchaseRemarkColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().remarkProperty();
-            } else {
-                return noneStPurchaseRemarkColumn.getComputedValue(cellData);
-            }
-        });
-        noneStPurchaseRemarkColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
-        noneStPurchaseRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().remarkProperty().set(cellData.getNewValue());
-            noneStPurchaseTreeTableView.requestFocus();
+        noneStPurchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
+        purchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        purchaseRemarkColumn.setOnEditCommit(cellData -> {
+            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
+                    .remarkProperty().set(cellData.getNewValue());
+            stockTableView.requestFocus();
         });
 
         noneStPurchaseTreeTableView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> selectedNoneStockPurchaseItem(newValue)
         );
 
-        noneStPurchaseTreeTableView.setRowFactory(tv -> new JFXTreeTableRow<PurchaseItem>() {
+        noneStPurchaseTreeTableView.setRowFactory(param -> new TableRow<PurchaseItem>() {
             @Override
             public void updateItem(PurchaseItem item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item != null && item.getPo().compareTo(noneStPurchaseSelectedPo) == 0) {
+                if (item == null || empty) {
+                    setStyle("");
+                } else if (item.getPo().compareTo(noneStPurchaseSelectedPo) == 0) {
                     setStyle("-fx-background-color: #FFF176;");
                 } else {
                     setStyle("");
@@ -1306,7 +1121,7 @@ public class RootController {
 
     private void selectedRotateItem(TreeItem<RotateItem> newValue) {
         if (newValue == null || !newValue.isLeaf()) {
-            stockTreeTableView.setRoot(null);
+            stockTableView.getItems().clear();
             return;
         }
 
@@ -1345,39 +1160,35 @@ public class RootController {
         updateNoneStPurchaseTable(rotateItem);
     }
 
-    private void selectedStockItem(TreeItem<StockItem> newValue) {
-        if (newValue == null || !newValue.isLeaf()) {
-            purchaseTreeTableView.setRoot(null);
+    private void selectedStockItem(StockItem newStockItem) {
+        if (newStockItem == null) {
+            purchaseTableView.getItems().clear();
             return;
         }
 
         stockPoColumn.setVisible(false);
         stockPoColumn.setVisible(true);
 
-        StockItem stockItem = newValue.getValue();
-        currentStockItem = stockItem;
-        stockSelectedPo = stockItem.getPo();
-        stockSelectedPart = stockItem.getRotateItem().getPartNumber();
+        currentStockItem = newStockItem;
+        stockSelectedPo = newStockItem.getPo();
+        stockSelectedPart = newStockItem.getRotateItem().getPartNumber();
 
-        updatePurchaseTable(stockItem);
+        updatePurchaseTable(newStockItem);
     }
 
-    private void selectedPurchaseItem(TreeItem<PurchaseItem> newValue) {
-        if (newValue == null || !newValue.isLeaf()) {
+    private void selectedPurchaseItem(PurchaseItem newPurchaseItem) {
+        if (newPurchaseItem == null)
+            return;
+
+        purchaseSelectedPo = newPurchaseItem.getPo();
+    }
+
+    private void selectedNoneStockPurchaseItem(PurchaseItem newPurchaseItem) {
+        if (newPurchaseItem == null) {
             return;
         }
 
-        PurchaseItem purchaseItem = newValue.getValue();
-        purchaseSelectedPo = purchaseItem.getPo();
-    }
-
-    private void selectedNoneStockPurchaseItem(TreeItem<PurchaseItem> newValue) {
-        if (newValue == null || !newValue.isLeaf()) {
-            return;
-        }
-
-        PurchaseItem purchaseItem = newValue.getValue();
-        noneStPurchaseSelectedPo = purchaseItem.getPo();
+        noneStPurchaseSelectedPo = newPurchaseItem.getPo();
     }
 
     private void stockPartNumComboChanged() {
@@ -1410,16 +1221,18 @@ public class RootController {
     }
 
     private void purchaseShowAllChanged() {
-        if (currentStockItem != null)
+        if (currentStockItem != null) {
+            purchasePoColumn.setVisible(false);
+            purchasePoColumn.setVisible(true);
             updatePurchaseTable(currentStockItem);
+        }
     }
 
     private void updateStockTable(RotateItem rotateItem) {
-        TreeItem<StockItem> root = null;
 
         if (rotateItem.isDuplicate()) {
-            root = null;
-            stockTreeTableView.setPlaceholder(new Label("重複的項目!! 我無法幫妳了 orz...."));
+            stockTableView.setPlaceholder(new Label("重複的項目!! 我無法幫妳了 orz...."));
+            stockTableView.getItems().clear();
         } else {
             ObservableList<StockItem> obsList;
             if (rotateItem.isKit() && showAllParts) {
@@ -1428,16 +1241,12 @@ public class RootController {
                 obsList = rotateItem.getStockItemObsList();
             }
 
-            if (obsList.size() == 0) {
-                stockTreeTableView.setPlaceholder(new Label("庫存找不到符合項目"));
+            if (obsList.size() > 0) {
+                stockTableView.setItems(obsList);
+                stockTableView.getSelectionModel().select(0, stockApQtyColumn);
             } else {
-                root = new RecursiveTreeItem<>(obsList, RecursiveTreeObject::getChildren);
+                stockTableView.setPlaceholder(new Label("庫存找不到符合項目"));
             }
-        }
-
-        stockTreeTableView.setRoot(root);
-        if (stockTreeTableView.getCurrentItemsCount() > 0) {
-            stockTreeTableView.getSelectionModel().select(0, stockApQtyColumn);
         }
 
         updateStockTableTotal();
@@ -1452,30 +1261,31 @@ public class RootController {
 
     private void updatePurchaseTable(StockItem stockItem) {
 
-        ObservableList<PurchaseItem> obsList;
-        if (purchaseShowAllToggle.isSelected()) {
-            if (stockItem.getRotateItem().isKit() && showAllParts) {
-                obsList = stockItem.getRotateItem().getKitNode().getPurchaseItemList();
-            } else {
-                obsList = stockItem.getRotateItem().getPurchaseItemList();
-            }
+
+        if (stockItem.getRotateItem().isDuplicate()) {
+            purchaseTableView.getItems().clear();
         } else {
-            if (stockItem.getRotateItem().isKit() && showAllParts) {
-                obsList = stockItem.getRotateItem().getKitNode().getPurchaseItemListWithPo(stockItem.getPo());
+            ObservableList<PurchaseItem> obsList;
+            if (purchaseShowAllToggle.isSelected()) {
+                if (stockItem.getRotateItem().isKit() && showAllParts) {
+                    obsList = stockItem.getRotateItem().getKitNode().getPurchaseItemList();
+                } else {
+                    obsList = stockItem.getRotateItem().getPurchaseItemList();
+                }
             } else {
-                obsList = stockItem.getPurchaseItems();
+                if (stockItem.getRotateItem().isKit() && showAllParts) {
+                    obsList = stockItem.getRotateItem().getKitNode().getPurchaseItemListWithPo(stockItem.getPo());
+                } else {
+                    obsList = stockItem.getPurchaseItems();
+                }
+            }
+
+            if (obsList.size() > 0) {
+                purchaseTableView.setItems(obsList);
+                purchaseTableView.getSelectionModel().select(0, purchaseApQtyColumn);
             }
         }
 
-        TreeItem<PurchaseItem> root = null;
-        if (obsList.size() > 0) {
-            root = new RecursiveTreeItem<>(obsList, RecursiveTreeObject::getChildren);
-        }
-
-        purchaseTreeTableView.setRoot(root);
-        if (purchaseTreeTableView.getCurrentItemsCount() > 0) {
-            purchaseTreeTableView.getSelectionModel().select(0, purchaseApQtyColumn);
-        }
         updatePurchaseTableTotal();
 
         if (purchaseShowAllToggle.isSelected()) {
@@ -1487,26 +1297,23 @@ public class RootController {
     }
 
     private void updateNoneStPurchaseTable(RotateItem rotateItem) {
-        TreeItem<PurchaseItem> noneStockRoot = null;
+
         if (rotateItem.isDuplicate()) {
-            noneStockRoot = null;
+            noneStPurchaseTreeTableView.getItems().clear();
         } else {
-            ObservableList<PurchaseItem> noneStockObsList;
+            ObservableList<PurchaseItem> obsList;
             if (rotateItem.isKit() && showAllParts) {
-                noneStockObsList = rotateItem.getKitNode().getNoneStPurchaseItemList();
+                obsList = rotateItem.getKitNode().getNoneStPurchaseItemList();
             } else {
-                noneStockObsList = rotateItem.getNoneStockPurchaseItemObsList();
+                obsList = rotateItem.getNoneStockPurchaseItemObsList();
             }
 
-            if (noneStockObsList.size() > 0) {
-                noneStockRoot = new RecursiveTreeItem<>(noneStockObsList, RecursiveTreeObject::getChildren);
+            if (obsList.size() > 0) {
+                noneStPurchaseTreeTableView.setItems(obsList);
+                noneStPurchaseTreeTableView.getSelectionModel().select(0, noneStPurchaseApQtyColumn);
             }
         }
 
-        noneStPurchaseTreeTableView.setRoot(noneStockRoot);
-        if (noneStPurchaseTreeTableView.getCurrentItemsCount() > 0) {
-            noneStPurchaseTreeTableView.getSelectionModel().select(0, noneStPurchaseApQtyColumn);
-        }
         updateNoneStPurchaseTableTotal();
     }
 
@@ -1537,13 +1344,9 @@ public class RootController {
         int currentPoStQtyTotal = 0;
         int currentPoApplyQtyTotal = 0;
 
-        TreeItem<StockItem> root = stockTreeTableView.getRoot();
-        if (root != null) {
-            for (TreeItem<StockItem> treeItem : root.getChildren()) {
-                if (treeItem == null || treeItem.getValue() == null)
-                    continue;
-
-                StockItem stockItem = treeItem.getValue();
+        ObservableList<StockItem> list = stockTableView.getItems();
+        if (list != null) {
+            for (StockItem stockItem : list) {
                 stQtyTotal += stockItem.getStockQty();
                 applyQtyTotal += stockItem.getApplyQty();
 
@@ -1566,13 +1369,11 @@ public class RootController {
         int grQtyTotal = 0;
         int applyQtyTotal = 0;
         int applySetTotal = 0;
-        TreeItem<PurchaseItem> root = purchaseTreeTableView.getRoot();
-        if (root != null) {
-            for (TreeItem<PurchaseItem> treeItem : root.getChildren()) {
-                if (treeItem == null || treeItem.getValue() == null)
-                    continue;
 
-                PurchaseItem purchaseItem = treeItem.getValue();
+        ObservableList<PurchaseItem> list = purchaseTableView.getItems();
+        if (list != null) {
+            for (PurchaseItem purchaseItem : list) {
+
                 grQtyTotal += purchaseItem.getGrQty();
                 applyQtyTotal += purchaseItem.getApplyQty();
                 applySetTotal += purchaseItem.getApplySet();
@@ -1590,13 +1391,9 @@ public class RootController {
         int applyQtyTotal = 0;
         int applySetTotal = 0;
 
-        TreeItem<PurchaseItem> root = noneStPurchaseTreeTableView.getRoot();
-        if (root != null) {
-            for (TreeItem<PurchaseItem> treeItem : root.getChildren()) {
-                if (treeItem == null || treeItem.getValue() == null)
-                    continue;
-
-                PurchaseItem purchaseItem = treeItem.getValue();
+        ObservableList<PurchaseItem> list = noneStPurchaseTreeTableView.getItems();
+        if (list != null) {
+            for (PurchaseItem purchaseItem : list) {
                 grQtyTotal += purchaseItem.getGrQty();
                 applyQtyTotal += purchaseItem.getApplyQty();
                 applySetTotal += purchaseItem.getApplySet();

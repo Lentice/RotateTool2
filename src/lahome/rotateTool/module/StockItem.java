@@ -28,7 +28,7 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     private StringProperty remark;
 
     private int rowNum;
-    public RotateItem rotateItem;
+    private RotateItem rotateItem;
 
     private boolean isDuplicate;
     private StockItem firstStockItem = this;

@@ -3,6 +3,10 @@
     -fx-prompt-text-fill: #9E9E9E;
 }
 
+.my-table-column-right {
+  -fx-alignment: CENTER-RIGHT;
+}
+
 .split-pane > .split-pane-divider {
     -fx-padding: 0 5 0 5;
 }
