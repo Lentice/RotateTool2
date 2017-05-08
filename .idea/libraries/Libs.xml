@@ -4,10 +4,6 @@
       <root url="file://$PROJECT_DIR$/Libs" />
     </CLASSES>
     <JAVADOC />
-    <NATIVE>
-      <root url="file://$PROJECT_DIR$/resources" />
-      <root url="file://$PROJECT_DIR$/resources" />
-    </NATIVE>
     <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/Libs" recursive="false" />
   </library>
