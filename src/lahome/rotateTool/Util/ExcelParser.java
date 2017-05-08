@@ -337,10 +337,9 @@ public class ExcelParser {
                     continue;
 
                 String ratio = getRatio(row, ExcelCommon.rotateRatioColumn);
-                int applySet = getApplySet(row, ExcelCommon.rotateApplySetColumn);
                 String remark = getRemark(row, ExcelCommon.rotateRemarkColumn);
 
-                collection.addRotate(new RotateItem(rowNum, kitName, partNum, pmQty, ratio, applySet, remark));
+                collection.addRotate(new RotateItem(rowNum, kitName, partNum, pmQty, ratio, remark));
 
             } catch (Exception e) {
                 log.error("failed!", e);
@@ -437,11 +436,10 @@ public class ExcelParser {
                 int grQty = getGrQty(row, ExcelCommon.purchaseGrQtyColumn);
 
                 int applyQty = getApQty(row, ExcelCommon.purchaseApQtyColumn);
-                int applySet = getApplySet(row, ExcelCommon.purchaseApSetColumn);
                 String remark = getRemark(row, ExcelCommon.purchaseRemarkColumn);
 
                 collection.addPurchase(kitName, partNum,
-                        new PurchaseItem(rowNum, po, grDate, grQty, applyQty, applySet, remark));
+                        new PurchaseItem(rowNum, po, grDate, grQty, applyQty, remark));
 
             } catch (Exception e) {
                 log.error("failed!", e);

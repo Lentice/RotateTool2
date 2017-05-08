@@ -19,22 +19,23 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
     private StringProperty remark;
 
     private int rowNum;
-    public StockItem stockItem;
-    public RotateItem rotateItem;
+    private StockItem stockItem;
+    private RotateItem rotateItem;
     private boolean isNoneStock;
 
     public PurchaseItem(int rowNum, String po, String grDate, int grQty,
-                        int applyQty, int applySet, String remark) {
+                        int applyQty, String remark) {
 
         this.po = new SimpleStringProperty(po);
         this.grDate = new SimpleStringProperty(grDate);
         this.grQty = new SimpleIntegerProperty(grQty);
         this.applyQty = new SimpleIntegerProperty(applyQty);
-        this.applySet = new SimpleIntegerProperty(applySet);
+        this.applySet = new SimpleIntegerProperty(0);
         this.remark = new SimpleStringProperty(remark);
 
         this.rowNum = rowNum;
         this.isNoneStock = false;
+
     }
 
     public void close() {
@@ -53,6 +54,18 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
     public void setRotate(RotateItem rotateItem, boolean isNoneStock) {
         this.isNoneStock = isNoneStock;
         this.rotateItem = rotateItem;
+
+        updateApplySet();
+        applyQty.addListener((observable, oldValue, newValue) -> updateApplySet());
+    }
+
+    private void updateApplySet() {
+        if (rotateItem.isKit() && rotateItem.isRotateValid() && rotateItem.isFirstPartOfKit()) {
+            int ratioValue = rotateItem.getRatio();
+            if (ratioValue > 0) {
+                applySet.set(getApplyQty() / ratioValue);
+            }
+        }
     }
 
     public int compareTo(PurchaseItem item) {

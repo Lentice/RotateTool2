@@ -3,8 +3,12 @@
     -fx-prompt-text-fill: #9E9E9E;
 }
 
-.my-table-column-right {
+.my-table-column-number {
   -fx-alignment: CENTER-RIGHT;
+}
+
+.my-table-column-center {
+  -fx-alignment: CENTER-LEFT;
 }
 
 .split-pane > .split-pane-divider {

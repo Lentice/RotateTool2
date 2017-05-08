@@ -6,14 +6,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 public class RotateCollection {
     private static final Logger log = LogManager.getLogger(RotateCollection.class.getName());
 
-    private HashMap<String, KitNode> kitNodeList = new HashMap<>();
+    private HashMap<String, KitNode> kitNodeMap = new HashMap<>();
     private HashMap<String, RotateItem> rotateItems = new HashMap<>();
 
     private ObservableList<RotateItem> rotateObsList = FXCollections.observableArrayList();
@@ -40,7 +39,7 @@ public class RotateCollection {
         rotateObsList.add(item);
 
         if (item.isKit() && !item.isDuplicate()) {
-            KitNode kitNode = kitNodeList.computeIfAbsent(item.getKitName(), k -> new KitNode());
+            KitNode kitNode = kitNodeMap.computeIfAbsent(item.getKitName(), k -> new KitNode());
             kitNode.addPart(item);
         }
     }
@@ -93,5 +92,9 @@ public class RotateCollection {
 
     public List<PurchaseItem> getPurchaseItemList() {
         return purchaseItemList;
+    }
+
+    public HashMap<String, KitNode> getKitNodeMap() {
+        return kitNodeMap;
     }
 }

@@ -17,7 +17,8 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     private boolean isKit;
     private KitNode kitNode;
-    private boolean isDuplicate;
+    private boolean isDuplicate = false;
+    private boolean isRotateValid = true;
     private int rowNum;
 
     private StringProperty kitName;
@@ -28,6 +29,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private IntegerProperty applySet;
     private StringProperty remark;
 
+    private boolean isFirstPartOfKit = false;
     private StringProperty serialNo;
 
     private List<RotateItem> duplicateRotateItems;
@@ -37,7 +39,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private ObservableList<PurchaseItem> noneStockPurchaseItemObsList = FXCollections.observableArrayList();
 
 
-    public RotateItem(int rowNum, String kitName, String partNum, int pmQty, String ratio, int applySet, String remark) {
+    public RotateItem(int rowNum, String kitName, String partNum, int pmQty, String ratio, String remark) {
         if (kitName == null)
             kitName = "";
 
@@ -46,14 +48,29 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         this.pmQty = new SimpleIntegerProperty(pmQty);
         this.stockApplyQtyTotal = new SimpleIntegerProperty(0);
         this.ratio = new SimpleStringProperty(ratio);
-        this.applySet = new SimpleIntegerProperty(applySet);
+        this.applySet = new SimpleIntegerProperty(0);
         this.remark = new SimpleStringProperty(remark);
 
         this.serialNo = new SimpleStringProperty("A");
 
         this.isKit = !kitName.isEmpty();
-        this.isDuplicate = false;
         this.rowNum = rowNum;
+    }
+
+    public void updateApplySet() {
+        if (isKit && isRotateValid && isFirstPartOfKit) {
+            int ratioValue = getRatio();
+            if (ratioValue > 0) {
+                applySet.set(getStockApplyQtyTotal() / ratioValue);
+            }
+        }
+    }
+
+    public void applySetListenerStart() {
+        updateApplySet();
+        if (isKit && isRotateValid && isFirstPartOfKit) {
+            stockApplyQtyTotal.addListener((observable, oldValue, newValue) -> updateApplySet());
+        }
     }
 
     public void setDuplicate(List<RotateItem> duplicateRotateItems, ObservableList<StockItem> stockItemObsList) {
@@ -94,7 +111,6 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     }
 
     public void addNoneStockPurchase(PurchaseItem purchaseItem) {
-
         noneStockPurchaseItemObsList.add(purchaseItem);
         purchaseItem.setRotate(this, true);
     }
@@ -133,6 +149,14 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     public IntegerProperty pmQtyProperty() {
         return pmQty;
+    }
+
+    public int getRatio() {
+        try {
+            return Integer.valueOf(ratio.get());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     public StringProperty ratioProperty() {
@@ -187,16 +211,36 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         this.kitNode = kitNode;
     }
 
-    public void setSerialNo(String serialNo) {
-        this.serialNo.set(serialNo);
-    }
 
     public String getRemark() {
         return remark.get();
     }
 
+    public String getSerialNo() {
+        return serialNo.get();
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo.set(serialNo);
+    }
     public StringProperty serialNoProperty() {
         return serialNo;
+    }
+
+    public boolean isFirstPartOfKit() {
+        return isFirstPartOfKit;
+    }
+
+    public void setFirstPartOfKit(boolean firstPartOfKit) {
+        isFirstPartOfKit = firstPartOfKit;
+    }
+
+    public boolean isRotateValid() {
+        return isRotateValid;
+    }
+
+    public void setRotateValid(boolean rotateValid) {
+        this.isRotateValid = rotateValid;
     }
 
     public ObservableList<PurchaseItem> getPurchaseItemList() {
@@ -211,5 +255,4 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         list.sort(PurchaseItem::compareTo);
         return list;
     }
-
 }

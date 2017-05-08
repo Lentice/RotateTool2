@@ -1,13 +1,8 @@
 package lahome.rotateTool.module;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-/**
- * Created by LenticeTsai on 2017/5/5.
- */
 public class KitNode {
 
     private ObservableList<RotateItem> PartsList = FXCollections.observableArrayList();
@@ -16,9 +11,15 @@ public class KitNode {
         if (item.isDuplicate())
             return;
 
-        item.setSerialNo(String.valueOf((char) (PartsList.size() + 'A')));
-
         PartsList.add(item);
+        int partCount = PartsList.size();
+        if (partCount == 1) {
+            item.setFirstPartOfKit(true);
+            item.updateApplySet();
+            item.applySetListenerStart();
+        }
+
+        item.setSerialNo(String.valueOf((char) (partCount - 1 + 'A')));
         item.setKitNode(this);
     }
 

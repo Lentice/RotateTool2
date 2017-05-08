@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -65,7 +64,7 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     public void setRotateItem(RotateItem rotateItem) {
         this.rotateItem = rotateItem;
 
-        rotateItem.addStockApplyQtyTotal(getApplyQty());
+        this.rotateItem.addStockApplyQtyTotal(getApplyQty());
         this.applyQty.addListener((observable, oldValue, newValue) -> {
             if (this.rotateItem != null) {
                 this.rotateItem.addStockApplyQtyTotal(newValue.intValue() - oldValue.intValue());

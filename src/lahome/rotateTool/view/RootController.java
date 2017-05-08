@@ -5,30 +5,29 @@ import com.jfoenix.controls.cells.editors.IntegerTextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
 import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.NumberStringConverter;
 import lahome.rotateTool.Main;
-import lahome.rotateTool.Util.ExcelParser;
 import lahome.rotateTool.Util.ExcelCommon;
+import lahome.rotateTool.Util.ExcelParser;
 import lahome.rotateTool.Util.ExcelSaver;
-import lahome.rotateTool.module.PurchaseItem;
-import lahome.rotateTool.module.RotateCollection;
-import lahome.rotateTool.module.RotateItem;
-import lahome.rotateTool.module.StockItem;
+import lahome.rotateTool.module.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,10 +38,13 @@ public class RootController {
     private static final Logger log = LogManager.getLogger(RootController.class.getName());
 
     @FXML
-    private JFXTabPane mainTab;
+    private JFXTabPane mainTabPane;
 
     @FXML
-    private JFXButton saveFilesButton;
+    private JFXButton exportToExcelButton;
+
+    @FXML
+    private JFXButton startEditButton;
 
     @FXML
     private Tab editTab;
@@ -221,9 +223,6 @@ public class RootController {
     @FXML
     private Label stockStQtyTotal;
 
-//    @FXML
-//    private Label stockGrQtyTotal;
-
     @FXML
     private Label stockApQtyTotal;
 
@@ -276,7 +275,7 @@ public class RootController {
     private Label purchaseApSetTotal;
 
     @FXML
-    private TableView<PurchaseItem> noneStPurchaseTreeTableView;
+    private TableView<PurchaseItem> noneStPurchaseTableView;
 
     @FXML
     private TableColumn<PurchaseItem, String> noneStPurchaseNoColumn;
@@ -328,6 +327,8 @@ public class RootController {
     private final String ALL_PARTS = "All";
     private RotateItem currentRotateItem;
     private StockItem currentStockItem;
+
+    private static final Object excelHandleLock = new Object();
 
     public RootController() {
     }
@@ -595,61 +596,102 @@ public class RootController {
     @FXML
     void handleStartEdit() {
 
-        ExcelCommon.setRotateConfig(
-                pathAgingReport.getText(),
-                Integer.valueOf(settingRotateFirstRow.getText()),
-                settingRotateKitNameCol.getText(),
-                settingRotatePartNumCol.getText(),
-                settingRotatePmQtyCol.getText(),
-                settingRotateApQtyCol.getText(),
-                settingRotateRatioCol.getText(),
-                settingRotateApSetCol.getText(),
-                settingRotateRemarkCol.getText());
+        synchronized (excelHandleLock) {
+            ExcelCommon.setRotateConfig(
+                    pathAgingReport.getText(),
+                    Integer.valueOf(settingRotateFirstRow.getText()),
+                    settingRotateKitNameCol.getText(),
+                    settingRotatePartNumCol.getText(),
+                    settingRotatePmQtyCol.getText(),
+                    settingRotateApQtyCol.getText(),
+                    settingRotateRatioCol.getText(),
+                    settingRotateApSetCol.getText(),
+                    settingRotateRemarkCol.getText());
 
-        ExcelCommon.setStockConfig(
-                pathStockFile.getText(),
-                Integer.valueOf(settingStockFirstRow.getText()),
-                settingStockKitNameCol.getText(),
-                settingStockPartNumCol.getText(),
-                settingStockPoCol.getText(),
-                settingStockStockQtyCol.getText(),
-                settingStockLotCol.getText(),
-                settingStockDcCol.getText(),
-                settingStockApQtyCol.getText(),
-                settingStockRemarkCol.getText());
+            ExcelCommon.setStockConfig(
+                    pathStockFile.getText(),
+                    Integer.valueOf(settingStockFirstRow.getText()),
+                    settingStockKitNameCol.getText(),
+                    settingStockPartNumCol.getText(),
+                    settingStockPoCol.getText(),
+                    settingStockStockQtyCol.getText(),
+                    settingStockLotCol.getText(),
+                    settingStockDcCol.getText(),
+                    settingStockApQtyCol.getText(),
+                    settingStockRemarkCol.getText());
 
-        ExcelCommon.setPurchaseConfig(
-                pathPurchaseFile.getText(),
-                Integer.valueOf(settingPurchaseFirstRow.getText()),
-                settingPurchaseKitNameCol.getText(),
-                settingPurchasePartNumCol.getText(),
-                settingPurchasePoCol.getText(),
-                settingPurchaseGrDateCol.getText(),
-                settingPurchaseGrQtyCol.getText(),
-                settingPurchaseApQtyCol.getText(),
-                settingPurchaseApSetCol.getText(),
-                settingPurchaseRemarkCol.getText());
+            ExcelCommon.setPurchaseConfig(
+                    pathPurchaseFile.getText(),
+                    Integer.valueOf(settingPurchaseFirstRow.getText()),
+                    settingPurchaseKitNameCol.getText(),
+                    settingPurchasePartNumCol.getText(),
+                    settingPurchasePoCol.getText(),
+                    settingPurchaseGrDateCol.getText(),
+                    settingPurchaseGrQtyCol.getText(),
+                    settingPurchaseApQtyCol.getText(),
+                    settingPurchaseApSetCol.getText(),
+                    settingPurchaseRemarkCol.getText());
 
-        excelParser.loadRotateExcel();
-        log.info("Process rotate table: Done");
-
-        excelParser.loadStockExcel();
-        log.info("Process stock table: Done");
-
-        excelParser.loadPurchaseExcel();
-        log.info("Process purchase table: Done");
-
-        final TreeItem<RotateItem> rotateRoot = new RecursiveTreeItem<>(
-                collection.getRotateObsList(), RecursiveTreeObject::getChildren);
-        rotateTableView.setRoot(rotateRoot);
-        rotateTableView.requestFocus();
-        if (rotateTableView.getCurrentItemsCount() > 0) {
-            rotateTableView.getSelectionModel().select(0, rotatePmQtyColumn);
+            Platform.runLater(() -> startEditButton.setDisable(true));
+            importExcel();
         }
-        rotatePartCount.setText(String.valueOf(collection.getRotateObsList().size()));
+    }
 
-        mainTab.getSelectionModel().select(editTab);
-        saveFilesButton.setVisible(true);
+    private void importExcel() {
+        new Thread(() -> {
+            synchronized (excelHandleLock) {
+                excelParser.loadRotateExcel();
+                log.info("Process rotate table: Done");
+
+                excelParser.loadStockExcel();
+                log.info("Process stock table: Done");
+
+                excelParser.loadPurchaseExcel();
+                log.info("Process purchase table: Done");
+
+                StringBuilder errorLog = new StringBuilder("");
+                DataChecker dataChecker = new DataChecker(collection, errorLog);
+                int failCount = dataChecker.doCheck();
+                if (failCount > 0) {
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+
+                        alert.setTitle("Warning");
+                        alert.setHeaderText(String.format("Total %d invalid data were found", failCount));
+                        alert.setContentText("Error logs are listed below:");
+
+                        TextArea textArea = new TextArea(errorLog.toString());
+                        textArea.setEditable(false);
+                        textArea.setWrapText(false);
+
+                        textArea.setMaxWidth(Double.MAX_VALUE);
+                        textArea.setMaxHeight(Double.MAX_VALUE);
+                        GridPane.setVgrow(textArea, Priority.ALWAYS);
+                        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+                        GridPane expContent = new GridPane();
+                        expContent.setMaxWidth(Double.MAX_VALUE);
+                        expContent.add(textArea, 0, 0);
+
+                        // Set expandable Exception into the dialog pane.
+                        alert.getDialogPane().setExpandableContent(expContent);
+                        alert.getDialogPane().setExpanded(true);
+
+                        alert.getDialogPane().setPrefWidth(600);
+                        alert.showAndWait();
+                    });
+                }
+
+                Platform.runLater(() -> {
+                    mainTabPane.getSelectionModel().select(editTab);
+                    updateRotateTable();
+                    exportToExcelButton.setVisible(true);
+                });
+
+                startEditButton.setDisable(false);
+            }
+        }).start();
+
     }
 
     @FXML
@@ -669,7 +711,7 @@ public class RootController {
     private void initialize() {
 
         filterIcon.setImage(new Image("file:resources/images/active-search-2-48.png"));
-        saveFilesButton.setVisible(false);
+        exportToExcelButton.setVisible(false);
         initialRotateTable();
         initialStockTable();
         initialPurchaseTable();
@@ -896,6 +938,7 @@ public class RootController {
             }
         };
 
+        stockNoColumn.getStyleClass().add("my-table-column-part-serial");
         stockNoColumn.setCellValueFactory(cellData -> cellData.getValue().getRotateItem().serialNoProperty());
         stockNoColumn.setCellFactory(readOnlyStringCell);
 
@@ -915,11 +958,11 @@ public class RootController {
         stockGrDateColumn.setCellValueFactory(cellData -> cellData.getValue().earliestGrDateProperty());
         stockGrDateColumn.setCellFactory(readOnlyStringCell);
 
-        stockStQtyColumn.getStyleClass().add("my-table-column-right");
+        stockStQtyColumn.getStyleClass().add("my-table-column-number");
         stockStQtyColumn.setCellValueFactory(cellData -> cellData.getValue().stockQtyProperty());
         stockStQtyColumn.setCellFactory(readOnlyNumberCell);
 
-        stockApQtyColumn.getStyleClass().add("my-table-column-right");
+        stockApQtyColumn.getStyleClass().add("my-table-column-number");
         stockApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
         stockApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         stockApQtyColumn.setOnEditCommit(cellData -> {
@@ -975,6 +1018,7 @@ public class RootController {
             }
         };
 
+        purchaseNoColumn.getStyleClass().add("my-table-column-part-serial");
         purchaseNoColumn.setCellValueFactory(cellData -> cellData.getValue().getRotateItem().serialNoProperty());
         purchaseNoColumn.setCellFactory(readOnlyStringCell);
 
@@ -987,11 +1031,11 @@ public class RootController {
         purchaseGrDateColumn.setCellValueFactory(cellData -> cellData.getValue().grDateProperty());
         purchaseGrDateColumn.setCellFactory(readOnlyStringCell);
 
-        purchaseGrQtyColumn.getStyleClass().add("my-table-column-right");
+        purchaseGrQtyColumn.getStyleClass().add("my-table-column-number");
         purchaseGrQtyColumn.setCellValueFactory(cellData -> cellData.getValue().grQtyProperty());
         purchaseGrQtyColumn.setCellFactory(readOnlyNumberCell);
 
-        purchaseApQtyColumn.getStyleClass().add("my-table-column-right");
+        purchaseApQtyColumn.getStyleClass().add("my-table-column-number");
         purchaseApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
         purchaseApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         purchaseApQtyColumn.setOnEditCommit(cellData -> {
@@ -1001,15 +1045,10 @@ public class RootController {
             stockTableView.requestFocus();
         });
 
-        purchaseApplySetColumn.getStyleClass().add("my-table-column-right");
+        purchaseApplySetColumn.getStyleClass().add("my-table-column-number");
         purchaseApplySetColumn.setCellValueFactory(cellData -> cellData.getValue().applySetProperty());
         purchaseApplySetColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
-        purchaseApplySetColumn.setOnEditCommit(cellData -> {
-            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
-                    .applySetProperty().set(cellData.getNewValue().intValue());
-            updatePurchaseTableTotal();
-            stockTableView.requestFocus();
-        });
+        purchaseApplySetColumn.setCellFactory(readOnlyNumberCell);
 
         purchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
         purchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -1040,9 +1079,9 @@ public class RootController {
     }
 
     private void initialNoneStockPurchaseTable() {
-        noneStPurchaseTreeTableView.setPlaceholder(new Label("ZMM 找不到符合項目"));
-        noneStPurchaseTreeTableView.getSelectionModel().setCellSelectionEnabled(true);
-        noneStPurchaseTreeTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        noneStPurchaseTableView.setPlaceholder(new Label("ZMM 找不到符合項目"));
+        noneStPurchaseTableView.getSelectionModel().setCellSelectionEnabled(true);
+        noneStPurchaseTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         purchaseTableView.setEditable(true);
 
         Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> readOnlyStringCell
@@ -1059,6 +1098,7 @@ public class RootController {
             }
         };
 
+        noneStPurchaseNoColumn.getStyleClass().add("my-table-column-part-serial");
         noneStPurchaseNoColumn.setCellValueFactory(cellData -> cellData.getValue().getRotateItem().serialNoProperty());
         noneStPurchaseNoColumn.setCellFactory(readOnlyStringCell);
 
@@ -1100,11 +1140,11 @@ public class RootController {
             stockTableView.requestFocus();
         });
 
-        noneStPurchaseTreeTableView.getSelectionModel().selectedItemProperty().addListener(
+        noneStPurchaseTableView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> selectedNoneStockPurchaseItem(newValue)
         );
 
-        noneStPurchaseTreeTableView.setRowFactory(param -> new TableRow<PurchaseItem>() {
+        noneStPurchaseTableView.setRowFactory(param -> new TableRow<PurchaseItem>() {
             @Override
             public void updateItem(PurchaseItem item, boolean empty) {
                 super.updateItem(item, empty);
@@ -1199,7 +1239,7 @@ public class RootController {
             return;
 
         String name = stockPartNumCombo.getSelectionModel().getSelectedItem().trim();
-        if (name.trim().isEmpty())
+        if (name.isEmpty())
             return;
 
         RotateItem rotateItem = currentRotateItem;
@@ -1226,6 +1266,19 @@ public class RootController {
             purchasePoColumn.setVisible(true);
             updatePurchaseTable(currentStockItem);
         }
+    }
+
+    private void updateRotateTable() {
+        final TreeItem<RotateItem> rotateRoot = new RecursiveTreeItem<>(
+                collection.getRotateObsList(), RecursiveTreeObject::getChildren);
+
+        rotateTableView.setRoot(rotateRoot);
+        if (rotateTableView.getCurrentItemsCount() > 0) {
+            rotateTableView.getSelectionModel().select(0, rotatePmQtyColumn);
+        }
+
+        rotateTableView.requestFocus();
+        rotatePartCount.setText(String.valueOf(collection.getRotateObsList().size()));
     }
 
     private void updateStockTable(RotateItem rotateItem) {
@@ -1289,9 +1342,9 @@ public class RootController {
         updatePurchaseTableTotal();
 
         if (purchaseShowAllToggle.isSelected()) {
-            purchaseTableTitle.setText("All PO in ZMM");
+            purchaseTableTitle.setText("ZMM (All PO)");
         } else {
-            purchaseTableTitle.setText("PO:" + stockItem.getPo() + " in ZMM");
+            purchaseTableTitle.setText("ZMM (PO:" + stockItem.getPo() + ")");
         }
 
     }
@@ -1299,7 +1352,7 @@ public class RootController {
     private void updateNoneStPurchaseTable(RotateItem rotateItem) {
 
         if (rotateItem.isDuplicate()) {
-            noneStPurchaseTreeTableView.getItems().clear();
+            noneStPurchaseTableView.getItems().clear();
         } else {
             ObservableList<PurchaseItem> obsList;
             if (rotateItem.isKit() && showAllParts) {
@@ -1309,8 +1362,8 @@ public class RootController {
             }
 
             if (obsList.size() > 0) {
-                noneStPurchaseTreeTableView.setItems(obsList);
-                noneStPurchaseTreeTableView.getSelectionModel().select(0, noneStPurchaseApQtyColumn);
+                noneStPurchaseTableView.setItems(obsList);
+                noneStPurchaseTableView.getSelectionModel().select(0, noneStPurchaseApQtyColumn);
             }
         }
 
@@ -1391,7 +1444,7 @@ public class RootController {
         int applyQtyTotal = 0;
         int applySetTotal = 0;
 
-        ObservableList<PurchaseItem> list = noneStPurchaseTreeTableView.getItems();
+        ObservableList<PurchaseItem> list = noneStPurchaseTableView.getItems();
         if (list != null) {
             for (PurchaseItem purchaseItem : list) {
                 grQtyTotal += purchaseItem.getGrQty();
