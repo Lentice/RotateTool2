@@ -28,7 +28,7 @@ public class Main extends Application {
         Parent root = loader.load();
         this.primaryStage.setTitle("LA Rotate Tool 1.0.0");
         this.primaryStage.getIcons().add(
-                new Image("file:resources/images/AppIcon.png"));
+                new Image(Main.class.getResourceAsStream("/images/AppIcon.png")));
         this.primaryStage.setScene(new Scene(root));
         this.primaryStage.show();
 
