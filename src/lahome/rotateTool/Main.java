@@ -2,12 +2,15 @@ package lahome.rotateTool;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lahome.rotateTool.module.RotateCollection;
 import lahome.rotateTool.view.RootController;
+
+import java.util.prefs.Preferences;
 
 public class Main extends Application {
 
@@ -23,7 +26,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("view/Root.fxml"));
         Parent root = loader.load();
-        this.primaryStage.setTitle("Hello World");
+        this.primaryStage.setTitle("LA Rotate Tool 1.0.0");
         this.primaryStage.getIcons().add(
                 new Image("file:resources/images/AppIcon.png"));
         this.primaryStage.setScene(new Scene(root));
@@ -32,11 +35,20 @@ public class Main extends Application {
         controller = loader.getController();
         controller.setMainApp(this);
 
-        controller.loadSetting();
+        loadSetting();
+
     }
 
     @Override
     public void stop(){
+        saveSetting();
+    }
+
+    private void loadSetting() {
+        controller.loadSetting();
+    }
+
+    private void saveSetting() {
         controller.saveSetting();
     }
 

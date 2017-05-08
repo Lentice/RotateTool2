@@ -1,9 +1,11 @@
-package lahome.rotateTool.Util;
+package lahome.rotateTool.Util.Excel;
 
 import com.incesoft.tools.excel.xlsx.*;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.monitorjbl.xlsx.StreamingReader;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import lahome.rotateTool.module.PurchaseItem;
 import lahome.rotateTool.module.RotateCollection;
@@ -292,7 +294,7 @@ public class ExcelParser {
     private String cellGetDate(Cell cell) {
         try {
             Date date = cell.getDateCellValue();
-            return DateUtil.format(date);
+            return lahome.rotateTool.Util.DateUtil.format(date);
         } catch (Exception e) {
             log.error("failed!", e);
             return null;
@@ -316,8 +318,7 @@ public class ExcelParser {
         return (c >= '0' && c <= '9');
     }
 
-
-    public void loadRotateExcel() {
+    public void loadRotateExcel(DoubleProperty rotateProgressProperty) {
 
         Workbook wb = getWorkbook(ExcelSettings.rotateFilePath);
         if (wb == null) {
@@ -331,8 +332,11 @@ public class ExcelParser {
             return;
         }
 
+        int rowCount = sheet.getLastRowNum();
         for (Row row : sheet) {
             int rowNum = row.getRowNum();
+            rotateProgressProperty.set(Math.min(1, (double)rowNum / rowCount));
+
             if (rowNum < ExcelSettings.rotateFirstDataRow)
                 continue;
 
@@ -358,10 +362,11 @@ public class ExcelParser {
             }
         }
 
+        rotateProgressProperty.set(1.0);
         close(wb);
     }
 
-    public void loadStockExcel() {
+    public void loadStockExcel(DoubleProperty stockProgressProperty) {
 
         Workbook wb = getWorkbook(ExcelSettings.stockFilePath);
         if (wb == null) {
@@ -375,8 +380,11 @@ public class ExcelParser {
             return;
         }
 
+        int rowCount = sheet.getLastRowNum();
         for (Row row : sheet) {
             int rowNum = row.getRowNum();
+            stockProgressProperty.set((double)rowNum / rowCount);
+
             if (rowNum < ExcelSettings.stockFirstDataRow)
                 continue;
 
@@ -412,7 +420,7 @@ public class ExcelParser {
         close(wb);
     }
 
-    public void loadPurchaseExcel() {
+    public void loadPurchaseExcel(DoubleProperty purchaseProgressProperty) {
 
         Workbook wb = getWorkbook(ExcelSettings.purchaseFilePath);
         if (wb == null) {
@@ -425,8 +433,13 @@ public class ExcelParser {
             log.error("sheet is null. Open sheet failed");
             return;
         }
+
+        int rowCount = sheet.getLastRowNum();
         for (Row row : sheet) {
+
             int rowNum = row.getRowNum();
+            purchaseProgressProperty.set((double)rowNum / rowCount);
+
             if (rowNum < ExcelSettings.purchaseFirstDataRow)
                 continue;
 
@@ -499,7 +512,7 @@ public class ExcelParser {
 
             //FileOutputStream fileOut = new FileOutputStream("D:\\AWG.xlsx");
             //wb.write(fileOut);
-            //fileOut.close();
+            //fileOut.clear();
             //pkg.flush();
             pkg.save(new File("D:\\Test.xlsx"));
             pkg.revert();
@@ -585,7 +598,7 @@ public class ExcelParser {
             if (cell != null) {
                 if (rowPos > 2 && cellPos == 5) {
                     System.out.println(com.incesoft.tools.excel.xlsx.Sheet.getCellId(rowPos, cellPos) + "="
-                            + DateUtil.format(cellGetDate(Integer.valueOf(cell.getValue()))));
+                            + lahome.rotateTool.Util.DateUtil.format(cellGetDate(Integer.valueOf(cell.getValue()))));
                 }
 
                 System.out.println(com.incesoft.tools.excel.xlsx.Sheet.getCellId(rowPos, cellPos) + "="
@@ -596,11 +609,11 @@ public class ExcelParser {
     }
 
 
-    public void savePurchaseExcel() {
-        List<PurchaseItem> itemList = collection.getPurchaseItemList();
-        itemList.sort(Comparator.comparing(PurchaseItem::getRowNum));
-
-        try {
+//    public void savePurchaseExcel() {
+//        List<PurchaseItem> itemList = collection.getPurchaseItemList();
+//        itemList.sort(Comparator.comparing(PurchaseItem::getRowNum));
+//
+//        try {
 //            SimpleXLSXWorkbook workbook = new SimpleXLSXWorkbook(new File("D:\\RotateFiles\\ZMMPO006_130307-131104.xlsx"));
 //
 //
@@ -608,12 +621,12 @@ public class ExcelParser {
 //            List<com.incesoft.tools.excel.xlsx.Cell[]> rows = sheet.getRows();
 //
 //            FileOutputStream fileOut = new FileOutputStream("D:\\AWG.xlsx");
-////            com.incesoft.tools.excel.xlsx.SimpleXLSXWorkbook.Commiter commiter = workbook.newCommiter(fileOut);
-////            commiter.beginCommit();
-////            commiter.beginCommitSheet(sheet);
-////            // merge it first,otherwise the modification will not take effect
-////            commiter.commitSheetModifications();
-//
+//            com.incesoft.tools.excel.xlsx.SimpleXLSXWorkbook.Commiter commiter = workbook.newCommiter(fileOut);
+//            commiter.beginCommit();
+//            commiter.beginCommitSheet(sheet);
+//            // merge it first,otherwise the modification will not take effect
+//            commiter.commitSheetModifications();
+
 //            int itemIdx = 0;
 //            PurchaseItem item = itemList.get(itemIdx);
 //            int rowNum = 0;
@@ -630,8 +643,8 @@ public class ExcelParser {
 //                rowNum++;
 //            }
 //            workbook.commit(fileOut);
-//            fileOut.close();
-//
+//            fileOut.clear();
+
 //        } catch (IOException e1) {
 //            e1.printStackTrace();
 //        } catch (XMLStreamException e1) {
@@ -641,46 +654,46 @@ public class ExcelParser {
 //        }
 
 //
-            OPCPackage pkg = OPCPackage.open(new File(ExcelSettings.purchaseFilePath));
-            XSSFWorkbook wb = new XSSFWorkbook(pkg);
-            Sheet sheet = wb.getSheetAt(ExcelSettings.purchaseSheetIndex - 1);
-            if (sheet == null) {
-                log.error("sheet is null. Open sheet failed");
-                return;
-            }
-
-            int itemIdx = 0;
-            Cell cell;
-            PurchaseItem item = itemList.get(itemIdx);
-            for (Row row : sheet) {
-                int rowNum = row.getRowNum();
-                if (rowNum == item.getRowNum()) {
-                    cell = row.getCell(ExcelSettings.purchaseApQtyColumn);
-                    if (cell == null)
-                        cell = row.createCell(ExcelSettings.purchaseApQtyColumn, CellType.NUMERIC);
-
-                    cell.setCellValue(item.getApplyQty());
-
-                    itemIdx++;
-                    if (itemIdx >= itemList.size())
-                        break;
-
-                    item = itemList.get(itemIdx);
-                }
-            }
-
-            //FileOutputStream fileOut = new FileOutputStream("D:\\AWG.xlsx");
-            //wb.write(fileOut);
-            //fileOut.close();
-            //pkg.flush();
-            pkg.save(new File("D:\\Test_ZMM.xlsx"));
-            pkg.revert();
-        } catch (InvalidFormatException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//            OPCPackage pkg = OPCPackage.open(new File(ExcelSettings.purchaseFilePath));
+//            XSSFWorkbook wb = new XSSFWorkbook(pkg);
+//            Sheet sheet = wb.getSheetAt(ExcelSettings.purchaseSheetIndex - 1);
+//            if (sheet == null) {
+//                log.error("sheet is null. Open sheet failed");
+//                return;
+//            }
+//
+//            int itemIdx = 0;
+//            Cell cell;
+//            PurchaseItem item = itemList.get(itemIdx);
+//            for (Row row : sheet) {
+//                int rowNum = row.getRowNum();
+//                if (rowNum == item.getRowNum()) {
+//                    cell = row.getCell(ExcelSettings.purchaseApQtyColumn);
+//                    if (cell == null)
+//                        cell = row.createCell(ExcelSettings.purchaseApQtyColumn, CellType.NUMERIC);
+//
+//                    cell.setCellValue(item.getApplyQty());
+//
+//                    itemIdx++;
+//                    if (itemIdx >= itemList.size())
+//                        break;
+//
+//                    item = itemList.get(itemIdx);
+//                }
+//            }
+//
+//            //FileOutputStream fileOut = new FileOutputStream("D:\\AWG.xlsx");
+//            //wb.write(fileOut);
+//            //fileOut.clear();
+//            //pkg.flush();
+//            pkg.save(new File("D:\\Test_ZMM.xlsx"));
+//            pkg.revert();
+//        } catch (InvalidFormatException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public static List getOpenedWorkbooks() {
         List workbookNames = new ArrayList();

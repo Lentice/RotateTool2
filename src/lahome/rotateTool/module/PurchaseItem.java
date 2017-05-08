@@ -38,7 +38,7 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
 
     }
 
-    public void close() {
+    public void clear() {
         this.po = null;
         this.grDate = null;
         this.grQty = null;

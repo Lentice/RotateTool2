@@ -22,9 +22,7 @@
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/commons-logging-1.2.jar" path-in-jar="/" />
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/jfoenix.jar" path-in-jar="/" />
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/junit-4.12.jar" path-in-jar="/" />
-        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/log4j-api-2.3-javadoc.jar" path-in-jar="/" />
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/log4j-api-2.3.jar" path-in-jar="/" />
-        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/log4j-core-2.3-javadoc.jar" path-in-jar="/" />
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/log4j-core-2.3.jar" path-in-jar="/" />
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/poi-3.16.jar" path-in-jar="/" />
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/poi-ooxml-3.16.jar" path-in-jar="/" />

@@ -1,9 +1,10 @@
-package lahome.rotateTool.Util;
+package lahome.rotateTool.Util.Excel;
 
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.ComThread;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
+import javafx.beans.property.DoubleProperty;
 import lahome.rotateTool.module.PurchaseItem;
 import lahome.rotateTool.module.RotateCollection;
 import lahome.rotateTool.module.RotateItem;
@@ -54,7 +55,7 @@ public class ExcelSaver {
         }
     }
 
-    public void saveRotateToExcel() {
+    public void saveRotateToExcel(DoubleProperty rotateProgressProperty) {
         ComThread.InitSTA(true);
         final ActiveXComponent excel = new ActiveXComponent("Excel.Application");
         try {
@@ -73,7 +74,11 @@ public class ExcelSaver {
 
             currentSheet = sheet;
 
+            int itemCount = 0;
+            int itemsTotal = collection.getRotateObsList().size();
             for (RotateItem item : collection.getRotateObsList()) {
+                rotateProgressProperty.set((double)++itemCount / itemsTotal);
+
                 if (item.isDuplicate())
                     continue;
 
@@ -93,10 +98,11 @@ public class ExcelSaver {
         } finally {
             //excel.invoke("Quit", new Variant[0]);
             ComThread.Release();
+            rotateProgressProperty.set(1.0);
         }
     }
 
-    public void saveStockToExcel() {
+    public void saveStockToExcel(DoubleProperty stockProgressProperty) {
         ComThread.InitSTA(true);
         final ActiveXComponent excel = new ActiveXComponent("Excel.Application");
         try {
@@ -115,7 +121,10 @@ public class ExcelSaver {
 
             currentSheet = sheet;
 
+            int itemCount = 0;
+            int itemsTotal = collection.getStockItemList().size();
             for (StockItem item : collection.getStockItemList()) {
+                stockProgressProperty.set((double)++itemCount / itemsTotal);
                 if (item.getRotateItem().isDuplicate())
                     continue;
 
@@ -134,10 +143,11 @@ public class ExcelSaver {
         } finally {
             //excel.invoke("Quit", new Variant[0]);
             ComThread.Release();
+            stockProgressProperty.set(1.0);
         }
     }
 
-    public void savePurchaseToExcel() {
+    public void savePurchaseToExcel(DoubleProperty purchaseProgressProperty) {
         ComThread.InitSTA(true);
         final ActiveXComponent excel = new ActiveXComponent("Excel.Application");
         try {
@@ -156,7 +166,11 @@ public class ExcelSaver {
 
             currentSheet = sheet;
 
+            int itemCount = 0;
+            int itemsTotal = collection.getPurchaseItemList().size();
             for (PurchaseItem item : collection.getPurchaseItemList()) {
+                purchaseProgressProperty.set((double)++itemCount / itemsTotal);
+
                 if (item.getRotateItem().isDuplicate())
                     continue;
 
@@ -176,6 +190,7 @@ public class ExcelSaver {
         } finally {
             //excel.invoke("Quit", new Variant[0]);
             ComThread.Release();
+            purchaseProgressProperty.set(1.0);
         }
 
     }

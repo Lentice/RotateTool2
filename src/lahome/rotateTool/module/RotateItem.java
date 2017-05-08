@@ -38,7 +38,6 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private ObservableList<StockItem> stockItemObsList = FXCollections.observableArrayList();
     private ObservableList<PurchaseItem> noneStockPurchaseItemObsList = FXCollections.observableArrayList();
 
-
     public RotateItem(int rowNum, String kitName, String partNum, int pmQty, String ratio, String remark) {
         if (kitName == null)
             kitName = "";

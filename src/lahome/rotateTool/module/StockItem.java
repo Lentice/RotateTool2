@@ -50,7 +50,8 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.rowNum = rowNum;
     }
 
-    public void close() {
+
+    public void clear() {
 
         this.po = null;
         this.stockQty = null;
@@ -59,6 +60,7 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.earliestGrDate = null;
         this.applyQty = null;
         this.remark = null;
+        this.clear();
     }
 
     public void setRotateItem(RotateItem rotateItem) {

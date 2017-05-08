@@ -13,7 +13,7 @@ public class RotateCollection {
     private static final Logger log = LogManager.getLogger(RotateCollection.class.getName());
 
     private HashMap<String, KitNode> kitNodeMap = new HashMap<>();
-    private HashMap<String, RotateItem> rotateItems = new HashMap<>();
+    private HashMap<String, RotateItem> rotateItemMap = new HashMap<>();
 
     private ObservableList<RotateItem> rotateObsList = FXCollections.observableArrayList();
     private List<StockItem> stockItemList = new ArrayList<>();
@@ -29,11 +29,11 @@ public class RotateCollection {
                 item.getKitName(), item.getPartNumber(), item.getPmQty(), item.isKit() ? "K" : "S"));
 
         String key = getRotateKey(item.getKitName(), item.getPartNumber());
-        RotateItem rotateItem = rotateItems.get(key);
+        RotateItem rotateItem = rotateItemMap.get(key);
         if (rotateItem != null) {
             rotateItem.addDuplicate(item);
         } else {
-            rotateItems.put(key, item);
+            rotateItemMap.put(key, item);
         }
 
         rotateObsList.add(item);
@@ -46,10 +46,10 @@ public class RotateCollection {
 
     public void addStock(String kitName, String partNum, StockItem item) {
         String key = getRotateKey(kitName, partNum);
-        RotateItem rotateItem = rotateItems.get(key);
+        RotateItem rotateItem = rotateItemMap.get(key);
         if (rotateItem == null) {
             log.trace(String.format("Ignore no needed stock item %s, %s", kitName, partNum));
-            item.close();
+            item.clear();
             return;
         }
 
@@ -60,10 +60,10 @@ public class RotateCollection {
     public void addPurchase(String kitName, String partNum, PurchaseItem item) {
 
         String key = getRotateKey(kitName, partNum);
-        RotateItem rotateItem = rotateItems.get(key);
+        RotateItem rotateItem = rotateItemMap.get(key);
         if (rotateItem == null) {
             log.trace(String.format("Ignore no needed purchase item %s, %s", kitName, partNum));
-            item.close();
+            item.clear();
             return;
         }
 
@@ -78,7 +78,7 @@ public class RotateCollection {
 
     public boolean belongToRotateItem(String kitName, String partNum) {
         String key = getRotateKey(kitName, partNum);
-        RotateItem rotateItem = rotateItems.get(key);
+        RotateItem rotateItem = rotateItemMap.get(key);
         return (rotateItem != null);
     }
 
@@ -97,4 +97,5 @@ public class RotateCollection {
     public HashMap<String, KitNode> getKitNodeMap() {
         return kitNodeMap;
     }
+
 }

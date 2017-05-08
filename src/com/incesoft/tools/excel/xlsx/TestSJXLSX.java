@@ -188,7 +188,7 @@ public class TestSJXLSX {
 		// // // WRITE large data
 		// output = newOutput("write_inc");
 		// testWriteByIncrement(newWorkbook(), output);
-		// output.close();
+		// output.clear();
 		//
 		// // MODIFY it and WRITE large data
 		output = newOutput("merge_write");
