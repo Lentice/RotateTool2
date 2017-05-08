@@ -1,12 +1,11 @@
 package lahome.rotateTool.view;
 
 import com.jfoenix.controls.*;
-import com.jfoenix.controls.cells.editors.IntegerTextFieldEditorBuilder;
-import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
-import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -17,15 +16,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.NumberStringConverter;
 import lahome.rotateTool.Main;
-import lahome.rotateTool.Util.ExcelSettings;
-import lahome.rotateTool.Util.ExcelParser;
-import lahome.rotateTool.Util.ExcelSaver;
+import lahome.rotateTool.Util.Excel.ExcelSettings;
+import lahome.rotateTool.Util.Excel.ExcelParser;
+import lahome.rotateTool.Util.Excel.ExcelSaver;
+import lahome.rotateTool.Util.TableUtils;
 import lahome.rotateTool.module.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,6 +66,18 @@ public class RootController {
 
     @FXML
     private JFXTextField pathPurchaseFile;
+
+    @FXML
+    private VBox processStatus;
+
+    @FXML
+    private ProgressIndicator rotateProgress;
+
+    @FXML
+    private ProgressIndicator stockProgress;
+
+    @FXML
+    private ProgressIndicator purchaseProgress;
 
     @FXML
     private TextField settingRotateFirstRow;
@@ -151,31 +164,31 @@ public class RootController {
     private JFXTextField rotateFilterField;
 
     @FXML
-    private JFXTreeTableView<RotateItem> rotateTableView;
+    private TableView<RotateItem> rotateTableView;
 
     @FXML
-    private JFXTreeTableColumn<RotateItem, String> rotateKitColumn;
+    private TableColumn<RotateItem, String> rotateKitColumn;
 
     @FXML
-    private JFXTreeTableColumn<RotateItem, String> rotatePartColumn;
+    private TableColumn<RotateItem, String> rotatePartColumn;
 
     @FXML
-    private JFXTreeTableColumn<RotateItem, String> rotateNoColumn;
+    private TableColumn<RotateItem, String> rotateNoColumn;
 
     @FXML
-    private JFXTreeTableColumn<RotateItem, Number> rotatePmQtyColumn;
+    private TableColumn<RotateItem, Number> rotatePmQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<RotateItem, Number> rotateApQtyColumn;
+    private TableColumn<RotateItem, Number> rotateApQtyColumn;
 
     @FXML
-    private JFXTreeTableColumn<RotateItem, String> rotateRatioColumn;
+    private TableColumn<RotateItem, String> rotateRatioColumn;
 
     @FXML
-    private JFXTreeTableColumn<RotateItem, Number> rotateApplySetColumn;
+    private TableColumn<RotateItem, Number> rotateApplySetColumn;
 
     @FXML
-    private JFXTreeTableColumn<RotateItem, String> rotateRemarkColumn;
+    private TableColumn<RotateItem, String> rotateRemarkColumn;
 
     @FXML
     private Label rotatePartCount;
@@ -504,8 +517,15 @@ public class RootController {
         this.collection = main.getCollection();
         excelParser = new ExcelParser(collection);
         initialHotkeys();
-    }
 
+        ExcelParser.rotateProgressProperty.addListener((observable, oldValue, newValue) ->
+                Platform.runLater(() -> rotateProgress.setProgress(newValue.doubleValue())));
+        ExcelParser.stockProgressProperty.addListener((observable, oldValue, newValue) ->
+                Platform.runLater(() -> stockProgress.setProgress(newValue.doubleValue())));
+        ExcelParser.purchaseProgressProperty.addListener((observable, oldValue, newValue) ->
+                Platform.runLater(() -> purchaseProgress.setProgress(newValue.doubleValue())));
+
+    }
 
     private void initialHotkeys() {
         Scene scene = primaryStage.getScene();
@@ -516,7 +536,7 @@ public class RootController {
             if (keyEvent.getCode() == KeyCode.F12) {
                 int row = rotateTableView.getSelectionModel().getSelectedIndex();
                 row++;
-                if (row < rotateTableView.getCurrentItemsCount()) {
+                if (row < rotateTableView.getItems().size()) {
                     rotateTableView.getSelectionModel().select(row, rotateApplySetColumn);
                     rotateTableView.scrollTo(Math.max(row - 3, 0));
                     rotateTableView.scrollToColumn(rotateApplySetColumn);
@@ -631,14 +651,24 @@ public class RootController {
                     settingPurchaseApSetCol.getText(),
                     settingPurchaseRemarkCol.getText());
 
+            rotateProgress.setProgress(0);
+            stockProgress.setProgress(0);
+            purchaseProgress.setProgress(0);
+
             Platform.runLater(() -> startEditButton.setDisable(true));
             importExcel();
         }
     }
 
     private void importExcel() {
+
         new Thread(() -> {
+
             synchronized (excelHandleLock) {
+                //processStatus.setVisible(true);
+
+                collection.clear();
+
                 excelParser.loadRotateExcel();
                 log.info("Process rotate table: Done");
 
@@ -686,7 +716,15 @@ public class RootController {
                     exportToExcelButton.setVisible(true);
                 });
 
-                startEditButton.setDisable(false);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                //processStatus.setVisible(false);
+                //startEditButton.setDisable(false);
             }
         }).start();
 
@@ -696,6 +734,10 @@ public class RootController {
     void handleSaveFiles() {
         log.info("Save File clicked");
         ExcelSaver excelSaver = new ExcelSaver(collection);
+
+        rotateProgress.setProgress(0);
+        stockProgress.setProgress(0);
+        purchaseProgress.setProgress(0);
 
         excelSaver.saveRotateToExcel();
         log.info("Rotate file saved");
@@ -718,191 +760,133 @@ public class RootController {
 
     private void initialRotateTable() {
         rotateTableView.getSelectionModel().setCellSelectionEnabled(true);
+        rotateTableView.setEditable(true);
+        TableUtils.installCopyPasteHandler(rotateTableView);
 
-        rotateKitColumn.setStyle("-fx-alignment: top-left; ");
-        rotatePartColumn.setStyle("-fx-alignment: top-left; ");
-        rotateNoColumn.setStyle("-fx-alignment: top-left; ");
-        rotateRemarkColumn.setStyle("-fx-alignment: top-left; ");
+        Callback<TableColumn<RotateItem, String>, TableCell<RotateItem, String>> readOnlyStringCell
+                = p -> new TextFieldTableCell<RotateItem, String>(new DefaultStringConverter()) {
+            @Override
+            public void commitEdit(String newValue) {
+            }
+        };
 
-        rotateKitColumn.setCellValueFactory(cellData -> {
-            if (rotateKitColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().kitNameProperty();
-            } else {
-                return rotateKitColumn.getComputedValue(cellData);
+        Callback<TableColumn<RotateItem, Number>, TableCell<RotateItem, Number>> readOnlyNumberCell
+                = p -> new TextFieldTableCell<RotateItem, Number>(new NumberStringConverter()) {
+            @Override
+            public void commitEdit(Number newValue) {
+            }
+        };
+
+        rotateKitColumn.setCellValueFactory(cellData -> cellData.getValue().kitNameProperty());
+        rotateKitColumn.setCellFactory(cellData -> new TextFieldTableCell<RotateItem, String>() {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                // set same kit with same background
+                if (item != null && !empty && item.compareTo(rotateSelectedKit) == 0) {
+                    setStyle("-fx-alignment: center-left; -fx-background-color: #FFEB3B;");
+                } else {
+                    setStyle("-fx-alignment: center-left; ");
+                }
+            }
+
+            @Override
+            public void commitEdit(String newValue) {
             }
         });
-        rotateKitColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<RotateItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        // set same kit with same background
-                        if (item != null && !item.isEmpty() && item.compareTo(rotateSelectedKit) == 0) {
-                            setStyle("-fx-alignment: top-left; -fx-background-color: #FFEB3B;");
-                        } else {
-                            setStyle("-fx-alignment: top-left; ");
-                        }
-                    }
 
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        rotatePartColumn.setCellValueFactory(cellData -> cellData.getValue().partNumberProperty());
+        rotatePartColumn.setCellFactory(cellData -> new TextFieldTableCell<RotateItem, String>() {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                // set same kit with same background
 
-        rotatePartColumn.setCellValueFactory(cellData -> {
-            if (rotatePartColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().partNumberProperty();
-            } else {
-                return rotatePartColumn.getComputedValue(cellData);
+                if (item != null && !empty && item.compareTo(rotateSelectedKit) == 0) {
+                    setStyle("-fx-alignment: center-left; -fx-background-color: #FFEB3B;");
+                } else {
+                    setStyle("-fx-alignment: center-left; ");
+                }
+            }
+
+            @Override
+            public void commitEdit(String newValue) {
             }
         });
-        rotatePartColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<RotateItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        // set same kit with same background
-                        int rowIdx = getTreeTableRow().getIndex();
-                        String kit = rotateKitColumn.getCellData(rowIdx);
-                        if (item != null && !kit.isEmpty() && kit.compareTo(rotateSelectedKit) == 0) {
-                            setStyle("-fx-alignment: top-left; -fx-background-color: #FFEB3B;");
-                        } else {
-                            setStyle("-fx-alignment: top-left; ");
-                        }
-                    }
 
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        rotateNoColumn.setCellValueFactory(cellData -> cellData.getValue().serialNoProperty());
+        rotateNoColumn.setCellFactory(cellData -> new TextFieldTableCell<RotateItem, String>() {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                // set same kit with same background
+                RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
+                if (rotateItem != null && rotateItem.getKitName().compareTo(rotateSelectedKit) == 0) {
+                    setStyle("-fx-alignment: center-left; -fx-background-color: #FFEB3B;");
+                } else {
+                    setStyle("-fx-alignment: center-left; ");
+                }
+            }
 
-        rotateNoColumn.setCellValueFactory(cellData -> {
-            if (rotateNoColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().serialNoProperty();
-            } else {
-                return rotateNoColumn.getComputedValue(cellData);
+            @Override
+            public void commitEdit(String newValue) {
             }
         });
-        rotateNoColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<RotateItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        // set same kit with same background
-                        int rowIdx = getTreeTableRow().getIndex();
-                        String kit = rotateKitColumn.getCellData(rowIdx);
-                        if (item != null && !kit.isEmpty() && kit.compareTo(rotateSelectedKit) == 0) {
-                            setStyle("-fx-alignment: top-left; -fx-background-color: #FFEB3B;");
-                        } else {
-                            setStyle("-fx-alignment: top-left; ");
-                        }
-                    }
 
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
+        rotatePmQtyColumn.setCellValueFactory(cellData -> cellData.getValue().pmQtyProperty());
+        rotatePmQtyColumn.setCellFactory(readOnlyNumberCell);
 
-        rotatePmQtyColumn.setCellValueFactory(cellData -> {
-            if (rotatePmQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().pmQtyProperty();
-            } else {
-                return rotatePmQtyColumn.getComputedValue(cellData);
+        rotateApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().stockApplyQtyTotalProperty());
+        rotateApQtyColumn.setCellFactory(cellData -> new TextFieldTableCell<RotateItem, Number>(new NumberStringConverter()) {
+            @Override
+            public void updateItem(Number item, boolean empty) {
+                super.updateItem(item, empty);
+
+                RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
+                if (rotateItem == null) {
+                    setStyle("-fx-alignment: center-right;");
+                    return;
+                }
+
+                int pmQty = rotateItem.getPmQty();
+                if (item == null) {
+                    setStyle("-fx-alignment: center-right;");
+                } else if (item.intValue() == pmQty) {
+                    setStyle("-fx-alignment: center-right; -fx-background-color: #4CAF50;"); // green
+                } else if (item.intValue() > pmQty) {
+                    setStyle("-fx-alignment: center-right; -fx-background-color: #ef5350;"); // red
+                } else {
+                    setStyle("");
+                }
+            }
+
+            @Override
+            public void commitEdit(Number newValue) {
             }
         });
-        rotatePmQtyColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<RotateItem, Number>(new IntegerTextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(Number newValue) {
-                    }
-                });
 
-        rotateApQtyColumn.setCellValueFactory(cellData -> {
-            if (rotateApQtyColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().stockApplyQtyTotalProperty();
-            } else {
-                return rotateApQtyColumn.getComputedValue(cellData);
-            }
-        });
-        rotateApQtyColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<RotateItem, Number>(new IntegerTextFieldEditorBuilder()) {
-                    @Override
-                    public void updateItem(Number item, boolean empty) {
-                        super.updateItem(item, empty);
-                        // set same kit with same background
-                        int rowIdx = getTreeTableRow().getIndex();
-                        Number pmQty = rotatePmQtyColumn.getCellData(rowIdx);
-                        if (pmQty == null || item == null) {
-                            setStyle("");
-                        } else if (pmQty.intValue() == item.intValue()) {
-                            setStyle("-fx-background-color: #4CAF50;");
-                        } else if (pmQty.intValue() < item.intValue()) {
-                            setStyle("-fx-background-color: #ef5350;");
-                        } else {
-                            setStyle("");
-                        }
-                    }
+        rotateRatioColumn.setCellValueFactory(cellData -> cellData.getValue().ratioProperty());
+        rotateRatioColumn.setCellFactory(readOnlyStringCell);
 
-                    @Override
-                    public void commitEdit(Number newValue) {
-                    }
-                });
+        rotateApplySetColumn.setCellValueFactory(cellData -> cellData.getValue().applySetProperty());
+        rotateApplySetColumn.setCellFactory(readOnlyNumberCell);
 
-        rotateRatioColumn.setCellValueFactory(cellData -> {
-            if (rotateRatioColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().ratioProperty();
-            } else {
-                return rotateRatioColumn.getComputedValue(cellData);
-            }
-        });
-        rotateRatioColumn.setCellFactory(cellData ->
-                new GenericEditableTreeTableCell<RotateItem, String>(new TextFieldEditorBuilder()) {
-                    @Override
-                    public void commitEdit(String newValue) {
-                    }
-                });
-
-        rotateApplySetColumn.setCellValueFactory(cellData -> {
-            if (rotateApplySetColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().applySetProperty();
-            } else {
-                return rotateApplySetColumn.getComputedValue(cellData);
-            }
-        });
-        rotateApplySetColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new IntegerTextFieldEditorBuilder()));
-        rotateApplySetColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().applySetProperty().set(cellData.getNewValue().intValue());
-            rotateTableView.requestFocus();
-        });
-
-        rotateRemarkColumn.setCellValueFactory(cellData -> {
-            if (rotateRemarkColumn.validateValue(cellData)) {
-                return cellData.getValue().getValue().remarkProperty();
-            } else {
-                return rotateRemarkColumn.getComputedValue(cellData);
-            }
-        });
-        rotateRemarkColumn.setCellFactory(cellData -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
+        rotateRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
+        rotateRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         rotateRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getTreeTableView().getTreeItem(cellData.getTreeTablePosition().getRow())
-                    .getValue().remarkProperty().set(cellData.getNewValue());
+            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
+                    .remarkProperty().set(cellData.getNewValue());
             rotateTableView.requestFocus();
         });
-
-        rotateFilterField.textProperty().addListener((o, oldVal, newVal) -> rotateTableView.setPredicate(itemProp -> {
-            final RotateItem item = itemProp.getValue();
-            return item.kitNameProperty().get().contains(newVal) || item.partNumberProperty().get().contains(newVal);
-        }));
 
         rotateTableView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> selectedRotateItem(newValue));
 
-        rotateTableView.setRowFactory(tv -> new JFXTreeTableRow<RotateItem>() {
+        rotateTableView.setRowFactory(tv -> new TableRow<RotateItem>() {
             @Override
             public void updateItem(RotateItem item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item == null) {
+                if (item == null || empty) {
                     setStyle("");
                 } else if (item.isDuplicate()) {
                     setStyle("-fx-background-color: #607D8B;");
@@ -921,9 +905,10 @@ public class RootController {
         stockTableView.getSelectionModel().setCellSelectionEnabled(true);
         stockTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         stockTableView.setEditable(true);
+        TableUtils.installCopyPasteHandler(stockTableView);
 
         Callback<TableColumn<StockItem, String>, TableCell<StockItem, String>> readOnlyStringCell
-                = p -> new TextFieldTableCell<StockItem, String>(new DefaultStringConverter()) {
+                = p -> new TextFieldTableCell<StockItem, String>() {
             @Override
             public void commitEdit(String newValue) {
             }
@@ -1001,9 +986,10 @@ public class RootController {
         purchaseTableView.getSelectionModel().setCellSelectionEnabled(true);
         purchaseTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         purchaseTableView.setEditable(true);
+        TableUtils.installCopyPasteHandler(purchaseTableView);
 
         Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> readOnlyStringCell
-                = p -> new TextFieldTableCell<PurchaseItem, String>(new DefaultStringConverter()) {
+                = p -> new TextFieldTableCell<PurchaseItem, String>() {
             @Override
             public void commitEdit(String newValue) {
             }
@@ -1080,10 +1066,11 @@ public class RootController {
         noneStPurchaseTableView.setPlaceholder(new Label("ZMM 找不到符合項目"));
         noneStPurchaseTableView.getSelectionModel().setCellSelectionEnabled(true);
         noneStPurchaseTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        purchaseTableView.setEditable(true);
+        noneStPurchaseTableView.setEditable(true);
+        TableUtils.installCopyPasteHandler(noneStPurchaseTableView);
 
         Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> readOnlyStringCell
-                = p -> new TextFieldTableCell<PurchaseItem, String>(new DefaultStringConverter()) {
+                = p -> new TextFieldTableCell<PurchaseItem, String>() {
             @Override
             public void commitEdit(String newValue) {
             }
@@ -1157,27 +1144,27 @@ public class RootController {
         });
     }
 
-    private void selectedRotateItem(TreeItem<RotateItem> newValue) {
-        if (newValue == null || !newValue.isLeaf()) {
+    private void selectedRotateItem(RotateItem newRotateItem) {
+        if (newRotateItem == null) {
             stockTableView.getItems().clear();
+            noneStPurchaseTableView.getItems().clear();
             return;
         }
 
         rotateKitColumn.setVisible(false);
         rotateKitColumn.setVisible(true);
 
-        RotateItem rotateItem = newValue.getValue();
-        boolean kitUpdate = currentRotateItem == null || !rotateItem.isKit() ||
-                rotateItem.getKitName().compareTo(currentRotateItem.getKitName()) != 0;
+        boolean kitUpdate = currentRotateItem == null || !newRotateItem.isKit() ||
+                newRotateItem.getKitName().compareTo(currentRotateItem.getKitName()) != 0;
         if (!kitUpdate)
             return;
 
-        currentRotateItem = rotateItem;
-        rotateSelectedKit = rotateItem.getKitName();
+        currentRotateItem = newRotateItem;
+        rotateSelectedKit = newRotateItem.getKitName();
 
-        if (rotateItem.isKit()) {
+        if (newRotateItem.isKit()) {
             stockPartNumCombo.getItems().clear();
-            for (RotateItem part : rotateItem.getKitNode().getPartsList()) {
+            for (RotateItem part : newRotateItem.getKitNode().getPartsList()) {
                 stockPartNumCombo.getItems().add(part.getPartNumber());
             }
 
@@ -1188,14 +1175,14 @@ public class RootController {
         } else {
             showAllParts = false;
             stockPartNumCombo.getItems().clear();
-            stockPartNumCombo.getItems().add(rotateItem.getPartNumber());
-            stockPartNumCombo.setValue(rotateItem.getPartNumber());
+            stockPartNumCombo.getItems().add(newRotateItem.getPartNumber());
+            stockPartNumCombo.setValue(newRotateItem.getPartNumber());
         }
 
         updateRotateTableTotal();
 
-        updateStockTable(rotateItem);
-        updateNoneStPurchaseTable(rotateItem);
+        updateStockTable(newRotateItem);
+        updateNoneStPurchaseTable(newRotateItem);
     }
 
     private void selectedStockItem(StockItem newStockItem) {
@@ -1267,23 +1254,51 @@ public class RootController {
     }
 
     private void updateRotateTable() {
-        final TreeItem<RotateItem> rotateRoot = new RecursiveTreeItem<>(
-                collection.getRotateObsList(), RecursiveTreeObject::getChildren);
 
-        rotateTableView.setRoot(rotateRoot);
-        if (rotateTableView.getCurrentItemsCount() > 0) {
-            rotateTableView.getSelectionModel().select(0, rotatePmQtyColumn);
+        rotateTableView.getItems().clear();
+        ObservableList<RotateItem> obsList = collection.getRotateObsList();
+        FilteredList<RotateItem> filteredData = new FilteredList<>(obsList, p -> true);
+
+        ChangeListener listener = (ChangeListener<String>) (ov, oldVal, newVal) -> filteredData.setPredicate(rotateItem -> {
+            // If filter text is empty, display all persons.
+            if (newVal == null || newVal.isEmpty()) {
+                return true;
+            }
+
+            // Compare first name and last name of every person with filter text.
+            String lowerCaseFilter = newVal.toLowerCase();
+
+            if (rotateItem.getKitName().toLowerCase().contains(lowerCaseFilter)) {
+                return true; // Filter matches first name.
+            } else if (rotateItem.getPartNumber().toLowerCase().contains(lowerCaseFilter)) {
+                return true; // Filter matches last name.
+            }
+            return false; // Does not match.
+        });
+
+        rotateFilterField.textProperty().addListener(listener);
+
+        // 3. Wrap the FilteredList in a SortedList.
+        SortedList<RotateItem> sortedData = new SortedList<>(filteredData);
+
+        // 4. Bind the SortedList comparator to the TableView comparator.
+        sortedData.comparatorProperty().bind(rotateTableView.comparatorProperty());
+
+        // 5. Add sorted (and filtered) data to the table.
+        rotateTableView.setItems(sortedData);
+        if (obsList.size() > 0) {
+            rotateTableView.getSelectionModel().select(0, rotateApplySetColumn);
         }
 
         rotateTableView.requestFocus();
-        rotatePartCount.setText(String.valueOf(collection.getRotateObsList().size()));
+        rotatePartCount.setText(String.valueOf(obsList.size()));
     }
 
     private void updateStockTable(RotateItem rotateItem) {
 
+        stockTableView.getItems().clear();
         if (rotateItem.isDuplicate()) {
             stockTableView.setPlaceholder(new Label("重複的項目!! 我無法幫妳了 orz...."));
-            stockTableView.getItems().clear();
         } else {
             ObservableList<StockItem> obsList;
             if (rotateItem.isKit() && showAllParts) {
@@ -1292,8 +1307,8 @@ public class RootController {
                 obsList = rotateItem.getStockItemObsList();
             }
 
+            stockTableView.setItems(obsList);
             if (obsList.size() > 0) {
-                stockTableView.setItems(obsList);
                 stockTableView.getSelectionModel().select(0, stockApQtyColumn);
             } else {
                 stockTableView.setPlaceholder(new Label("庫存找不到符合項目"));
@@ -1312,10 +1327,8 @@ public class RootController {
 
     private void updatePurchaseTable(StockItem stockItem) {
 
-
-        if (stockItem.getRotateItem().isDuplicate()) {
-            purchaseTableView.getItems().clear();
-        } else {
+        purchaseTableView.getItems().clear();
+        if (!stockItem.getRotateItem().isDuplicate()) {
             ObservableList<PurchaseItem> obsList;
             if (purchaseShowAllToggle.isSelected()) {
                 if (stockItem.getRotateItem().isKit() && showAllParts) {
@@ -1331,8 +1344,8 @@ public class RootController {
                 }
             }
 
+            purchaseTableView.setItems(obsList);
             if (obsList.size() > 0) {
-                purchaseTableView.setItems(obsList);
                 purchaseTableView.getSelectionModel().select(0, purchaseApQtyColumn);
             }
         }
@@ -1349,9 +1362,8 @@ public class RootController {
 
     private void updateNoneStPurchaseTable(RotateItem rotateItem) {
 
+        noneStPurchaseTableView.getItems().clear();
         if (rotateItem.isDuplicate()) {
-            noneStPurchaseTableView.getItems().clear();
-        } else {
             ObservableList<PurchaseItem> obsList;
             if (rotateItem.isKit() && showAllParts) {
                 obsList = rotateItem.getKitNode().getNoneStPurchaseItemList();
@@ -1359,8 +1371,8 @@ public class RootController {
                 obsList = rotateItem.getNoneStockPurchaseItemObsList();
             }
 
+            noneStPurchaseTableView.setItems(obsList);
             if (obsList.size() > 0) {
-                noneStPurchaseTableView.setItems(obsList);
                 noneStPurchaseTableView.getSelectionModel().select(0, noneStPurchaseApQtyColumn);
             }
         }
