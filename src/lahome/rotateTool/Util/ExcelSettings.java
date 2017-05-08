@@ -7,7 +7,7 @@ import java.util.Locale;
 /**
  * Created by Administrator on 2017/5/6.
  */
-public class ExcelCommon {
+public class ExcelSettings {
 
     public static String rotateFilePath;
     public static int rotateSheetIndex = 1;
@@ -94,41 +94,5 @@ public class ExcelCommon {
         purchaseRemarkColumn = CellReference.convertColStringToIndex(remarkColStr);
     }
 
-    public static String convertNumToColString(int col) {
 
-        int excelColNum = col + 1;
-        StringBuilder colRef = new StringBuilder(2);
-        int colRemain = excelColNum;
-
-        while(colRemain > 0) {
-            int thisPart = colRemain % 26;
-            if(thisPart == 0) {
-                thisPart = 26;
-            }
-
-            colRemain = (colRemain - thisPart) / 26;
-            char colChar = (char)(thisPart + 64);
-            colRef.insert(0, colChar);
-        }
-
-        return colRef.toString();
-    }
-
-    public static int convertColStringToIndex(String ref) {
-        int retValue = 0;
-        char[] refs = ref.toUpperCase(Locale.ROOT).toCharArray();
-
-        for(int k = 0; k < refs.length; ++k) {
-            char ch = refs[k];
-            if(ch == 36) {
-                if(k != 0) {
-                    throw new IllegalArgumentException("Bad col ref format '" + ref + "'");
-                }
-            } else {
-                retValue = retValue * 26 + ch - 65 + 1;
-            }
-        }
-
-        return retValue - 1;
-    }
 }

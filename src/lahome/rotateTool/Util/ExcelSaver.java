@@ -10,10 +10,6 @@ import lahome.rotateTool.module.RotateItem;
 import lahome.rotateTool.module.StockItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.util.CellReference;
-
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Created by Administrator on 2017/5/6.
@@ -28,9 +24,29 @@ public class ExcelSaver {
         this.collection = collection;
     }
 
+    public static String convertNumToColString(int col) {
+
+        int excelColNum = col + 1;
+        StringBuilder colRef = new StringBuilder(2);
+        int colRemain = excelColNum;
+
+        while(colRemain > 0) {
+            int thisPart = colRemain % 26;
+            if(thisPart == 0) {
+                thisPart = 26;
+            }
+
+            colRemain = (colRemain - thisPart) / 26;
+            char colChar = (char)(thisPart + 64);
+            colRef.insert(0, colChar);
+        }
+
+        return colRef.toString();
+    }
+
     public void writeCell(int row, int col, String data) {
         try {
-            String pos = ExcelCommon.convertNumToColString(col) + row;
+            String pos = convertNumToColString(col) + row;
             Dispatch cell = Dispatch.invoke(currentSheet, "Range", Dispatch.Get, new Object[]{pos}, new int[1]).toDispatch();
             Dispatch.put(cell, "Value", data);
         } catch (Exception e) {
@@ -46,10 +62,10 @@ public class ExcelSaver {
             Dispatch.put(excel, "Visible", new Variant(true));
 
             Dispatch workbooks = excel.getProperty("Workbooks").toDispatch();
-            Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant(ExcelCommon.rotateFilePath)).toDispatch();
+            Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant(ExcelSettings.rotateFilePath)).toDispatch();
             Dispatch sheets = Dispatch.get(workbook, "Worksheets").toDispatch();//獲得所有的Sheet
             int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
-            Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{ExcelCommon.rotateSheetIndex}, new int[1]).toDispatch();
+            Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{ExcelSettings.rotateSheetIndex}, new int[1]).toDispatch();
             String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
             Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
             Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
@@ -62,9 +78,9 @@ public class ExcelSaver {
                     continue;
 
                 int rowNum = item.getRowNum();
-                writeCell(rowNum, ExcelCommon.rotateApQtyColumn, String.valueOf(item.getStockApplyQtyTotal()));
-                writeCell(rowNum, ExcelCommon.rotateApplySetColumn, String.valueOf(item.getApplySet()));
-                writeCell(rowNum, ExcelCommon.rotateRemarkColumn, item.getRemark());
+                writeCell(rowNum, ExcelSettings.rotateApQtyColumn, String.valueOf(item.getStockApplyQtyTotal()));
+                writeCell(rowNum, ExcelSettings.rotateApplySetColumn, String.valueOf(item.getApplySet()));
+                writeCell(rowNum, ExcelSettings.rotateRemarkColumn, item.getRemark());
             }
 
             // Saves and closes
@@ -88,10 +104,10 @@ public class ExcelSaver {
             Dispatch.put(excel, "Visible", new Variant(true));
 
             Dispatch workbooks = excel.getProperty("Workbooks").toDispatch();
-            Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant(ExcelCommon.stockFilePath)).toDispatch();
+            Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant(ExcelSettings.stockFilePath)).toDispatch();
             Dispatch sheets = Dispatch.get(workbook, "Worksheets").toDispatch();//獲得所有的Sheet
             int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
-            Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{ExcelCommon.stockSheetIndex}, new int[1]).toDispatch();
+            Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{ExcelSettings.stockSheetIndex}, new int[1]).toDispatch();
             String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
             Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
             Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
@@ -104,8 +120,8 @@ public class ExcelSaver {
                     continue;
 
                 int rowNum = item.getRowNum();
-                writeCell(rowNum, ExcelCommon.stockApQtyColumn, String.valueOf(item.getApplyQty()));
-                writeCell(rowNum, ExcelCommon.stockRemarkColumn, item.getRemark());
+                writeCell(rowNum, ExcelSettings.stockApQtyColumn, String.valueOf(item.getApplyQty()));
+                writeCell(rowNum, ExcelSettings.stockRemarkColumn, item.getRemark());
             }
 
             // Saves and closes
@@ -129,10 +145,10 @@ public class ExcelSaver {
             Dispatch.put(excel, "Visible", new Variant(true));
 
             Dispatch workbooks = excel.getProperty("Workbooks").toDispatch();
-            Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant(ExcelCommon.purchaseFilePath)).toDispatch();
+            Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant(ExcelSettings.purchaseFilePath)).toDispatch();
             Dispatch sheets = Dispatch.get(workbook, "Worksheets").toDispatch();//獲得所有的Sheet
             int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
-            Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{ExcelCommon.purchaseSheetIndex}, new int[1]).toDispatch();
+            Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{ExcelSettings.purchaseSheetIndex}, new int[1]).toDispatch();
             String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
             Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
             Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
@@ -145,9 +161,9 @@ public class ExcelSaver {
                     continue;
 
                 int rowNum = item.getRowNum();
-                writeCell(rowNum, ExcelCommon.purchaseApQtyColumn, String.valueOf(item.getApplyQty()));
-                writeCell(rowNum, ExcelCommon.purchaseApSetColumn, String.valueOf(item.getApplySet()));
-                writeCell(rowNum, ExcelCommon.purchaseRemarkColumn, item.getRemark());
+                writeCell(rowNum, ExcelSettings.purchaseApQtyColumn, String.valueOf(item.getApplyQty()));
+                writeCell(rowNum, ExcelSettings.purchaseApSetColumn, String.valueOf(item.getApplySet()));
+                writeCell(rowNum, ExcelSettings.purchaseRemarkColumn, item.getRemark());
             }
 
             // Saves and closes

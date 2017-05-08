@@ -8,22 +8,14 @@ import java.util.Map;
 public class DataChecker {
     private static final Logger log = LogManager.getLogger(DataChecker.class.getName());
 
-    private RotateCollection collection;
-    private StringBuilder errorLog;
-
-    public DataChecker(RotateCollection collection, StringBuilder errorLog) {
-        this.collection = collection;
-        this.errorLog = errorLog;
-    }
-
-    public int doCheck() {
+    public static int doCheck(RotateCollection collection, StringBuilder errorLog) {
         int retValue = 0;
-        retValue += checkRatio();
+        retValue += checkRatio(collection, errorLog);
 
         return retValue;
     }
 
-    private int checkRatio() {
+    private static int checkRatio(RotateCollection collection, StringBuilder errorLog) {
         int retValue = 0;
 
         for (Object o : collection.getKitNodeMap().entrySet()) {

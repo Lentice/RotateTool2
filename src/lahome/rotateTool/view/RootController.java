@@ -7,7 +7,6 @@ import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -24,7 +23,7 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.NumberStringConverter;
 import lahome.rotateTool.Main;
-import lahome.rotateTool.Util.ExcelCommon;
+import lahome.rotateTool.Util.ExcelSettings;
 import lahome.rotateTool.Util.ExcelParser;
 import lahome.rotateTool.Util.ExcelSaver;
 import lahome.rotateTool.module.*;
@@ -597,7 +596,7 @@ public class RootController {
     void handleStartEdit() {
 
         synchronized (excelHandleLock) {
-            ExcelCommon.setRotateConfig(
+            ExcelSettings.setRotateConfig(
                     pathAgingReport.getText(),
                     Integer.valueOf(settingRotateFirstRow.getText()),
                     settingRotateKitNameCol.getText(),
@@ -608,7 +607,7 @@ public class RootController {
                     settingRotateApSetCol.getText(),
                     settingRotateRemarkCol.getText());
 
-            ExcelCommon.setStockConfig(
+            ExcelSettings.setStockConfig(
                     pathStockFile.getText(),
                     Integer.valueOf(settingStockFirstRow.getText()),
                     settingStockKitNameCol.getText(),
@@ -620,7 +619,7 @@ public class RootController {
                     settingStockApQtyCol.getText(),
                     settingStockRemarkCol.getText());
 
-            ExcelCommon.setPurchaseConfig(
+            ExcelSettings.setPurchaseConfig(
                     pathPurchaseFile.getText(),
                     Integer.valueOf(settingPurchaseFirstRow.getText()),
                     settingPurchaseKitNameCol.getText(),
@@ -650,8 +649,7 @@ public class RootController {
                 log.info("Process purchase table: Done");
 
                 StringBuilder errorLog = new StringBuilder("");
-                DataChecker dataChecker = new DataChecker(collection, errorLog);
-                int failCount = dataChecker.doCheck();
+                int failCount = DataChecker.doCheck(collection, errorLog);
                 if (failCount > 0) {
                     Platform.runLater(() -> {
                         Alert alert = new Alert(Alert.AlertType.WARNING);
