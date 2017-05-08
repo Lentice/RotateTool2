@@ -2,7 +2,10 @@ package lahome.rotateTool.view;
 
 import com.jfoenix.controls.*;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -340,6 +343,13 @@ public class RootController {
     private RotateItem currentRotateItem;
     private StockItem currentStockItem;
 
+    private ObservableList<RotateItem> emptyRotateList = FXCollections.observableArrayList();
+    private ObservableList<StockItem> emptyStockList = FXCollections.observableArrayList();
+    private ObservableList<PurchaseItem> emptyPurchaseList = FXCollections.observableArrayList();
+    private DoubleProperty rotateProgressProperty = new SimpleDoubleProperty(0);
+    private DoubleProperty stockProgressProperty = new SimpleDoubleProperty(0);
+    private DoubleProperty purchaseProgressProperty = new SimpleDoubleProperty(0);
+
     private static final Object excelHandleLock = new Object();
 
     public RootController() {
@@ -518,11 +528,11 @@ public class RootController {
         excelParser = new ExcelParser(collection);
         initialHotkeys();
 
-        ExcelParser.rotateProgressProperty.addListener((observable, oldValue, newValue) ->
+        rotateProgressProperty.addListener((observable, oldValue, newValue) ->
                 Platform.runLater(() -> rotateProgress.setProgress(newValue.doubleValue())));
-        ExcelParser.stockProgressProperty.addListener((observable, oldValue, newValue) ->
+        stockProgressProperty.addListener((observable, oldValue, newValue) ->
                 Platform.runLater(() -> stockProgress.setProgress(newValue.doubleValue())));
-        ExcelParser.purchaseProgressProperty.addListener((observable, oldValue, newValue) ->
+        purchaseProgressProperty.addListener((observable, oldValue, newValue) ->
                 Platform.runLater(() -> purchaseProgress.setProgress(newValue.doubleValue())));
 
     }
@@ -651,10 +661,6 @@ public class RootController {
                     settingPurchaseApSetCol.getText(),
                     settingPurchaseRemarkCol.getText());
 
-            rotateProgress.setProgress(0);
-            stockProgress.setProgress(0);
-            purchaseProgress.setProgress(0);
-
             Platform.runLater(() -> startEditButton.setDisable(true));
             importExcel();
         }
@@ -667,15 +673,17 @@ public class RootController {
             synchronized (excelHandleLock) {
                 //processStatus.setVisible(true);
 
-                collection.clear();
+                rotateProgress.setProgress(0);
+                stockProgress.setProgress(0);
+                purchaseProgress.setProgress(0);
 
-                excelParser.loadRotateExcel();
+                excelParser.loadRotateExcel(rotateProgressProperty);
                 log.info("Process rotate table: Done");
 
-                excelParser.loadStockExcel();
+                excelParser.loadStockExcel(stockProgressProperty);
                 log.info("Process stock table: Done");
 
-                excelParser.loadPurchaseExcel();
+                excelParser.loadPurchaseExcel(purchaseProgressProperty);
                 log.info("Process purchase table: Done");
 
                 StringBuilder errorLog = new StringBuilder("");
@@ -735,16 +743,22 @@ public class RootController {
         log.info("Save File clicked");
         ExcelSaver excelSaver = new ExcelSaver(collection);
 
-        rotateProgress.setProgress(0);
-        stockProgress.setProgress(0);
-        purchaseProgress.setProgress(0);
+        new Thread(() -> {
 
-        excelSaver.saveRotateToExcel();
-        log.info("Rotate file saved");
-        excelSaver.saveStockToExcel();
-        log.info("Stock file saved");
-        excelSaver.savePurchaseToExcel();
-        log.info("Purchase file saved");
+            synchronized (excelHandleLock) {
+
+                rotateProgress.setProgress(0);
+                stockProgress.setProgress(0);
+                purchaseProgress.setProgress(0);
+
+                excelSaver.saveRotateToExcel(rotateProgressProperty);
+                log.info("Rotate file saved");
+                excelSaver.saveStockToExcel(stockProgressProperty);
+                log.info("Stock file saved");
+                excelSaver.savePurchaseToExcel(purchaseProgressProperty);
+                log.info("Purchase file saved");
+            }
+        }).start();
     }
 
     @FXML
@@ -936,7 +950,6 @@ public class RootController {
 
         stockDcColumn.setCellValueFactory(cellData -> cellData.getValue().dcProperty());
         stockDcColumn.setCellFactory(readOnlyStringCell);
-
 
         stockGrDateColumn.setCellValueFactory(cellData -> cellData.getValue().earliestGrDateProperty());
         stockGrDateColumn.setCellFactory(readOnlyStringCell);
@@ -1146,8 +1159,8 @@ public class RootController {
 
     private void selectedRotateItem(RotateItem newRotateItem) {
         if (newRotateItem == null) {
-            stockTableView.getItems().clear();
-            noneStPurchaseTableView.getItems().clear();
+            stockTableView.setItems(emptyStockList);
+            noneStPurchaseTableView.setItems(emptyPurchaseList);
             return;
         }
 
@@ -1187,7 +1200,7 @@ public class RootController {
 
     private void selectedStockItem(StockItem newStockItem) {
         if (newStockItem == null) {
-            purchaseTableView.getItems().clear();
+            purchaseTableView.setItems(emptyPurchaseList);
             return;
         }
 
@@ -1255,7 +1268,7 @@ public class RootController {
 
     private void updateRotateTable() {
 
-        rotateTableView.getItems().clear();
+        rotateTableView.setItems(emptyRotateList);
         ObservableList<RotateItem> obsList = collection.getRotateObsList();
         FilteredList<RotateItem> filteredData = new FilteredList<>(obsList, p -> true);
 
@@ -1296,7 +1309,7 @@ public class RootController {
 
     private void updateStockTable(RotateItem rotateItem) {
 
-        stockTableView.getItems().clear();
+        stockTableView.setItems(emptyStockList);
         if (rotateItem.isDuplicate()) {
             stockTableView.setPlaceholder(new Label("重複的項目!! 我無法幫妳了 orz...."));
         } else {
@@ -1327,7 +1340,7 @@ public class RootController {
 
     private void updatePurchaseTable(StockItem stockItem) {
 
-        purchaseTableView.getItems().clear();
+        purchaseTableView.setItems(emptyPurchaseList);
         if (!stockItem.getRotateItem().isDuplicate()) {
             ObservableList<PurchaseItem> obsList;
             if (purchaseShowAllToggle.isSelected()) {
@@ -1362,7 +1375,7 @@ public class RootController {
 
     private void updateNoneStPurchaseTable(RotateItem rotateItem) {
 
-        noneStPurchaseTableView.getItems().clear();
+        noneStPurchaseTableView.setItems(emptyPurchaseList);
         if (rotateItem.isDuplicate()) {
             ObservableList<PurchaseItem> obsList;
             if (rotateItem.isKit() && showAllParts) {
