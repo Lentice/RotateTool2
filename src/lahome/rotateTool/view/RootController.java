@@ -331,6 +331,7 @@ public class RootController {
 
     private File latestDir = new File(System.getProperty("user.dir"));
     private String rotateSelectedKit = "";
+    private String rotateSelectedPart = "";
     private String stockSelectedPart = "";
     private String stockSelectedPo = "";
     private String purchaseSelectedPo = "";
@@ -824,11 +825,17 @@ public class RootController {
             @Override
             public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
+
                 // set same kit with same background
-                if (item != null && !empty && item.compareTo(rotateSelectedKit) == 0) {
-                    setStyle("-fx-alignment: center-left; -fx-background-color: #FFEB3B;");
+                String basicStyle = "-fx-alignment: center-left; ";
+                RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
+
+                if (rotateItem == null || rotateItem.isDuplicate() || !rotateItem.isKit()) {
+                    setStyle(basicStyle);
+                } else if (rotateItem.isKit() && rotateItem.getKitName().equals(rotateSelectedKit)) {
+                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
                 } else {
-                    setStyle("-fx-alignment: center-left; ");
+                    setStyle(basicStyle);
                 }
             }
 
@@ -842,13 +849,19 @@ public class RootController {
             @Override
             public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                // set same kit with same background
 
+                // set same kit with same background
+                String basicStyle = "-fx-alignment: center-left; ";
                 RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
-                if (rotateItem != null && rotateItem.getKitName().compareTo(rotateSelectedKit) == 0) {
-                    setStyle("-fx-alignment: center-left; -fx-background-color: #FFEB3B;");
+
+                if (rotateItem == null || rotateItem.isDuplicate()) {
+                    setStyle(basicStyle);
+                } else if (!rotateItem.isKit() && rotateItem.getPartNumber().equals(rotateSelectedPart)) {
+                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
+                } else if (rotateItem.isKit() && rotateItem.getKitName().equals(rotateSelectedKit)) {
+                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
                 } else {
-                    setStyle("-fx-alignment: center-left; ");
+                    setStyle(basicStyle);
                 }
             }
 
@@ -862,12 +875,18 @@ public class RootController {
             @Override
             public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
+
                 // set same kit with same background
+                String basicStyle = "-fx-alignment: center-left; ";
                 RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
-                if (rotateItem != null && rotateItem.getKitName().compareTo(rotateSelectedKit) == 0) {
-                    setStyle("-fx-alignment: center-left; -fx-background-color: #FFEB3B;");
+                if (rotateItem == null || rotateItem.isDuplicate()) {
+                    setStyle(basicStyle);
+                } else if (!rotateItem.isKit() && rotateItem.getPartNumber().equals(rotateSelectedPart)) {
+                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
+                } else if (rotateItem.isKit() && rotateItem.getKitName().equals(rotateSelectedKit)) {
+                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
                 } else {
-                    setStyle("-fx-alignment: center-left; ");
+                    setStyle(basicStyle);
                 }
             }
 
@@ -1038,7 +1057,7 @@ public class RootController {
                 super.updateItem(item, empty);
                 if (item == null || empty) {
                     setStyle("");
-                } else if (item.getPo().compareTo(stockSelectedPo) == 0) {
+                } else if (item.getPo().equals(stockSelectedPo)) {
                     setStyle("-fx-background-color: #FFF176;");
                 } else {
                     setStyle("");
@@ -1121,7 +1140,7 @@ public class RootController {
                 super.updateItem(item, empty);
                 if (item == null || empty) {
                     setStyle("");
-                } else if (item.getPo().compareTo(purchaseSelectedPo) == 0) {
+                } else if (item.getPo().equals(purchaseSelectedPo)) {
                     setStyle("-fx-background-color: #FFF176;");
                 } else {
                     setStyle("");
@@ -1209,7 +1228,7 @@ public class RootController {
                 super.updateItem(item, empty);
                 if (item == null || empty) {
                     setStyle("");
-                } else if (item.getPo().compareTo(noneStPurchaseSelectedPo) == 0) {
+                } else if (item.getPo().equals(noneStPurchaseSelectedPo)) {
                     setStyle("-fx-background-color: #FFF176;");
                 } else {
                     setStyle("");
@@ -1243,12 +1262,13 @@ public class RootController {
         rotateKitColumn.setVisible(true);
 
         boolean kitUpdate = currentRotateItem == null || !newRotateItem.isKit() ||
-                newRotateItem.getKitName().compareTo(currentRotateItem.getKitName()) != 0;
+                !newRotateItem.getKitName().equals(currentRotateItem.getKitName());
         if (!kitUpdate)
             return;
 
         currentRotateItem = newRotateItem;
         rotateSelectedKit = newRotateItem.getKitName();
+        rotateSelectedPart = newRotateItem.getPartNumber();
 
         if (newRotateItem.isKit()) {
             stockPartNumCombo.getItems().clear();
@@ -1293,6 +1313,9 @@ public class RootController {
         if (newPurchaseItem == null)
             return;
 
+        purchasePoColumn.setVisible(false);
+        purchasePoColumn.setVisible(true);
+
         purchaseSelectedPo = newPurchaseItem.getPo();
     }
 
@@ -1300,6 +1323,9 @@ public class RootController {
         if (newPurchaseItem == null) {
             return;
         }
+
+        noneStPurchasePoColumn.setVisible(false);
+        noneStPurchasePoColumn.setVisible(true);
 
         noneStPurchaseSelectedPo = newPurchaseItem.getPo();
     }

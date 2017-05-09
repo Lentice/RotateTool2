@@ -25,7 +25,7 @@ public class KitNode {
 
     public RotateItem getPart(String partNum) {
         for (RotateItem rotateItem : PartsList) {
-            if (partNum.compareTo(rotateItem.getPartNumber()) == 0) {
+            if (partNum.equals(rotateItem.getPartNumber())) {
                 return rotateItem;
             }
         }
@@ -62,7 +62,7 @@ public class KitNode {
         ObservableList<PurchaseItem> list = FXCollections.observableArrayList();
         for (RotateItem rotateItem : PartsList) {
             for (StockItem stockItem : rotateItem.getStockItemObsList()) {
-                if (stockItem.isMainStockItem() && po.compareTo(stockItem.getPo()) == 0) {
+                if (stockItem.isMainStockItem() && po.equals(stockItem.getPo())) {
                     list.addAll(stockItem.getPurchaseItems());
                 }
             }

@@ -648,7 +648,7 @@
                                                                </HBox.margin>
                                                             </Text>
                                                             <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ZMM Sets">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ZMM Sets:">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
