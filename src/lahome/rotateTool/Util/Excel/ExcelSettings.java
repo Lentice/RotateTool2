@@ -15,6 +15,7 @@ public class ExcelSettings {
     public static int rotateFirstDataRow;
     public static int rotateKitColumn;
     public static int rotatePartColumn;
+    public static int rotateBacklogColumn;
     public static int rotatePmQtyColumn;
     public static int rotateApQtyColumn;
     public static int rotateRatioColumn;
@@ -46,14 +47,16 @@ public class ExcelSettings {
     public static int purchaseRemarkColumn;
 
     public static void setRotateConfig(
-            String filePath, int firstDataRow, String kitColStr, String partColStr, String pmQtyColStr,
-            String apQtyColStr, String ratioColStr, String applySetColStr, String remarkColStr) {
+            String filePath, int firstDataRow, String kitColStr, String partColStr, String backlogCol,
+            String pmQtyColStr, String apQtyColStr, String ratioColStr, String applySetColStr,
+            String remarkColStr) {
 
         rotateFilePath = filePath;
         rotateFirstDataRow = firstDataRow;
 
         rotateKitColumn = CellReference.convertColStringToIndex(kitColStr.toUpperCase());
         rotatePartColumn = CellReference.convertColStringToIndex(partColStr.toLowerCase());
+        rotateBacklogColumn = CellReference.convertColStringToIndex(backlogCol.toLowerCase());
         rotatePmQtyColumn = CellReference.convertColStringToIndex(pmQtyColStr.toUpperCase());
         rotateApQtyColumn = CellReference.convertColStringToIndex(apQtyColStr.toUpperCase());
         rotateRatioColumn = CellReference.convertColStringToIndex(ratioColStr.toUpperCase());

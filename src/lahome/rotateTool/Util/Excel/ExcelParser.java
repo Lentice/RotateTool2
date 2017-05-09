@@ -75,6 +75,15 @@ public class ExcelParser {
         return cellGetString(cell).trim();
     }
 
+    private String getBacklog(Row row, int column) throws Exception {
+        Cell cell = row.getCell(column);
+        if (cell == null) {
+            return "";
+        }
+
+        return cellGetString(cell).trim();
+    }
+
     private int getExpectQty(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
@@ -352,10 +361,12 @@ public class ExcelParser {
                 if (pmQty == 0)
                     continue;
 
+                String backlog = getBacklog(row, ExcelSettings.rotateBacklogColumn);
+
                 String ratio = getRatio(row, ExcelSettings.rotateRatioColumn);
                 String remark = getRemark(row, ExcelSettings.rotateRemarkColumn);
 
-                collection.addRotate(new RotateItem(rowNum, kitName, partNum, pmQty, ratio, remark));
+                collection.addRotate(new RotateItem(rowNum, kitName, partNum, backlog, pmQty, ratio, remark));
 
             } catch (Exception e) {
                 log.error("failed!", e);

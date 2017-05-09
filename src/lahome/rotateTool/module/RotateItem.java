@@ -24,6 +24,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     private StringProperty kitName;
     private StringProperty partNumber;
+    private StringProperty backlog;
     private IntegerProperty pmQty;
     private IntegerProperty stockApplyQtyTotal;
     private StringProperty ratio;
@@ -39,12 +40,13 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private ObservableList<StockItem> stockItemObsList = FXCollections.observableArrayList();
     private ObservableList<PurchaseItem> noneStockPurchaseItemObsList = FXCollections.observableArrayList();
 
-    public RotateItem(int rowNum, String kitName, String partNum, int pmQty, String ratio, String remark) {
+    public RotateItem(int rowNum, String kitName, String partNum, String backlog, int pmQty, String ratio, String remark) {
         if (kitName == null)
             kitName = "";
 
         this.kitName = new SimpleStringProperty(kitName);
         this.partNumber = new SimpleStringProperty(partNum);
+        this.backlog = new SimpleStringProperty(backlog);
         this.pmQty = new SimpleIntegerProperty(pmQty);
         this.stockApplyQtyTotal = new SimpleIntegerProperty(0);
         this.ratio = new SimpleStringProperty(ratio);
@@ -94,8 +96,8 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     public void addStockItem(StockItem item) {
 
-        log.debug(String.format("Add stock: %s, %s, %s, %d, %s, %d",
-                getKitName(), getPartNumber(), item.getPo(), item.getStockQty(), item.getDc(),
+        log.debug(String.format("Add stock: %s, %s, %s, %s, %d, %s, %d",
+                getKitName(), getPartNumber(), getBacklog(), item.getPo(), item.getStockQty(), item.getDc(),
                 item.getApplyQty()));
 
         item.setRotateItem(this);
@@ -142,6 +144,14 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     public StringProperty partNumberProperty() {
         return partNumber;
+    }
+
+    public String getBacklog() {
+        return backlog.get();
+    }
+
+    public StringProperty backlogProperty() {
+        return backlog;
     }
 
     public int getPmQty() {

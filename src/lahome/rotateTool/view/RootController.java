@@ -92,6 +92,9 @@ public class RootController {
     private TextField settingRotatePartNumCol;
 
     @FXML
+    private TextField settingRotateBacklogCol;
+
+    @FXML
     private TextField settingRotatePmQtyCol;
 
     @FXML
@@ -177,6 +180,9 @@ public class RootController {
 
     @FXML
     private TableColumn<RotateItem, String> rotateNoColumn;
+
+    @FXML
+    private TableColumn<RotateItem, String> rotateBacklogColumn;
 
     @FXML
     private TableColumn<RotateItem, Number> rotatePmQtyColumn;
@@ -381,6 +387,7 @@ public class RootController {
         prefs.put("settingRotateFirstRow", settingRotateFirstRow.getText());
         prefs.put("settingRotateKitNameCol", settingRotateKitNameCol.getText());
         prefs.put("settingRotatePartNumCol", settingRotatePartNumCol.getText());
+        prefs.put("settingRotateBacklogCol", settingRotateBacklogCol.getText());
         prefs.put("settingRotatePmQtyCol", settingRotatePmQtyCol.getText());
         prefs.put("settingRotateApQtyCol", settingRotateApQtyCol.getText());
         prefs.put("settingRotateRatioCol", settingRotateRatioCol.getText());
@@ -414,6 +421,7 @@ public class RootController {
         prefs.put("RotateKitWidth", String.valueOf(rotateKitColumn.getWidth()));
         prefs.put("RotatePartWidth", String.valueOf(rotatePartColumn.getWidth()));
         prefs.put("RotateNoWidth", String.valueOf(rotateNoColumn.getWidth()));
+        prefs.put("RotateBacklogWidth", String.valueOf(rotateBacklogColumn.getWidth()));
         prefs.put("RotatePmQtyWidth", String.valueOf(rotatePmQtyColumn.getWidth()));
         prefs.put("RotateApQtyWidth", String.valueOf(rotateApQtyColumn.getWidth()));
         prefs.put("RotateRatioWidth", String.valueOf(rotateRatioColumn.getWidth()));
@@ -463,6 +471,7 @@ public class RootController {
         settingRotateFirstRow.setText(prefs.get("settingRotateFirstRow", "4"));
         settingRotateKitNameCol.setText(prefs.get("settingRotateKitNameCol", "F"));
         settingRotatePartNumCol.setText(prefs.get("settingRotatePartNumCol", "H"));
+        settingRotateBacklogCol.setText(prefs.get("settingRotateBacklogCol", "Q"));
         settingRotatePmQtyCol.setText(prefs.get("settingRotatePmQtyCol", "R"));
         settingRotateApQtyCol.setText(prefs.get("settingRotateApQtyCol", "AO"));
         settingRotateRatioCol.setText(prefs.get("settingRotateRatioCol", "AP"));
@@ -496,6 +505,7 @@ public class RootController {
         rotateKitColumn.setPrefWidth(Double.valueOf(prefs.get("RotateKitWidth", "140")));
         rotatePartColumn.setPrefWidth(Double.valueOf(prefs.get("RotatePartWidth", "140")));
         rotateNoColumn.setPrefWidth(Double.valueOf(prefs.get("RotateNoWidth", "30")));
+        rotateBacklogColumn.setPrefWidth(Double.valueOf(prefs.get("RotateBacklogWidth", "60")));
         rotatePmQtyColumn.setPrefWidth(Double.valueOf(prefs.get("RotatePmQtyWidth", "50")));
         rotateApQtyColumn.setPrefWidth(Double.valueOf(prefs.get("RotateApQtyWidth", "50")));
         rotateRatioColumn.setPrefWidth(Double.valueOf(prefs.get("RotateRatioWidth", "50")));
@@ -636,6 +646,7 @@ public class RootController {
                 Integer.valueOf(settingRotateFirstRow.getText()),
                 settingRotateKitNameCol.getText(),
                 settingRotatePartNumCol.getText(),
+                settingRotateBacklogCol.getText(),
                 settingRotatePmQtyCol.getText(),
                 settingRotateApQtyCol.getText(),
                 settingRotateRatioCol.getText(),
@@ -895,6 +906,10 @@ public class RootController {
             }
         });
 
+        rotateBacklogColumn.getStyleClass().add("my-table-column-number");
+        rotateBacklogColumn.setCellValueFactory(cellData -> cellData.getValue().backlogProperty());
+        rotateBacklogColumn.setCellFactory(readOnlyStringCell);
+
         rotatePmQtyColumn.setCellValueFactory(cellData -> cellData.getValue().pmQtyProperty());
         rotatePmQtyColumn.setCellFactory(readOnlyNumberCell);
 
@@ -916,6 +931,8 @@ public class RootController {
                     setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
                 } else if (rotateItem.getStockApplyQtyTotal() != rotateItem.getPurchasesApplyQtyTotal()) {
                     setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                } else if ((rotateItem.getStockApplyQtyTotal() % rotateItem.getRatio()) != 0) {
+                    setStyle(basicStyle + "-fx-background-color: #FFAB91;"); // orange
                 } else if (item.intValue() == pmQty) {
                     setStyle(basicStyle + "-fx-background-color: #4CAF50;"); // green
                 } else {
@@ -1024,8 +1041,11 @@ public class RootController {
                     return;
                 }
 
+
                 if (item.intValue() > stockItem.getStockQty()) {
                     setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
+                //} else if ((item.intValue() % stockItem.getRotateItem().getRatio()) != 0) {
+                //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
                 } else {
                     setStyle(basicStyle);
                 }
@@ -1106,7 +1126,27 @@ public class RootController {
 
         purchaseApQtyColumn.getStyleClass().add("my-table-column-number");
         purchaseApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
-        purchaseApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
+        purchaseApQtyColumn.setCellFactory(cellData -> new TextFieldTableCell<PurchaseItem, Number>(new NumberStringConverter()) {
+            @Override
+            public void updateItem(Number item, boolean empty) {
+                super.updateItem(item, empty);
+
+                String basicStyle = "";
+                PurchaseItem purchaseItem = (PurchaseItem) this.getTableRow().getItem();
+                if (item == null || empty || purchaseItem == null) {
+                    setStyle(basicStyle);
+                    return;
+                }
+
+                if (item.intValue() > purchaseItem.getGrQty()) {
+                    setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
+                //} else if ((item.intValue() % purchaseItem.getRotateItem().getRatio()) != 0) {
+                //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                } else {
+                    setStyle(basicStyle);
+                }
+            }
+        });
         purchaseApQtyColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .applyQtyProperty().set(cellData.getNewValue().intValue());
@@ -1189,7 +1229,27 @@ public class RootController {
 
         noneStPurchaseApQtyColumn.getStyleClass().add("my-table-column-number");
         noneStPurchaseApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
-        noneStPurchaseApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
+        noneStPurchaseApQtyColumn.setCellFactory(cellData -> new TextFieldTableCell<PurchaseItem, Number>(new NumberStringConverter()) {
+            @Override
+            public void updateItem(Number item, boolean empty) {
+                super.updateItem(item, empty);
+
+                String basicStyle = "";
+                PurchaseItem purchaseItem = (PurchaseItem) this.getTableRow().getItem();
+                if (item == null || empty || purchaseItem == null) {
+                    setStyle(basicStyle);
+                    return;
+                }
+
+                if (item.intValue() > purchaseItem.getGrQty()) {
+                    setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
+                //} else if ((item.intValue() % purchaseItem.getRotateItem().getRatio()) != 0) {
+                //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                } else {
+                    setStyle(basicStyle);
+                }
+            }
+        });
         noneStPurchaseApQtyColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .applyQtyProperty().set(cellData.getNewValue().intValue());
@@ -1200,14 +1260,7 @@ public class RootController {
 
         noneStPurchaseApplySetColumn.getStyleClass().add("my-table-column-number");
         noneStPurchaseApplySetColumn.setCellValueFactory(cellData -> cellData.getValue().applySetProperty());
-        noneStPurchaseApplySetColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
-        noneStPurchaseApplySetColumn.setOnEditCommit(cellData -> {
-            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
-                    .applySetProperty().set(cellData.getNewValue().intValue());
-            updateNoneStPurchaseTableTotal();
-            refreshAllTable();
-            noneStPurchaseTableView.requestFocus();
-        });
+        noneStPurchaseApplySetColumn.setCellFactory(readOnlyNumberCell);
 
         noneStPurchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
         noneStPurchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -1287,10 +1340,11 @@ public class RootController {
             stockPartNumCombo.setValue(newRotateItem.getPartNumber());
         }
 
-        updateRotateTableTotal();
 
         updateStockTable(newRotateItem);
         updateNoneStPurchaseTable(newRotateItem);
+
+        updateRotateTableTotal();
     }
 
     private void handleSelectedStockItem(StockItem newStockItem) {
@@ -1307,6 +1361,7 @@ public class RootController {
         stockSelectedPart = newStockItem.getRotateItem().getPartNumber();
 
         updatePurchaseTable(newStockItem);
+        updateStockTableTotal();
     }
 
     private void handleSelectedPurchaseItem(PurchaseItem newPurchaseItem) {
@@ -1317,6 +1372,7 @@ public class RootController {
         purchasePoColumn.setVisible(true);
 
         purchaseSelectedPo = newPurchaseItem.getPo();
+        updatePurchaseTableTotal();
     }
 
     private void handleSelectedNoneStockPurchaseItem(PurchaseItem newPurchaseItem) {
@@ -1328,6 +1384,7 @@ public class RootController {
         noneStPurchasePoColumn.setVisible(true);
 
         noneStPurchaseSelectedPo = newPurchaseItem.getPo();
+        updateNoneStPurchaseTableTotal();
     }
 
     private void handleStockPartNumComboChanged() {
@@ -1356,7 +1413,6 @@ public class RootController {
                 updateNoneStPurchaseTable(currentRotateItem);
             }
         }
-
     }
 
     private void handlePurchaseShowAllChanged() {
