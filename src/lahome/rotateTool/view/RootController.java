@@ -356,7 +356,7 @@ public class RootController {
     @FXML
     private void initialize() {
 
-        filterIcon.setImage(new Image("file:resources/images/active-search-2-48.png"));
+        filterIcon.setImage(new Image(Main.class.getResourceAsStream("/images/active-search-2-48.png")));
         exportToExcelButton.setVisible(false);
         initialRotateTable();
         initialStockTable();
