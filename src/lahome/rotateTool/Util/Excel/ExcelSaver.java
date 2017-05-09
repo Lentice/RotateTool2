@@ -99,6 +99,7 @@ public class ExcelSaver {
             e.printStackTrace();
         } finally {
             //excel.invoke("Quit", new Variant[0]);
+            ComThread.quitMainSTA();
             ComThread.Release();
             rotateProgressProperty.set(1.0);
         }
@@ -144,6 +145,7 @@ public class ExcelSaver {
             e.printStackTrace();
         } finally {
             //excel.invoke("Quit", new Variant[0]);
+            ComThread.quitMainSTA();
             ComThread.Release();
             stockProgressProperty.set(1.0);
         }
@@ -194,6 +196,7 @@ public class ExcelSaver {
             e.printStackTrace();
         } finally {
             //excel.invoke("Quit", new Variant[0]);
+            ComThread.quitMainSTA();
             ComThread.Release();
             purchaseProgressProperty.set(1.0);
         }

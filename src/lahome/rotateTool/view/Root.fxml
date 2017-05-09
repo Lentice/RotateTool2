@@ -684,7 +684,7 @@
                                           </AnchorPane>
                                           <AnchorPane>
                                              <children>
-                                                <Label focusTraversable="false" text="ZMM &quot;NOT&quot; in stock" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                                <Label focusTraversable="false" text="ZMM 但沒有在庫存" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                                                    <font>
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
@@ -772,7 +772,7 @@
                                        <items>
                                           <AnchorPane>
                                              <children>
-                                                <Label focusTraversable="false" text="WMS" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                                <Label focusTraversable="false" text="庫存" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                                                    <font>
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
