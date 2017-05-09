@@ -17,6 +17,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
     private boolean isKit;
     private KitNode kitNode;
+    private boolean isFirstPartOfKit = false;
     private boolean isDuplicate = false;
     private boolean isRotateValid = true;
     private int rowNum;
@@ -29,7 +30,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private IntegerProperty applySet;
     private StringProperty remark;
 
-    private boolean isFirstPartOfKit = false;
+    private IntegerProperty purchasesApplyQtyTotal;
     private StringProperty serialNo;
 
     private List<RotateItem> duplicateRotateItems;
@@ -50,6 +51,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         this.applySet = new SimpleIntegerProperty(0);
         this.remark = new SimpleStringProperty(remark);
 
+        this.purchasesApplyQtyTotal = new SimpleIntegerProperty(0);
         this.serialNo = new SimpleStringProperty("A");
 
         this.isKit = !kitName.isEmpty();
@@ -179,6 +181,19 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     public void addStockApplyQtyTotal(int qty) {
         stockApplyQtyTotal.set(stockApplyQtyTotal.intValue() + qty);
     }
+
+    public int getPurchasesApplyQtyTotal() {
+        return purchasesApplyQtyTotal.get();
+    }
+
+    public IntegerProperty purchasesApplyQtyTotalProperty() {
+        return purchasesApplyQtyTotal;
+    }
+
+    public void addPurchasesApplyQtyTotal(int qty) {
+        purchasesApplyQtyTotal.set(purchasesApplyQtyTotal.intValue() + qty);
+    }
+
 
     public StockItem getStockByPo(String po) {
         return stockItems.get(po);

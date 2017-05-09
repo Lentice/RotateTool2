@@ -325,11 +325,9 @@ public class RootController {
     @FXML
     private Label noneStPurchaseApSetTotal;
 
-
     private Main main;
     private Stage primaryStage;
     private RotateCollection collection;
-    private ExcelParser excelParser;
 
     private File latestDir = new File(System.getProperty("user.dir"));
     private String rotateSelectedKit = "";
@@ -338,21 +336,32 @@ public class RootController {
     private String purchaseSelectedPo = "";
     private String noneStPurchaseSelectedPo = "";
     private boolean showAllParts = true;
-
     private final String ALL_PARTS = "All";
     private RotateItem currentRotateItem;
     private StockItem currentStockItem;
+    private boolean rotateFilterListenerAdded = false;
 
     private ObservableList<RotateItem> emptyRotateList = FXCollections.observableArrayList();
     private ObservableList<StockItem> emptyStockList = FXCollections.observableArrayList();
     private ObservableList<PurchaseItem> emptyPurchaseList = FXCollections.observableArrayList();
+
     private DoubleProperty rotateProgressProperty = new SimpleDoubleProperty(0);
     private DoubleProperty stockProgressProperty = new SimpleDoubleProperty(0);
     private DoubleProperty purchaseProgressProperty = new SimpleDoubleProperty(0);
 
-    private static final Object excelHandleLock = new Object();
 
     public RootController() {
+    }
+
+    @FXML
+    private void initialize() {
+
+        filterIcon.setImage(new Image("file:resources/images/active-search-2-48.png"));
+        exportToExcelButton.setVisible(false);
+        initialRotateTable();
+        initialStockTable();
+        initialPurchaseTable();
+        initialNoneStockPurchaseTable();
     }
 
     public void saveSetting() {
@@ -525,7 +534,6 @@ public class RootController {
         this.main = main;
         this.primaryStage = main.getPrimaryStage();
         this.collection = main.getCollection();
-        excelParser = new ExcelParser(collection);
         initialHotkeys();
 
         rotateProgressProperty.addListener((observable, oldValue, newValue) ->
@@ -535,43 +543,6 @@ public class RootController {
         purchaseProgressProperty.addListener((observable, oldValue, newValue) ->
                 Platform.runLater(() -> purchaseProgress.setProgress(newValue.doubleValue())));
 
-    }
-
-    private void initialHotkeys() {
-        Scene scene = primaryStage.getScene();
-
-        scene.setOnKeyPressed(keyEvent -> {
-            Node focusNode = scene.getFocusOwner();
-
-            if (keyEvent.getCode() == KeyCode.F12) {
-                int row = rotateTableView.getSelectionModel().getSelectedIndex();
-                row++;
-                if (row < rotateTableView.getItems().size()) {
-                    rotateTableView.getSelectionModel().select(row, rotateApplySetColumn);
-                    rotateTableView.scrollTo(Math.max(row - 3, 0));
-                    rotateTableView.scrollToColumn(rotateApplySetColumn);
-                }
-                focusNode.requestFocus();
-
-                //Stop letting it do anything else
-                keyEvent.consume();
-            }
-
-            if (keyEvent.getCode() == KeyCode.F11) {
-
-                int row = rotateTableView.getSelectionModel().getSelectedIndex();
-                row--;
-                if (row >= 0) {
-                    rotateTableView.getSelectionModel().select(row, rotateApplySetColumn);
-                    rotateTableView.scrollTo(Math.max(row - 3, 0));
-                    rotateTableView.scrollToColumn(rotateApplySetColumn);
-                }
-                focusNode.requestFocus();
-
-                //Stop letting it do anything else
-                keyEvent.consume();
-            }
-        });
     }
 
     @FXML
@@ -624,152 +595,209 @@ public class RootController {
 
     @FXML
     void handleStartEdit() {
+        startEditButton.setDisable(true);
 
-        synchronized (excelHandleLock) {
-            ExcelSettings.setRotateConfig(
-                    pathAgingReport.getText(),
-                    Integer.valueOf(settingRotateFirstRow.getText()),
-                    settingRotateKitNameCol.getText(),
-                    settingRotatePartNumCol.getText(),
-                    settingRotatePmQtyCol.getText(),
-                    settingRotateApQtyCol.getText(),
-                    settingRotateRatioCol.getText(),
-                    settingRotateApSetCol.getText(),
-                    settingRotateRemarkCol.getText());
+        rotateProgress.setProgress(0);
+        stockProgress.setProgress(0);
+        purchaseProgress.setProgress(0);
 
-            ExcelSettings.setStockConfig(
-                    pathStockFile.getText(),
-                    Integer.valueOf(settingStockFirstRow.getText()),
-                    settingStockKitNameCol.getText(),
-                    settingStockPartNumCol.getText(),
-                    settingStockPoCol.getText(),
-                    settingStockStockQtyCol.getText(),
-                    settingStockLotCol.getText(),
-                    settingStockDcCol.getText(),
-                    settingStockApQtyCol.getText(),
-                    settingStockRemarkCol.getText());
-
-            ExcelSettings.setPurchaseConfig(
-                    pathPurchaseFile.getText(),
-                    Integer.valueOf(settingPurchaseFirstRow.getText()),
-                    settingPurchaseKitNameCol.getText(),
-                    settingPurchasePartNumCol.getText(),
-                    settingPurchasePoCol.getText(),
-                    settingPurchaseGrDateCol.getText(),
-                    settingPurchaseGrQtyCol.getText(),
-                    settingPurchaseApQtyCol.getText(),
-                    settingPurchaseApSetCol.getText(),
-                    settingPurchaseRemarkCol.getText());
-
-            Platform.runLater(() -> startEditButton.setDisable(true));
-            importExcel();
-        }
-    }
-
-    private void importExcel() {
-
-        new Thread(() -> {
-
-            synchronized (excelHandleLock) {
-                //processStatus.setVisible(true);
-
-                rotateProgress.setProgress(0);
-                stockProgress.setProgress(0);
-                purchaseProgress.setProgress(0);
-
-                excelParser.loadRotateExcel(rotateProgressProperty);
-                log.info("Process rotate table: Done");
-
-                excelParser.loadStockExcel(stockProgressProperty);
-                log.info("Process stock table: Done");
-
-                excelParser.loadPurchaseExcel(purchaseProgressProperty);
-                log.info("Process purchase table: Done");
-
-                StringBuilder errorLog = new StringBuilder("");
-                int failCount = DataChecker.doCheck(collection, errorLog);
-                if (failCount > 0) {
-                    Platform.runLater(() -> {
-                        Alert alert = new Alert(Alert.AlertType.WARNING);
-
-                        alert.setTitle("Warning");
-                        alert.setHeaderText(String.format("Total %d invalid data were found", failCount));
-                        alert.setContentText("Error logs are listed below:");
-
-                        TextArea textArea = new TextArea(errorLog.toString());
-                        textArea.setEditable(false);
-                        textArea.setWrapText(false);
-
-                        textArea.setMaxWidth(Double.MAX_VALUE);
-                        textArea.setMaxHeight(Double.MAX_VALUE);
-                        GridPane.setVgrow(textArea, Priority.ALWAYS);
-                        GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-                        GridPane expContent = new GridPane();
-                        expContent.setMaxWidth(Double.MAX_VALUE);
-                        expContent.add(textArea, 0, 0);
-
-                        // Set expandable Exception into the dialog pane.
-                        alert.getDialogPane().setExpandableContent(expContent);
-                        alert.getDialogPane().setExpanded(true);
-
-                        alert.getDialogPane().setPrefWidth(600);
-                        alert.showAndWait();
-                    });
-                }
-
-                Platform.runLater(() -> {
-                    mainTabPane.getSelectionModel().select(editTab);
-                    updateRotateTable();
-                    exportToExcelButton.setVisible(true);
-                });
-
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                //processStatus.setVisible(false);
-                //startEditButton.setDisable(false);
-            }
-        }).start();
-
+        configExcelSettings();
+        importExcel();
     }
 
     @FXML
     void handleSaveFiles() {
         log.info("Save File clicked");
-        ExcelSaver excelSaver = new ExcelSaver(collection);
+
+        exportToExcelButton.setDisable(true);
+        rotateProgress.setProgress(0);
+        stockProgress.setProgress(0);
+        purchaseProgress.setProgress(0);
 
         new Thread(() -> {
 
-            synchronized (excelHandleLock) {
+            ExcelSaver excelSaver = new ExcelSaver(collection);
 
-                rotateProgress.setProgress(0);
-                stockProgress.setProgress(0);
-                purchaseProgress.setProgress(0);
+            excelSaver.saveRotateToExcel(rotateProgressProperty);
+            log.info("Rotate file saved");
+            excelSaver.saveStockToExcel(stockProgressProperty);
+            log.info("Stock file saved");
+            excelSaver.savePurchaseToExcel(purchaseProgressProperty);
+            log.info("Purchase file saved");
 
-                excelSaver.saveRotateToExcel(rotateProgressProperty);
-                log.info("Rotate file saved");
-                excelSaver.saveStockToExcel(stockProgressProperty);
-                log.info("Stock file saved");
-                excelSaver.savePurchaseToExcel(purchaseProgressProperty);
-                log.info("Purchase file saved");
-            }
+            Platform.runLater(() -> exportToExcelButton.setDisable(false));
         }).start();
     }
 
-    @FXML
-    private void initialize() {
+    private void configExcelSettings() {
+        ExcelSettings.setRotateConfig(
+                pathAgingReport.getText(),
+                Integer.valueOf(settingRotateFirstRow.getText()),
+                settingRotateKitNameCol.getText(),
+                settingRotatePartNumCol.getText(),
+                settingRotatePmQtyCol.getText(),
+                settingRotateApQtyCol.getText(),
+                settingRotateRatioCol.getText(),
+                settingRotateApSetCol.getText(),
+                settingRotateRemarkCol.getText()
+        );
 
-        filterIcon.setImage(new Image("file:resources/images/active-search-2-48.png"));
-        exportToExcelButton.setVisible(false);
-        initialRotateTable();
-        initialStockTable();
-        initialPurchaseTable();
-        initialNoneStockPurchaseTable();
+        ExcelSettings.setStockConfig(
+                pathStockFile.getText(),
+                Integer.valueOf(settingStockFirstRow.getText()),
+                settingStockKitNameCol.getText(),
+                settingStockPartNumCol.getText(),
+                settingStockPoCol.getText(),
+                settingStockStockQtyCol.getText(),
+                settingStockLotCol.getText(),
+                settingStockDcCol.getText(),
+                settingStockApQtyCol.getText(),
+                settingStockRemarkCol.getText()
+        );
+
+        ExcelSettings.setPurchaseConfig(
+                pathPurchaseFile.getText(),
+                Integer.valueOf(settingPurchaseFirstRow.getText()),
+                settingPurchaseKitNameCol.getText(),
+                settingPurchasePartNumCol.getText(),
+                settingPurchasePoCol.getText(),
+                settingPurchaseGrDateCol.getText(),
+                settingPurchaseGrQtyCol.getText(),
+                settingPurchaseApQtyCol.getText(),
+                settingPurchaseApSetCol.getText(),
+                settingPurchaseRemarkCol.getText()
+        );
+    }
+
+    private void importExcel() {
+
+        new Thread(() -> {
+            ExcelParser excelParser = new ExcelParser(collection);
+            StringBuilder errorLog = new StringBuilder("");
+
+            excelParser.loadRotateExcel(rotateProgressProperty);
+            log.info("Process rotate table: Done");
+
+            excelParser.loadStockExcel(stockProgressProperty);
+            log.info("Process stock table: Done");
+
+            excelParser.loadPurchaseExcel(purchaseProgressProperty);
+            log.info("Process purchase table: Done");
+
+            int failCount = DataChecker.doCheck(collection, errorLog);
+            if (failCount > 0) {
+                showAlertWarning(
+                        "Warning",
+                        String.format("Total %d invalid data were found", failCount),
+                        "Error logs are listed below:",
+                        errorLog.toString()
+                );
+            }
+
+            try {
+                Thread.sleep(500);  // waiting user to see all item were completed.
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            Platform.runLater(() -> {
+                mainTabPane.getSelectionModel().select(editTab);
+                updateRotateTable();
+                exportToExcelButton.setVisible(true);
+            });
+
+        }).start();
+    }
+
+    private void showAlertWarning(String title, String header, String content, String detail) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+
+            alert.setTitle(title);
+            alert.setHeaderText(header);
+            alert.setContentText(content);
+
+            TextArea textArea = new TextArea(detail);
+            textArea.setEditable(false);
+            textArea.setWrapText(false);
+
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(textArea, 0, 0);
+
+            // Set expandable Exception into the dialog pane.
+            alert.getDialogPane().setExpandableContent(expContent);
+            alert.getDialogPane().setExpanded(true);
+
+            alert.getDialogPane().setPrefWidth(600);
+            alert.showAndWait();
+        });
+    }
+
+    private void initialHotkeys() {
+        Scene scene = primaryStage.getScene();
+
+        scene.setOnKeyPressed(keyEvent -> {
+            Node focusNode = scene.getFocusOwner();
+
+            if (keyEvent.getCode() == KeyCode.F12) {
+                keyEvent.consume();
+
+                int row = rotateTableView.getSelectionModel().getSelectedIndex();
+                row++;
+                if (row < rotateTableView.getItems().size()) {
+                    rotateTableView.getSelectionModel().select(row, rotateApplySetColumn);
+                    rotateTableView.scrollTo(Math.max(row - 3, 0));
+                    rotateTableView.scrollToColumn(rotateApplySetColumn);
+                }
+                focusNode.requestFocus();
+            }
+
+            if (keyEvent.getCode() == KeyCode.F11) {
+                keyEvent.consume();
+
+                int row = rotateTableView.getSelectionModel().getSelectedIndex();
+                row--;
+                if (row >= 0) {
+                    rotateTableView.getSelectionModel().select(row, rotateApplySetColumn);
+                    rotateTableView.scrollTo(Math.max(row - 3, 0));
+                    rotateTableView.scrollToColumn(rotateApplySetColumn);
+                }
+                focusNode.requestFocus();
+            }
+
+            if (keyEvent.getCode() == KeyCode.F1) {
+                keyEvent.consume();
+
+                int listCount = stockPartNumCombo.getItems().size();
+                if (listCount <= 1) {
+                    return;
+                }
+
+                // get current item
+                int index = 0;
+                for (String item : stockPartNumCombo.getItems()) {
+                    if (item.equals(stockPartNumCombo.getValue())) {
+                        break;
+                    }
+                    index++;
+                }
+
+                // Select next item
+                if (++index >= listCount) {
+                    stockPartNumCombo.setValue(stockPartNumCombo.getItems().get(0));
+                } else {
+                    stockPartNumCombo.setValue(stockPartNumCombo.getItems().get(index));
+                }
+
+                focusNode.requestFocus();
+            }
+        });
     }
 
     private void initialRotateTable() {
@@ -816,7 +844,8 @@ public class RootController {
                 super.updateItem(item, empty);
                 // set same kit with same background
 
-                if (item != null && !empty && item.compareTo(rotateSelectedKit) == 0) {
+                RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
+                if (rotateItem != null && rotateItem.getKitName().compareTo(rotateSelectedKit) == 0) {
                     setStyle("-fx-alignment: center-left; -fx-background-color: #FFEB3B;");
                 } else {
                     setStyle("-fx-alignment: center-left; ");
@@ -856,21 +885,22 @@ public class RootController {
             public void updateItem(Number item, boolean empty) {
                 super.updateItem(item, empty);
 
+                String basicStyle = "-fx-alignment: center-right; ";
                 RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
-                if (rotateItem == null) {
-                    setStyle("-fx-alignment: center-right;");
+                if (item == null || empty || rotateItem == null) {
+                    setStyle(basicStyle);
                     return;
                 }
 
                 int pmQty = rotateItem.getPmQty();
-                if (item == null) {
-                    setStyle("-fx-alignment: center-right;");
+                if (item.intValue() > pmQty) {
+                    setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
+                } else if (rotateItem.getStockApplyQtyTotal() != rotateItem.getPurchasesApplyQtyTotal()) {
+                    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
                 } else if (item.intValue() == pmQty) {
-                    setStyle("-fx-alignment: center-right; -fx-background-color: #4CAF50;"); // green
-                } else if (item.intValue() > pmQty) {
-                    setStyle("-fx-alignment: center-right; -fx-background-color: #ef5350;"); // red
+                    setStyle(basicStyle + "-fx-background-color: #4CAF50;"); // green
                 } else {
-                    setStyle("");
+                    setStyle(basicStyle);
                 }
             }
 
@@ -879,9 +909,11 @@ public class RootController {
             }
         });
 
+        rotateRatioColumn.getStyleClass().add("my-table-column-number");
         rotateRatioColumn.setCellValueFactory(cellData -> cellData.getValue().ratioProperty());
         rotateRatioColumn.setCellFactory(readOnlyStringCell);
 
+        rotateApplySetColumn.getStyleClass().add("my-table-column-number");
         rotateApplySetColumn.setCellValueFactory(cellData -> cellData.getValue().applySetProperty());
         rotateApplySetColumn.setCellFactory(readOnlyNumberCell);
 
@@ -890,11 +922,12 @@ public class RootController {
         rotateRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .remarkProperty().set(cellData.getNewValue());
+            refreshAllTable();
             rotateTableView.requestFocus();
         });
 
         rotateTableView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> selectedRotateItem(newValue));
+                (observable, oldValue, newValue) -> handleSelectedRotateItem(newValue));
 
         rotateTableView.setRowFactory(tv -> new TableRow<RotateItem>() {
             @Override
@@ -911,7 +944,7 @@ public class RootController {
         });
 
         stockPartNumCombo.autosize();
-        stockPartNumCombo.setOnAction(e -> stockPartNumComboChanged());
+        stockPartNumCombo.setOnAction(e -> handleStockPartNumComboChanged());
     }
 
     private void initialStockTable() {
@@ -960,11 +993,30 @@ public class RootController {
 
         stockApQtyColumn.getStyleClass().add("my-table-column-number");
         stockApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
-        stockApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
+        stockApQtyColumn.setCellFactory(cellData -> new TextFieldTableCell<StockItem, Number>(new NumberStringConverter()) {
+            @Override
+            public void updateItem(Number item, boolean empty) {
+                super.updateItem(item, empty);
+
+                String basicStyle = "";
+                StockItem stockItem = (StockItem) this.getTableRow().getItem();
+                if (item == null || empty || stockItem == null) {
+                    setStyle(basicStyle);
+                    return;
+                }
+
+                if (item.intValue() > stockItem.getStockQty()) {
+                    setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
+                } else {
+                    setStyle(basicStyle);
+                }
+            }
+        });
         stockApQtyColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .applyQtyProperty().set(cellData.getNewValue().intValue());
             updateStockTableTotal();
+            refreshAllTable();
             stockTableView.requestFocus();
         });
 
@@ -973,11 +1025,12 @@ public class RootController {
         stockRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .remarkProperty().set(cellData.getNewValue());
+            refreshAllTable();
             stockTableView.requestFocus();
         });
 
         stockTableView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> selectedStockItem(newValue));
+                (observable, oldValue, newValue) -> handleSelectedStockItem(newValue));
 
         stockTableView.setRowFactory(param -> new TableRow<StockItem>() {
             @Override
@@ -1039,6 +1092,7 @@ public class RootController {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .applyQtyProperty().set(cellData.getNewValue().intValue());
             updatePurchaseTableTotal();
+            refreshAllTable();
             stockTableView.requestFocus();
         });
 
@@ -1052,13 +1106,14 @@ public class RootController {
         purchaseRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .remarkProperty().set(cellData.getNewValue());
+            refreshAllTable();
             stockTableView.requestFocus();
         });
 
         purchaseTableView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> selectedPurchaseItem(newValue));
+                (observable, oldValue, newValue) -> handleSelectedPurchaseItem(newValue));
 
-        purchaseShowAllToggle.setOnAction(a -> purchaseShowAllChanged());
+        purchaseShowAllToggle.setOnAction(a -> handlePurchaseShowAllChanged());
 
         purchaseTableView.setRowFactory(param -> new TableRow<PurchaseItem>() {
             @Override
@@ -1109,24 +1164,29 @@ public class RootController {
         noneStPurchaseGrDateColumn.setCellValueFactory(cellData -> cellData.getValue().grDateProperty());
         noneStPurchaseGrDateColumn.setCellFactory(readOnlyStringCell);
 
+        noneStPurchaseGrQtyColumn.getStyleClass().add("my-table-column-number");
         noneStPurchaseGrQtyColumn.setCellValueFactory(cellData -> cellData.getValue().grQtyProperty());
         noneStPurchaseGrQtyColumn.setCellFactory(readOnlyNumberCell);
 
+        noneStPurchaseApQtyColumn.getStyleClass().add("my-table-column-number");
         noneStPurchaseApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
         noneStPurchaseApQtyColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         noneStPurchaseApQtyColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .applyQtyProperty().set(cellData.getNewValue().intValue());
             updateNoneStPurchaseTableTotal();
+            refreshAllTable();
             stockTableView.requestFocus();
         });
 
+        noneStPurchaseApplySetColumn.getStyleClass().add("my-table-column-number");
         noneStPurchaseApplySetColumn.setCellValueFactory(cellData -> cellData.getValue().applySetProperty());
         noneStPurchaseApplySetColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
         noneStPurchaseApplySetColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .applySetProperty().set(cellData.getNewValue().intValue());
             updateNoneStPurchaseTableTotal();
+            refreshAllTable();
             stockTableView.requestFocus();
         });
 
@@ -1135,11 +1195,12 @@ public class RootController {
         noneStPurchaseRemarkColumn.setOnEditCommit(cellData -> {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .remarkProperty().set(cellData.getNewValue());
+            refreshAllTable();
             stockTableView.requestFocus();
         });
 
         noneStPurchaseTableView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> selectedNoneStockPurchaseItem(newValue)
+                (observable, oldValue, newValue) -> handleSelectedNoneStockPurchaseItem(newValue)
         );
 
         noneStPurchaseTableView.setRowFactory(param -> new TableRow<PurchaseItem>() {
@@ -1157,7 +1218,21 @@ public class RootController {
         });
     }
 
-    private void selectedRotateItem(RotateItem newRotateItem) {
+    private void refreshAllTable() {
+        rotateKitColumn.setVisible(false);
+        rotateKitColumn.setVisible(true);
+
+        stockPoColumn.setVisible(false);
+        stockPoColumn.setVisible(true);
+
+        purchasePoColumn.setVisible(false);
+        purchasePoColumn.setVisible(true);
+
+        noneStPurchasePoColumn.setVisible(false);
+        noneStPurchasePoColumn.setVisible(true);
+    }
+
+    private void handleSelectedRotateItem(RotateItem newRotateItem) {
         if (newRotateItem == null) {
             stockTableView.setItems(emptyStockList);
             noneStPurchaseTableView.setItems(emptyPurchaseList);
@@ -1198,7 +1273,7 @@ public class RootController {
         updateNoneStPurchaseTable(newRotateItem);
     }
 
-    private void selectedStockItem(StockItem newStockItem) {
+    private void handleSelectedStockItem(StockItem newStockItem) {
         if (newStockItem == null) {
             purchaseTableView.setItems(emptyPurchaseList);
             return;
@@ -1214,14 +1289,14 @@ public class RootController {
         updatePurchaseTable(newStockItem);
     }
 
-    private void selectedPurchaseItem(PurchaseItem newPurchaseItem) {
+    private void handleSelectedPurchaseItem(PurchaseItem newPurchaseItem) {
         if (newPurchaseItem == null)
             return;
 
         purchaseSelectedPo = newPurchaseItem.getPo();
     }
 
-    private void selectedNoneStockPurchaseItem(PurchaseItem newPurchaseItem) {
+    private void handleSelectedNoneStockPurchaseItem(PurchaseItem newPurchaseItem) {
         if (newPurchaseItem == null) {
             return;
         }
@@ -1229,7 +1304,7 @@ public class RootController {
         noneStPurchaseSelectedPo = newPurchaseItem.getPo();
     }
 
-    private void stockPartNumComboChanged() {
+    private void handleStockPartNumComboChanged() {
         if (currentRotateItem == null)
             return;
 
@@ -1258,7 +1333,7 @@ public class RootController {
 
     }
 
-    private void purchaseShowAllChanged() {
+    private void handlePurchaseShowAllChanged() {
         if (currentStockItem != null) {
             purchasePoColumn.setVisible(false);
             purchasePoColumn.setVisible(true);
@@ -1272,24 +1347,28 @@ public class RootController {
         ObservableList<RotateItem> obsList = collection.getRotateObsList();
         FilteredList<RotateItem> filteredData = new FilteredList<>(obsList, p -> true);
 
-        ChangeListener listener = (ChangeListener<String>) (ov, oldVal, newVal) -> filteredData.setPredicate(rotateItem -> {
-            // If filter text is empty, display all persons.
-            if (newVal == null || newVal.isEmpty()) {
-                return true;
-            }
+        if (!rotateFilterListenerAdded) {
+            rotateFilterListenerAdded = true;
 
-            // Compare first name and last name of every person with filter text.
-            String lowerCaseFilter = newVal.toLowerCase();
+            ChangeListener listener = (ChangeListener<String>) (ov, oldVal, newVal) -> filteredData.setPredicate(rotateItem -> {
+                // If filter text is empty, display all persons.
+                if (newVal == null || newVal.isEmpty()) {
+                    return true;
+                }
 
-            if (rotateItem.getKitName().toLowerCase().contains(lowerCaseFilter)) {
-                return true; // Filter matches first name.
-            } else if (rotateItem.getPartNumber().toLowerCase().contains(lowerCaseFilter)) {
-                return true; // Filter matches last name.
-            }
-            return false; // Does not match.
-        });
+                // Compare first name and last name of every person with filter text.
+                String lowerCaseFilter = newVal.toLowerCase();
 
-        rotateFilterField.textProperty().addListener(listener);
+                if (rotateItem.getKitName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches first name.
+                } else if (rotateItem.getPartNumber().toLowerCase().contains(lowerCaseFilter)) {
+                    return true; // Filter matches last name.
+                }
+                return false; // Does not match.
+            });
+
+            rotateFilterField.textProperty().addListener(listener);
+        }
 
         // 3. Wrap the FilteredList in a SortedList.
         SortedList<RotateItem> sortedData = new SortedList<>(filteredData);
@@ -1313,6 +1392,8 @@ public class RootController {
         if (rotateItem.isDuplicate()) {
             stockTableView.setPlaceholder(new Label("重複的項目!! 我無法幫妳了 orz...."));
         } else {
+            stockTableView.setPlaceholder(new Label("庫存找不到符合項目"));
+
             ObservableList<StockItem> obsList;
             if (rotateItem.isKit() && showAllParts) {
                 obsList = rotateItem.getKitNode().getStockItemList();
@@ -1323,8 +1404,6 @@ public class RootController {
             stockTableView.setItems(obsList);
             if (obsList.size() > 0) {
                 stockTableView.getSelectionModel().select(0, stockApQtyColumn);
-            } else {
-                stockTableView.setPlaceholder(new Label("庫存找不到符合項目"));
             }
         }
 
@@ -1335,7 +1414,6 @@ public class RootController {
         } else {
             stockPmQty.setText(String.valueOf(rotateItem.getPmQty()));
         }
-
     }
 
     private void updatePurchaseTable(StockItem stockItem) {
@@ -1376,7 +1454,7 @@ public class RootController {
     private void updateNoneStPurchaseTable(RotateItem rotateItem) {
 
         noneStPurchaseTableView.setItems(emptyPurchaseList);
-        if (rotateItem.isDuplicate()) {
+        if (!rotateItem.isDuplicate()) {
             ObservableList<PurchaseItem> obsList;
             if (rotateItem.isKit() && showAllParts) {
                 obsList = rotateItem.getKitNode().getNoneStPurchaseItemList();
@@ -1479,7 +1557,6 @@ public class RootController {
         noneStPurchaseGrQtyTotal.setText(String.valueOf(grQtyTotal));
         noneStPurchaseApQtyTotal.setText(String.valueOf(applyQtyTotal));
         noneStPurchaseApSetTotal.setText(String.valueOf(applySetTotal));
-
     }
 
 }

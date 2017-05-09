@@ -30,6 +30,7 @@ public class Main extends Application {
         this.primaryStage.getIcons().add(
                 new Image(Main.class.getResourceAsStream("/images/AppIcon.png")));
         this.primaryStage.setScene(new Scene(root));
+        this.primaryStage.setMaximized(true);
         this.primaryStage.show();
 
         controller = loader.getController();

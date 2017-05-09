@@ -56,7 +56,15 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
         this.rotateItem = rotateItem;
 
         updateApplySet();
-        applyQty.addListener((observable, oldValue, newValue) -> updateApplySet());
+        this.rotateItem.addPurchasesApplyQtyTotal(getApplyQty());
+
+        this.applyQty.addListener((observable, oldValue, newValue) -> {
+            updateApplySet();
+
+            if (this.rotateItem != null) {
+                this.rotateItem.addPurchasesApplyQtyTotal(newValue.intValue() - oldValue.intValue());
+            }
+        });
     }
 
     private void updateApplySet() {

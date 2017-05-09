@@ -84,8 +84,10 @@ public class ExcelSaver {
 
                 int rowNum = item.getRowNum();
                 writeCell(rowNum, ExcelSettings.rotateApQtyColumn, String.valueOf(item.getStockApplyQtyTotal()));
-                writeCell(rowNum, ExcelSettings.rotateApplySetColumn, String.valueOf(item.getApplySet()));
                 writeCell(rowNum, ExcelSettings.rotateRemarkColumn, item.getRemark());
+                if (item.isKit()) {
+                    writeCell(rowNum, ExcelSettings.rotateApplySetColumn, String.valueOf(item.getApplySet()));
+                }
             }
 
             // Saves and closes
@@ -176,8 +178,11 @@ public class ExcelSaver {
 
                 int rowNum = item.getRowNum();
                 writeCell(rowNum, ExcelSettings.purchaseApQtyColumn, String.valueOf(item.getApplyQty()));
-                writeCell(rowNum, ExcelSettings.purchaseApSetColumn, String.valueOf(item.getApplySet()));
                 writeCell(rowNum, ExcelSettings.purchaseRemarkColumn, item.getRemark());
+
+                if (item.getRotateItem().isKit()) {
+                    writeCell(rowNum, ExcelSettings.purchaseApSetColumn, String.valueOf(item.getApplySet()));
+                }
             }
 
             // Saves and closes

@@ -1,5 +1,6 @@
 package lahome.rotateTool.Util.Excel;
 
+import javafx.beans.property.DoubleProperty;
 import org.apache.poi.ss.util.CellReference;
 
 import java.util.Locale;
@@ -44,9 +45,9 @@ public class ExcelSettings {
     public static int purchaseApSetColumn;
     public static int purchaseRemarkColumn;
 
-    public static void setRotateConfig(String filePath, int firstDataRow, String kitColStr, String partColStr,
-                                String pmQtyColStr, String apQtyColStr, String ratioColStr, String applySetColStr,
-                                String remarkColStr) {
+    public static void setRotateConfig(
+            String filePath, int firstDataRow, String kitColStr, String partColStr, String pmQtyColStr,
+            String apQtyColStr, String ratioColStr, String applySetColStr, String remarkColStr) {
 
         rotateFilePath = filePath;
         rotateFirstDataRow = firstDataRow - 1;
@@ -60,9 +61,11 @@ public class ExcelSettings {
         rotateRemarkColumn = CellReference.convertColStringToIndex(remarkColStr.toUpperCase());
     }
 
-    public static void setStockConfig(String filePath, int firstDataRow, String kitColStr, String partColStr,
-                               String poColStr, String stQtyColStr, String lotColStr, String dcColStr,
-                               String apQtyColStr, String remarkColStr) {
+    public static void setStockConfig(
+            String filePath, int firstDataRow, String kitColStr, String partColStr,
+            String poColStr, String stQtyColStr, String lotColStr, String dcColStr,
+            String apQtyColStr, String remarkColStr) {
+
 
         stockFilePath = filePath;
         stockFirstDataRow = firstDataRow - 1;
@@ -77,9 +80,10 @@ public class ExcelSettings {
         stockRemarkColumn = CellReference.convertColStringToIndex(remarkColStr);
     }
 
-    public static void setPurchaseConfig(String filePath, int firstDataRow, String kitColStr, String partColStr,
-                                  String poColStr, String grDateColStr, String grQtyColStr,
-                                  String apQtyColStr, String setColStr, String remarkColStr) {
+    public static void setPurchaseConfig(
+            String filePath, int firstDataRow, String kitColStr, String partColStr,
+            String poColStr, String grDateColStr, String grQtyColStr, String apQtyColStr,
+            String setColStr, String remarkColStr) {
 
         purchaseFilePath = filePath;
         purchaseFirstDataRow = firstDataRow - 1;
