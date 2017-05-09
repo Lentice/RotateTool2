@@ -6,12 +6,8 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="- Fix bugs&#10;- Add backlog column">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lahome/rotateTool/Util/Excel/ExcelParser.java" afterPath="$PROJECT_DIR$/src/lahome/rotateTool/Util/Excel/ExcelParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lahome/rotateTool/Util/Excel/ExcelSettings.java" afterPath="$PROJECT_DIR$/src/lahome/rotateTool/Util/Excel/ExcelSettings.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lahome/rotateTool/module/RotateItem.java" afterPath="$PROJECT_DIR$/src/lahome/rotateTool/module/RotateItem.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lahome/rotateTool/view/Root.fxml" afterPath="$PROJECT_DIR$/src/lahome/rotateTool/view/Root.fxml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lahome/rotateTool/view/RootController.java" afterPath="$PROJECT_DIR$/src/lahome/rotateTool/view/RootController.java" />
     </list>
     <ignored path="JavaFxApplication.iws" />
@@ -79,18 +75,18 @@
       <file leaf-file-name="RootController.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/view/RootController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
-              <caret line="1047" column="18" lean-forward="false" selection-start-line="1047" selection-start-column="18" selection-end-line="1047" selection-end-column="18" />
+            <state relative-caret-position="375">
+              <caret line="1248" column="62" lean-forward="false" selection-start-line="1248" selection-start-column="62" selection-end-line="1248" selection-end-column="62" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#38684#39143#0" expanded="true" />
-                <element signature="e#39142#39143#0" expanded="true" />
-                <element signature="e#43658#44133#0" expanded="true" />
-                <element signature="e#44132#44133#0" expanded="true" />
-                <element signature="e#48793#49277#0" expanded="true" />
-                <element signature="e#49276#49277#0" expanded="true" />
-                <element signature="e#53964#54454#0" expanded="true" />
-                <element signature="e#54453#54454#0" expanded="true" />
+                <element signature="e#38732#39191#0" expanded="true" />
+                <element signature="e#39190#39191#0" expanded="true" />
+                <element signature="e#43753#44228#0" expanded="true" />
+                <element signature="e#44227#44228#0" expanded="true" />
+                <element signature="e#48936#49420#0" expanded="true" />
+                <element signature="e#49419#49420#0" expanded="true" />
+                <element signature="e#54151#54641#0" expanded="true" />
+                <element signature="e#54640#54641#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -256,7 +252,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>this.getTableRow().getItem();</find>
       <find>updateRotateTable</find>
       <find>ratio</find>
       <find>commit</find>
@@ -286,6 +281,7 @@
       <find>compareto</find>
       <find>partNumber</find>
       <find>settingRotatePartNumCol</find>
+      <find>getRatio()</find>
     </findStrings>
   </component>
   <component name="FindManager">
@@ -1102,7 +1098,14 @@
       <option name="project" value="LOCAL" />
       <updated>1494312226605</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="- Fix bugs&#10;- Add backlog column">
+      <created>1494338455658</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1494338455658</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -1133,6 +1136,7 @@
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2793177" sideWeight="0.6703755" order="0" side_tool="false" content_ui="combo" />
       <window_info id="JProfiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32998884" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32552955" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13486141" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1151,7 +1155,6 @@
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32552955" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1213,7 +1216,8 @@
     <MESSAGE value="- Fix miss search icon bug" />
     <MESSAGE value="- Fix jacob doesn't quit STA bug.&#10;- Refine UI." />
     <MESSAGE value="- Fix select item color bugs&#10;- Refine code" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Fix select item color bugs&#10;- Refine code" />
+    <MESSAGE value="- Fix bugs&#10;- Add backlog column" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Fix bugs&#10;- Add backlog column" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1893,18 +1897,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/lahome/rotateTool/view/RootController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="1047" column="18" lean-forward="false" selection-start-line="1047" selection-start-column="18" selection-end-line="1047" selection-end-column="18" />
+        <state relative-caret-position="375">
+          <caret line="1248" column="62" lean-forward="false" selection-start-line="1248" selection-start-column="62" selection-end-line="1248" selection-end-column="62" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#38684#39143#0" expanded="true" />
-            <element signature="e#39142#39143#0" expanded="true" />
-            <element signature="e#43658#44133#0" expanded="true" />
-            <element signature="e#44132#44133#0" expanded="true" />
-            <element signature="e#48793#49277#0" expanded="true" />
-            <element signature="e#49276#49277#0" expanded="true" />
-            <element signature="e#53964#54454#0" expanded="true" />
-            <element signature="e#54453#54454#0" expanded="true" />
+            <element signature="e#38732#39191#0" expanded="true" />
+            <element signature="e#39190#39191#0" expanded="true" />
+            <element signature="e#43753#44228#0" expanded="true" />
+            <element signature="e#44227#44228#0" expanded="true" />
+            <element signature="e#48936#49420#0" expanded="true" />
+            <element signature="e#49419#49420#0" expanded="true" />
+            <element signature="e#54151#54641#0" expanded="true" />
+            <element signature="e#54640#54641#0" expanded="true" />
           </folding>
         </state>
       </provider>

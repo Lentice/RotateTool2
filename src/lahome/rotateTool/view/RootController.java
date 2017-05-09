@@ -927,11 +927,12 @@ public class RootController {
                 }
 
                 int pmQty = rotateItem.getPmQty();
+                int ratio = rotateItem.getRatio();
                 if (item.intValue() > pmQty) {
                     setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
                 } else if (rotateItem.getStockApplyQtyTotal() != rotateItem.getPurchasesApplyQtyTotal()) {
                     setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
-                } else if ((rotateItem.getStockApplyQtyTotal() % rotateItem.getRatio()) != 0) {
+                } else if (ratio > 0 && (rotateItem.getStockApplyQtyTotal() % ratio) != 0) {
                     setStyle(basicStyle + "-fx-background-color: #FFAB91;"); // orange
                 } else if (item.intValue() == pmQty) {
                     setStyle(basicStyle + "-fx-background-color: #4CAF50;"); // green
@@ -1041,10 +1042,10 @@ public class RootController {
                     return;
                 }
 
-
+                int ratio = stockItem.getRotateItem().getRatio();
                 if (item.intValue() > stockItem.getStockQty()) {
                     setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
-                //} else if ((item.intValue() % stockItem.getRotateItem().getRatio()) != 0) {
+                //} else if (ratio > 0 && (item.intValue() % ratio) != 0) {
                 //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
                 } else {
                     setStyle(basicStyle);
@@ -1138,9 +1139,10 @@ public class RootController {
                     return;
                 }
 
+                int ratio = purchaseItem.getRotateItem().getRatio();
                 if (item.intValue() > purchaseItem.getGrQty()) {
                     setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
-                //} else if ((item.intValue() % purchaseItem.getRotateItem().getRatio()) != 0) {
+                //} else if (ratio > 0 && (item.intValue() % ratio) != 0) {
                 //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
                 } else {
                     setStyle(basicStyle);
@@ -1241,9 +1243,10 @@ public class RootController {
                     return;
                 }
 
+                int ratio = purchaseItem.getRotateItem().getRatio();
                 if (item.intValue() > purchaseItem.getGrQty()) {
                     setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
-                //} else if ((item.intValue() % purchaseItem.getRotateItem().getRatio()) != 0) {
+                //} else if (ratio > 0(item.intValue() % ratio) != 0) {
                 //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
                 } else {
                     setStyle(basicStyle);
