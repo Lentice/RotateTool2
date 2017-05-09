@@ -1093,7 +1093,7 @@ public class RootController {
                     .applyQtyProperty().set(cellData.getNewValue().intValue());
             updatePurchaseTableTotal();
             refreshAllTable();
-            stockTableView.requestFocus();
+            purchaseTableView.requestFocus();
         });
 
         purchaseApplySetColumn.getStyleClass().add("my-table-column-number");
@@ -1107,7 +1107,7 @@ public class RootController {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .remarkProperty().set(cellData.getNewValue());
             refreshAllTable();
-            stockTableView.requestFocus();
+            purchaseTableView.requestFocus();
         });
 
         purchaseTableView.getSelectionModel().selectedItemProperty().addListener(
@@ -1176,7 +1176,7 @@ public class RootController {
                     .applyQtyProperty().set(cellData.getNewValue().intValue());
             updateNoneStPurchaseTableTotal();
             refreshAllTable();
-            stockTableView.requestFocus();
+            noneStPurchaseTableView.requestFocus();
         });
 
         noneStPurchaseApplySetColumn.getStyleClass().add("my-table-column-number");
@@ -1187,7 +1187,7 @@ public class RootController {
                     .applySetProperty().set(cellData.getNewValue().intValue());
             updateNoneStPurchaseTableTotal();
             refreshAllTable();
-            stockTableView.requestFocus();
+            noneStPurchaseTableView.requestFocus();
         });
 
         noneStPurchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
@@ -1196,7 +1196,7 @@ public class RootController {
             cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
                     .remarkProperty().set(cellData.getNewValue());
             refreshAllTable();
-            stockTableView.requestFocus();
+            noneStPurchaseTableView.requestFocus();
         });
 
         noneStPurchaseTableView.getSelectionModel().selectedItemProperty().addListener(

@@ -334,7 +334,7 @@ public class ExcelParser {
 
         int rowCount = sheet.getLastRowNum();
         for (Row row : sheet) {
-            int rowNum = row.getRowNum();
+            int rowNum = row.getRowNum() + 1;
             rotateProgressProperty.set(Math.min(1, (double)rowNum / rowCount));
 
             if (rowNum < ExcelSettings.rotateFirstDataRow)
@@ -382,7 +382,7 @@ public class ExcelParser {
 
         int rowCount = sheet.getLastRowNum();
         for (Row row : sheet) {
-            int rowNum = row.getRowNum();
+            int rowNum = row.getRowNum() + 1;
             stockProgressProperty.set((double)rowNum / rowCount);
 
             if (rowNum < ExcelSettings.stockFirstDataRow)
@@ -437,7 +437,7 @@ public class ExcelParser {
         int rowCount = sheet.getLastRowNum();
         for (Row row : sheet) {
 
-            int rowNum = row.getRowNum();
+            int rowNum = row.getRowNum() + 1;
             purchaseProgressProperty.set((double)rowNum / rowCount);
 
             if (rowNum < ExcelSettings.purchaseFirstDataRow)
@@ -517,11 +517,7 @@ public class ExcelParser {
             pkg.save(new File("D:\\Test.xlsx"));
             pkg.revert();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidFormatException e) {
+        } catch (InvalidFormatException | IOException e) {
             e.printStackTrace();
         }
     }

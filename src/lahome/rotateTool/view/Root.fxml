@@ -920,7 +920,7 @@
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXToggleButton fx:id="purchaseShowAllToggle" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="24.0" text="Show All" toggleColor="#009485" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0" />
+                                                <JFXToggleButton fx:id="purchaseShowAllToggle" focusTraversable="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="24.0" text="Show All" toggleColor="#009485" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0" />
                                                 <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
                                                    <children>
                                                       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">

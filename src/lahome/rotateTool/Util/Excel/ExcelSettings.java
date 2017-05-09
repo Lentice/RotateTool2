@@ -50,7 +50,7 @@ public class ExcelSettings {
             String apQtyColStr, String ratioColStr, String applySetColStr, String remarkColStr) {
 
         rotateFilePath = filePath;
-        rotateFirstDataRow = firstDataRow - 1;
+        rotateFirstDataRow = firstDataRow;
 
         rotateKitColumn = CellReference.convertColStringToIndex(kitColStr.toUpperCase());
         rotatePartColumn = CellReference.convertColStringToIndex(partColStr.toLowerCase());
@@ -68,7 +68,7 @@ public class ExcelSettings {
 
 
         stockFilePath = filePath;
-        stockFirstDataRow = firstDataRow - 1;
+        stockFirstDataRow = firstDataRow;
 
         stockKitColumn = CellReference.convertColStringToIndex(kitColStr);
         stockPartColumn = CellReference.convertColStringToIndex(partColStr);
@@ -86,7 +86,7 @@ public class ExcelSettings {
             String setColStr, String remarkColStr) {
 
         purchaseFilePath = filePath;
-        purchaseFirstDataRow = firstDataRow - 1;
+        purchaseFirstDataRow = firstDataRow;
 
         purchaseKitColumn = CellReference.convertColStringToIndex(kitColStr);
         purchasePartColumn = CellReference.convertColStringToIndex(partColStr);
