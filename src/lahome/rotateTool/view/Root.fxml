@@ -574,195 +574,199 @@
             </Tab>
             <Tab fx:id="editTab" closable="false" text="編輯">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <AnchorPane>
                      <children>
-                        <SplitPane fx:id="editTabHSlitPane" dividerPositions="0.4481409001956947" focusTraversable="false" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane fx:id="editTabHSlitPane" dividerPositions="0.4481409001956947" focusTraversable="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
-                              <SplitPane fx:id="editTabVLeftSlitPane" dividerPositions="0.7523510971786834" focusTraversable="false" orientation="VERTICAL">
-                                 <items>
-                                  <AnchorPane>
-                                       <children>
-                                          <Label focusTraversable="false" text="Rotate Items" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
-                                             <font>
-                                                <Font name="System Bold" size="18.0" />
-                                             </font>
-                                             <padding>
-                                                <Insets right="20.0" />
-                                             </padding>
-                                          </Label>
-                                          <HBox alignment="CENTER_RIGHT" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                              <AnchorPane>
+                                 <children>
+                                    <SplitPane fx:id="editTabVLeftSlitPane" dividerPositions="0.7523510971786834" focusTraversable="false" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <items>
+                                        <AnchorPane>
                                              <children>
-                                                <ImageView fx:id="filterIcon" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
-                                                   <HBox.margin>
-                                                      <Insets right="10.0" />
-                                                   </HBox.margin>
-                                                </ImageView>
-                                                <JFXTextField fx:id="rotateFilterField" focusTraversable="false" prefColumnCount="200" prefWidth="200.0">
+                                                <Label focusTraversable="false" text="Rotate Items" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                                                    <font>
-                                                      <Font size="14.0" />
+                                                      <Font name="System Bold" size="18.0" />
                                                    </font>
-                                                </JFXTextField>
+                                                   <padding>
+                                                      <Insets right="20.0" />
+                                                   </padding>
+                                                </Label>
+                                                <HBox alignment="CENTER_RIGHT" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <ImageView fx:id="filterIcon" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                                         <HBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </HBox.margin>
+                                                      </ImageView>
+                                                      <JFXTextField fx:id="rotateFilterField" focusTraversable="false" prefColumnCount="200" prefWidth="200.0">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </JFXTextField>
+                                                   </children>
+                                                </HBox>
+                                                <VBox layoutY="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                   <children>
+                                                      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="rotatePartCount" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                         <padding>
+                                                            <Insets left="10.0" right="10.0" />
+                                                         </padding>
+                                                      </HBox>
+                                                      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #FFF176;">
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Kit:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ZMM Sets">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="rotateCurrKitZmmSetTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                         <padding>
+                                                            <Insets left="10.0" right="10.0" />
+                                                         </padding>
+                                                      </HBox>
+                                                      <TableView fx:id="rotateTableView" editable="true" maxHeight="1.7976931348623157E308" prefHeight="9999.0">
+                                                         <columns>
+                                                            <TableColumn fx:id="rotateKitColumn" minWidth="20.0" prefWidth="140.0" text="KitName" />
+                                                            <TableColumn fx:id="rotatePartColumn" minWidth="20.0" prefWidth="140.0" text="PartNum" />
+                                                            <TableColumn fx:id="rotateNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
+                                                            <TableColumn fx:id="rotatePmQtyColumn" minWidth="20.0" prefWidth="50.0" text="PM Qty" />
+                                                            <TableColumn fx:id="rotateApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                            <TableColumn fx:id="rotateRatioColumn" minWidth="20.0" prefWidth="50.0" text="Ratio" />
+                                                            <TableColumn fx:id="rotateApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
+                                                            <TableColumn fx:id="rotateRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
+                                                         </columns>
+                                                      </TableView>
+                                                   </children>
+                                                </VBox>
                                              </children>
-                                          </HBox>
-                                          <VBox layoutY="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                          </AnchorPane>
+                                          <AnchorPane>
                                              <children>
-                                                <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
+                                                <Label focusTraversable="false" text="ZMM &quot;NOT&quot; in stock" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                                   <font>
+                                                      <Font name="System Bold" size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
                                                    <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part:">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Label fx:id="rotatePartCount" focusTraversable="false" minWidth="45.0" text="0">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
+                                                      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GR Qty:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="noneStPurchaseGrQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Qty:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="noneStPurchaseApQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Set:">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Text>
+                                                            <Label fx:id="noneStPurchaseApSetTotal" focusTraversable="false" minWidth="45.0" text="0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                         <padding>
+                                                            <Insets left="10.0" right="10.0" />
+                                                         </padding>
+                                                      </HBox>
+                                                      <TableView fx:id="noneStPurchaseTableView" editable="true" maxHeight="1.7976931348623157E308" prefHeight="9999.0">
+                                                         <columns>
+                                                            <TableColumn fx:id="noneStPurchaseNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
+                                                            <TableColumn fx:id="noneStPurchasePartNumColumn" minWidth="20.0" prefWidth="120.0" text="PartNum" />
+                                                            <TableColumn fx:id="noneStPurchasePoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
+                                                            <TableColumn fx:id="noneStPurchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
+                                                            <TableColumn fx:id="noneStPurchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
+                                                            <TableColumn fx:id="noneStPurchaseApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
+                                                            <TableColumn fx:id="noneStPurchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
+                                                            <TableColumn fx:id="noneStPurchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
+                                                         </columns>
+                                                      </TableView>
                                                    </children>
-                                                   <padding>
-                                                      <Insets left="10.0" right="10.0" />
-                                                   </padding>
-                                                </HBox>
-                                                <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #FFF176;">
-                                                   <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Kit:">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ZMM Sets">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Label fx:id="rotateCurrKitZmmSetTotal" focusTraversable="false" minWidth="45.0" text="0">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                   <padding>
-                                                      <Insets left="10.0" right="10.0" />
-                                                   </padding>
-                                                </HBox>
-                                                <TableView fx:id="rotateTableView" editable="true" prefHeight="9999.0">
-                                                   <columns>
-                                                      <TableColumn fx:id="rotateKitColumn" minWidth="20.0" prefWidth="140.0" text="KitName" />
-                                                      <TableColumn fx:id="rotatePartColumn" minWidth="20.0" prefWidth="140.0" text="PartNum" />
-                                                      <TableColumn fx:id="rotateNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
-                                                      <TableColumn fx:id="rotatePmQtyColumn" minWidth="20.0" prefWidth="50.0" text="PM Qty" />
-                                                      <TableColumn fx:id="rotateApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
-                                                      <TableColumn fx:id="rotateRatioColumn" minWidth="20.0" prefWidth="50.0" text="Ratio" />
-                                                      <TableColumn fx:id="rotateApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
-                                                      <TableColumn fx:id="rotateRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
-                                                   </columns>
-                                                </TableView>
+                                                </VBox>
                                              </children>
-                                          </VBox>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane SplitPane.resizableWithParent="false">
-                                       <children>
-                                          <Label focusTraversable="false" text="ZMM &quot;NOT&quot; in stock" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
-                                             <font>
-                                                <Font name="System Bold" size="18.0" />
-                                             </font>
-                                          </Label>
-                                          <VBox maxHeight="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
-                                             <children>
-                                                <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
-                                                   <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Total:">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Pane minWidth="0.0" HBox.hgrow="ALWAYS" />
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GR Qty:">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Label fx:id="noneStPurchaseGrQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Qty:">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Label fx:id="noneStPurchaseApQtyTotal" focusTraversable="false" minWidth="45.0" text="0">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ap Set:">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Label fx:id="noneStPurchaseApSetTotal" focusTraversable="false" minWidth="45.0" text="0">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                   <padding>
-                                                      <Insets left="10.0" right="10.0" />
-                                                   </padding>
-                                                </HBox>
-                                                <TableView fx:id="noneStPurchaseTableView" editable="true" prefHeight="9999.0">
-                                                   <columns>
-                                                      <TableColumn fx:id="noneStPurchaseNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
-                                                      <TableColumn fx:id="noneStPurchasePartNumColumn" minWidth="20.0" prefWidth="120.0" text="PartNum" />
-                                                      <TableColumn fx:id="noneStPurchasePoColumn" minWidth="20.0" prefWidth="120.0" text="PO" />
-                                                      <TableColumn fx:id="noneStPurchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
-                                                      <TableColumn fx:id="noneStPurchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
-                                                      <TableColumn fx:id="noneStPurchaseApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
-                                                      <TableColumn fx:id="noneStPurchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
-                                                      <TableColumn fx:id="noneStPurchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
-                                                   </columns>
-                                                </TableView>
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </AnchorPane>
-                                 </items>
-                              </SplitPane>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                          </AnchorPane>
+                                       </items>
+                                    </SplitPane>
+                                 </children>
+                              </AnchorPane>
+                            <AnchorPane>
                                  <children>
                                     <SplitPane fx:id="editTabVRightSlitPane" dividerPositions="0.75" focusTraversable="false" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <items>
@@ -773,7 +777,40 @@
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
                                                 </Label>
-                                                <VBox layoutY="50.0" maxHeight="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                <HBox alignment="CENTER_RIGHT" layoutX="317.0" layoutY="31.0" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #8BC34A;" AnchorPane.rightAnchor="0.0">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PM Qty:">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <HBox.margin>
+                                                            <Insets />
+                                                         </HBox.margin>
+                                                      </Text>
+                                                      <Label fx:id="stockPmQty" focusTraversable="false" minWidth="45.0" text="0">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="10.0" right="10.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox alignment="CENTER_RIGHT" layoutX="211.0" layoutY="29.0" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="25.0">
+                                                   <children>
+                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part:">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <HBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </HBox.margin>
+                                                      </Text>
+                                                      <ComboBox fx:id="stockPartNumCombo" editable="true" focusTraversable="false" />
+                                                   </children>
+                                                </HBox>
+                                                <VBox layoutY="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                                    <children>
                                                       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
                                                          <children>
@@ -859,7 +896,7 @@
                                                             <Insets left="10.0" right="10.0" />
                                                          </padding>
                                                       </HBox>
-                                                      <TableView fx:id="stockTableView" editable="true" prefHeight="9999.0">
+                                                      <TableView fx:id="stockTableView" editable="true" maxHeight="1.7976931348623157E308" prefHeight="9999.0">
                                                          <columns>
                                                             <TableColumn fx:id="stockNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
                                                             <TableColumn fx:id="stockPartNumColumn" minWidth="20.0" prefWidth="120.0" text="PartNum" />
@@ -874,42 +911,9 @@
                                                       </TableView>
                                                    </children>
                                                 </VBox>
-                                                <HBox alignment="CENTER_RIGHT" layoutX="317.0" layoutY="31.0" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #8BC34A;" AnchorPane.rightAnchor="0.0">
-                                                   <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PM Qty:">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Label fx:id="stockPmQty" focusTraversable="false" minWidth="45.0" text="0">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                   <padding>
-                                                      <Insets left="10.0" right="10.0" />
-                                                   </padding>
-                                                </HBox>
-                                                <HBox alignment="CENTER_RIGHT" layoutX="211.0" layoutY="29.0" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="25.0">
-                                                   <children>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part:">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <HBox.margin>
-                                                            <Insets right="10.0" />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <ComboBox fx:id="stockPartNumCombo" editable="true" focusTraversable="false" />
-                                                   </children>
-                                                </HBox>
                                              </children>
                                           </AnchorPane>
-                                          <AnchorPane SplitPane.resizableWithParent="false">
+                                          <AnchorPane>
                                              <children>
                                                 <Label fx:id="purchaseTableTitle" focusTraversable="false" text="ZMM" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
                                                    <font>
@@ -917,7 +921,7 @@
                                                    </font>
                                                 </Label>
                                                 <JFXToggleButton fx:id="purchaseShowAllToggle" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="24.0" text="Show All" toggleColor="#009485" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0" />
-                                                <VBox maxHeight="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+                                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
                                                    <children>
                                                       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
                                                          <children>
@@ -974,7 +978,7 @@
                                                             <Insets left="10.0" right="10.0" />
                                                          </padding>
                                                       </HBox>
-                                                      <TableView fx:id="purchaseTableView" editable="true" prefHeight="9999.0">
+                                                      <TableView fx:id="purchaseTableView" editable="true" maxHeight="1.7976931348623157E308" prefHeight="9999.0">
                                                          <columns>
                                                             <TableColumn fx:id="purchaseNoColumn" minWidth="20.0" prefWidth="30.0" text="No." />
                                                             <TableColumn fx:id="purchasePartNumColumn" minWidth="20.0" prefWidth="143.0" text="PartNum" />
