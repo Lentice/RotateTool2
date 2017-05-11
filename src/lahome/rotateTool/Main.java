@@ -21,6 +21,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        loadSetting();
+
         this.primaryStage = primaryStage;
 
         FXMLLoader loader = new FXMLLoader();
@@ -36,7 +38,6 @@ public class Main extends Application {
         controller = loader.getController();
         controller.setMainApp(this);
 
-        loadSetting();
 
     }
 
@@ -46,7 +47,7 @@ public class Main extends Application {
     }
 
     private void loadSetting() {
-        controller.loadSetting();
+        //controller.loadSetting();
     }
 
     private void saveSetting() {

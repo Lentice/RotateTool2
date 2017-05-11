@@ -1,10 +1,8 @@
 package lahome.rotateTool.module;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import gnu.trove.map.hash.THashMap;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
@@ -22,21 +20,21 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     private boolean isRotateValid = true;
     private int rowNum;
 
-    private StringProperty kitName;
-    private StringProperty partNumber;
-    private StringProperty backlog;
+    private ReadOnlyStringProperty kitName;
+    private ReadOnlyStringProperty partNumber;
+    private ReadOnlyStringProperty backlog;
     private IntegerProperty pmQty;
     private IntegerProperty stockApplyQtyTotal;
-    private StringProperty ratio;
+    private ReadOnlyStringProperty ratio;
     private IntegerProperty applySet;
     private StringProperty remark;
 
     private IntegerProperty purchasesApplyQtyTotal;
-    private StringProperty serialNo;
+    private ReadOnlyStringWrapper serialNo;
 
     private List<RotateItem> duplicateRotateItems;
 
-    private HashMap<String, StockItem> stockItems = new HashMap<>();
+    private THashMap<String, StockItem> stockItemMap = new THashMap<>();
     private ObservableList<StockItem> stockItemObsList = FXCollections.observableArrayList();
     private ObservableList<PurchaseItem> noneStockPurchaseItemObsList = FXCollections.observableArrayList();
 
@@ -54,7 +52,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         this.remark = new SimpleStringProperty(remark);
 
         this.purchasesApplyQtyTotal = new SimpleIntegerProperty(0);
-        this.serialNo = new SimpleStringProperty("A");
+        this.serialNo = new ReadOnlyStringWrapper("A");
 
         this.isKit = !kitName.isEmpty();
         this.rowNum = rowNum;
@@ -103,11 +101,11 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         item.setRotateItem(this);
 
         String key = item.getPo();
-        StockItem stItem = stockItems.get(key);
+        StockItem stItem = stockItemMap.get(key);
         if (stItem != null) {
             stItem.addDuplicate(item);
         } else {
-            stockItems.put(key, item);
+            stockItemMap.put(key, item);
         }
 
         stockItemObsList.add(item);
@@ -134,7 +132,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         return kitName.get();
     }
 
-    public StringProperty kitNameProperty() {
+    public ReadOnlyStringProperty kitNameProperty() {
         return kitName;
     }
 
@@ -142,7 +140,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         return partNumber.get();
     }
 
-    public StringProperty partNumberProperty() {
+    public ReadOnlyStringProperty partNumberProperty() {
         return partNumber;
     }
 
@@ -150,7 +148,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         return backlog.get();
     }
 
-    public StringProperty backlogProperty() {
+    public ReadOnlyStringProperty backlogProperty() {
         return backlog;
     }
 
@@ -170,7 +168,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
         }
     }
 
-    public StringProperty ratioProperty() {
+    public ReadOnlyStringProperty ratioProperty() {
         return ratio;
     }
 
@@ -206,7 +204,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
 
     public StockItem getStockByPo(String po) {
-        return stockItems.get(po);
+        return stockItemMap.get(po);
     }
 
     public int getApplySet() {
@@ -247,8 +245,8 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
     public void setSerialNo(String serialNo) {
         this.serialNo.set(serialNo);
     }
-    public StringProperty serialNoProperty() {
-        return serialNo;
+    public ReadOnlyStringProperty serialNoProperty() {
+        return serialNo.getReadOnlyProperty();
     }
 
     public boolean isFirstPartOfKit() {
@@ -272,7 +270,7 @@ public class RotateItem extends RecursiveTreeObject<RotateItem> {
 
             for (StockItem stockItem : stockItemObsList) {
                 if (stockItem.isMainStockItem()) {
-                    list.addAll(stockItem.getPurchaseItems());
+                    list.addAll(stockItem.getPurchaseItemList());
                 }
             }
 

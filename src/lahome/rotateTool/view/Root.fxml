@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXColorPicker?>
 <?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXToggleButton?>
@@ -67,7 +68,7 @@
                                           <DropShadow />
                                        </effect>
                                     </JFXButton>
-                                    <JFXButton fx:id="exportToExcelButton" focusTraversable="false" layoutX="486.0" layoutY="596.0" onMouseClicked="#handleSaveFiles" prefHeight="37.0" prefWidth="121.0" ripplerFill="#1dd023" style="-fx-background-color: #2E7D32;" text="匯出到Excel" textFill="WHITE" textOverrun="CLIP" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="149.0">
+                                    <JFXButton fx:id="exportToExcelButton" focusTraversable="false" layoutX="486.0" layoutY="596.0" onMouseClicked="#handleExportToFiles" prefHeight="37.0" prefWidth="121.0" ripplerFill="#1dd023" style="-fx-background-color: #2E7D32;" text="匯出到Excel" textFill="WHITE" textOverrun="CLIP" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="149.0">
                                        <font>
                                           <Font size="17.0" />
                                        </font>
@@ -148,6 +149,33 @@
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
                                                 </Text>
+                                                <TitledPane focusTraversable="false" text="一般設定">
+                                                   <content>
+                                                      <GridPane alignment="CENTER_RIGHT" hgap="5.0" prefWidth="250.0" vgap="5.0">
+                                                         <columnConstraints>
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="130.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="62.0" />
+                                                         </columnConstraints>
+                                                         <rowConstraints>
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                         </rowConstraints>
+                                                         <children>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="相同Kit顏色" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <GridPane.margin>
+                                                                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                               </GridPane.margin>
+                                                            </Text>
+                                                            <JFXColorPicker fx:id="kitGroupColorPicker" onAction="#handleKitGroupColorPicker" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                                                         </children>
+                                                      </GridPane>
+                                                   </content>
+                                                   <VBox.margin>
+                                                      <Insets left="10.0" />
+                                                   </VBox.margin>
+                                                </TitledPane>
                                                 <TitledPane focusTraversable="false" text="退貨總表">
                                                    <content>
                                                       <GridPane alignment="CENTER_RIGHT" hgap="5.0" prefWidth="250.0" vgap="5.0">

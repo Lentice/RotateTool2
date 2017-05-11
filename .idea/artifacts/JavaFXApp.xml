@@ -30,7 +30,11 @@
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/xmlbeans-2.6.0.jar" path-in-jar="/" />
         <element id="file-copy" path="$PROJECT_DIR$/src/log4j2.xml" />
         <element id="extracted-dir" path="$PROJECT_DIR$/Libs/jacob.jar" path-in-jar="/" />
-        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/xlsx-streamer-1.1.0.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/trove-3.0.3.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/commons-lang3-3.5.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/commons-io-2.5.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/xercesImpl-2.11.0-22.jar" path-in-jar="/" />
+        <element id="extracted-dir" path="$PROJECT_DIR$/Libs/xmlParserAPIs-2.11.0.jar" path-in-jar="/" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/resources/jacob-1.18-x64.dll" />
       <element id="file-copy" path="$PROJECT_DIR$/resources/jacob-1.18-x86.dll" />

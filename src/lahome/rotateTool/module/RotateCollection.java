@@ -1,26 +1,27 @@
 package lahome.rotateTool.module;
 
+import gnu.trove.map.hash.THashMap;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class RotateCollection {
     private static final Logger log = LogManager.getLogger(RotateCollection.class.getName());
 
-    private HashMap<String, KitNode> kitNodeMap = new HashMap<>();
-    private HashMap<String, RotateItem> rotateItemMap = new HashMap<>();
+    private THashMap<String, KitNode> kitNodeMap = new THashMap<>();
+    private THashMap<String, RotateItem> rotateItemMap = new THashMap<>();
 
     private ObservableList<RotateItem> rotateObsList = FXCollections.observableArrayList();
     private List<StockItem> stockItemList = new ArrayList<>();
     private List<PurchaseItem> purchaseItemList = new ArrayList<>();
 
     private String getRotateKey(String kitName, String partNum) {
-        return kitName.replaceAll("-", "") + partNum.replaceAll("-", "");
+        return StringUtils.remove(kitName + partNum, '-');
     }
 
     public void addRotate(RotateItem item) {
@@ -44,28 +45,15 @@ public class RotateCollection {
         }
     }
 
-    public void addStock(String kitName, String partNum, StockItem item) {
-        String key = getRotateKey(kitName, partNum);
-        RotateItem rotateItem = rotateItemMap.get(key);
-        if (rotateItem == null) {
-            log.trace(String.format("Ignore no needed stock item %s, %s", kitName, partNum));
-            item.clear();
-            return;
-        }
+    public void addStock(RotateItem rotateItem, StockItem item) {
+        assert rotateItem != null;
 
         stockItemList.add(item);
         rotateItem.addStockItem(item);
     }
 
-    public void addPurchase(String kitName, String partNum, PurchaseItem item) {
-
-        String key = getRotateKey(kitName, partNum);
-        RotateItem rotateItem = rotateItemMap.get(key);
-        if (rotateItem == null) {
-            log.trace(String.format("Ignore no needed purchase item %s, %s", kitName, partNum));
-            item.clear();
-            return;
-        }
+    public void addPurchase(RotateItem rotateItem, PurchaseItem item) {
+        assert  rotateItem != null;
 
         StockItem stockitem = rotateItem.getStockByPo(item.getPo());
         if (stockitem == null) {
@@ -76,10 +64,9 @@ public class RotateCollection {
         purchaseItemList.add(item);
     }
 
-    public boolean belongToRotateItem(String kitName, String partNum) {
+    public RotateItem getRotateItem(String kitName, String partNum) {
         String key = getRotateKey(kitName, partNum);
-        RotateItem rotateItem = rotateItemMap.get(key);
-        return (rotateItem != null);
+        return rotateItemMap.get(key);
     }
 
     public ObservableList<RotateItem> getRotateObsList() {
@@ -94,7 +81,7 @@ public class RotateCollection {
         return purchaseItemList;
     }
 
-    public HashMap<String, KitNode> getKitNodeMap() {
+    public THashMap<String, KitNode> getKitNodeMap() {
         return kitNodeMap;
     }
 

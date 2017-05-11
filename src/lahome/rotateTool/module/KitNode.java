@@ -63,7 +63,7 @@ public class KitNode {
         for (RotateItem rotateItem : PartsList) {
             for (StockItem stockItem : rotateItem.getStockItemObsList()) {
                 if (stockItem.isMainStockItem() && po.equals(stockItem.getPo())) {
-                    list.addAll(stockItem.getPurchaseItems());
+                    list.addAll(stockItem.getPurchaseItemList());
                 }
             }
         }
@@ -90,7 +90,7 @@ public class KitNode {
         for (RotateItem rotateItem : PartsList) {
             for (StockItem stockItem : rotateItem.getStockItemObsList()) {
                 if (stockItem.isMainStockItem()) {
-                    list.addAll(stockItem.getPurchaseItems());
+                    list.addAll(stockItem.getPurchaseItemList());
                 }
             }
         }

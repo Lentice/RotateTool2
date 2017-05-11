@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -27,7 +29,7 @@ import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.NumberStringConverter;
 import lahome.rotateTool.Main;
 import lahome.rotateTool.Util.Excel.ExcelSettings;
-import lahome.rotateTool.Util.Excel.ExcelParser;
+import lahome.rotateTool.Util.Excel.ExcelReader;
 import lahome.rotateTool.Util.Excel.ExcelSaver;
 import lahome.rotateTool.Util.TableUtils;
 import lahome.rotateTool.module.*;
@@ -81,6 +83,9 @@ public class RootController {
 
     @FXML
     private ProgressIndicator purchaseProgress;
+
+    @FXML
+    private JFXColorPicker kitGroupColorPicker;
 
     @FXML
     private TextField settingRotateFirstRow;
@@ -348,16 +353,16 @@ public class RootController {
     private StockItem currentStockItem;
     private boolean rotateFilterListenerAdded = false;
 
-    private ObservableList<RotateItem> emptyRotateList = FXCollections.observableArrayList();
-    private ObservableList<StockItem> emptyStockList = FXCollections.observableArrayList();
-    private ObservableList<PurchaseItem> emptyPurchaseList = FXCollections.observableArrayList();
-
     private DoubleProperty rotateProgressProperty = new SimpleDoubleProperty(0);
     private DoubleProperty stockProgressProperty = new SimpleDoubleProperty(0);
     private DoubleProperty purchaseProgressProperty = new SimpleDoubleProperty(0);
 
+    private String sameKitRowColor = "#DCEDC8";
+    private String samePoRowColor = "#DCEDC8"; //FFEB3B
+
 
     public RootController() {
+
     }
 
     @FXML
@@ -365,10 +370,14 @@ public class RootController {
 
         filterIcon.setImage(new Image(Main.class.getResourceAsStream("/images/active-search-2-48.png")));
         exportToExcelButton.setVisible(false);
+        loadSetting();
+
         initialRotateTable();
         initialStockTable();
         initialPurchaseTable();
         initialNoneStockPurchaseTable();
+
+        kitGroupColorPicker.setValue(Color.valueOf(sameKitRowColor));
     }
 
     public void saveSetting() {
@@ -393,6 +402,9 @@ public class RootController {
         prefs.put("settingRotateRatioCol", settingRotateRatioCol.getText());
         prefs.put("settingRotateApSetCol", settingRotateApSetCol.getText());
         prefs.put("settingRotateRemarkCol", settingRotateRemarkCol.getText());
+
+        prefs.put("sameKitRowColor", sameKitRowColor);
+        prefs.put("samePoRowColor", samePoRowColor);
 
         prefs.put("settingStockFirstRow", settingStockFirstRow.getText());
         prefs.put("settingStockKitNameCol", settingStockKitNameCol.getText());
@@ -477,6 +489,9 @@ public class RootController {
         settingRotateRatioCol.setText(prefs.get("settingRotateRatioCol", "AP"));
         settingRotateApSetCol.setText(prefs.get("settingRotateApSetCol", "AQ"));
         settingRotateRemarkCol.setText(prefs.get("settingRotateRemarkCol", "AS"));
+
+        sameKitRowColor = (prefs.get("sameKitRowColor", "#DCEDC8"));
+        samePoRowColor = (prefs.get("samePoRowColor", "#DCEDC8"));
 
         settingStockFirstRow.setText(prefs.get("settingStockFirstRow", "2"));
         settingStockKitNameCol.setText(prefs.get("settingStockKitNameCol", "G"));
@@ -605,6 +620,17 @@ public class RootController {
     }
 
     @FXML
+    void handleKitGroupColorPicker(ActionEvent event) {
+        Color c = kitGroupColorPicker.getValue();
+        sameKitRowColor = String.format("#%02X%02X%02X",
+                (int) (c.getRed() * 255),
+                (int) (c.getGreen() * 255),
+                (int) (c.getBlue() * 255));
+        samePoRowColor = sameKitRowColor;
+        refreshAllTable();
+    }
+
+    @FXML
     void handleStartEdit() {
         startEditButton.setDisable(true);
 
@@ -612,13 +638,14 @@ public class RootController {
         stockProgress.setProgress(0);
         purchaseProgress.setProgress(0);
 
+
         configExcelSettings();
         importExcel();
     }
 
     @FXML
-    void handleSaveFiles() {
-        log.info("Save File clicked");
+    void handleExportToFiles() {
+        log.info("Export to file was clicked");
 
         exportToExcelButton.setDisable(true);
         rotateProgress.setProgress(0);
@@ -629,13 +656,20 @@ public class RootController {
 
             ExcelSaver excelSaver = new ExcelSaver(collection);
 
-            excelSaver.saveRotateToExcel(rotateProgressProperty);
-            log.info("Rotate file saved");
-            excelSaver.saveStockToExcel(stockProgressProperty);
-            log.info("Stock file saved");
-            excelSaver.savePurchaseToExcel(purchaseProgressProperty);
-            log.info("Purchase file saved");
+            Platform.runLater(() -> primaryStage.setAlwaysOnTop(true));
 
+            try {
+                excelSaver.saveRotateToExcel(rotateProgressProperty);
+                log.info("Rotate file saved");
+                excelSaver.saveStockToExcel(stockProgressProperty);
+                log.info("Stock file saved");
+                excelSaver.savePurchaseToExcel(purchaseProgressProperty);
+                log.info("Purchase file saved");
+            } catch (Exception e) {
+                log.error("failed!", e);
+            }
+
+            Platform.runLater(() -> primaryStage.setAlwaysOnTop(false));
             Platform.runLater(() -> exportToExcelButton.setDisable(false));
         }).start();
     }
@@ -684,17 +718,19 @@ public class RootController {
     private void importExcel() {
 
         new Thread(() -> {
-            ExcelParser excelParser = new ExcelParser(collection);
+            ExcelReader excelReader = new ExcelReader(collection);
             StringBuilder errorLog = new StringBuilder("");
 
-            excelParser.loadRotateExcel(rotateProgressProperty);
-            log.info("Process rotate table: Done");
-
-            excelParser.loadStockExcel(stockProgressProperty);
-            log.info("Process stock table: Done");
-
-            excelParser.loadPurchaseExcel(purchaseProgressProperty);
-            log.info("Process purchase table: Done");
+            try {
+                excelReader.loadRotateExcel(rotateProgressProperty);
+                log.info("Process rotate table: Done");
+                excelReader.loadStockExcel(stockProgressProperty);
+                log.info("Process stock table: Done");
+                excelReader.loadPurchaseExcel(purchaseProgressProperty);
+                log.info("Process purchase table: Done");
+            } catch (Exception e) {
+                log.error("failed!", e);
+            }
 
             int failCount = DataChecker.doCheck(collection, errorLog);
             if (failCount > 0) {
@@ -832,79 +868,13 @@ public class RootController {
         };
 
         rotateKitColumn.setCellValueFactory(cellData -> cellData.getValue().kitNameProperty());
-        rotateKitColumn.setCellFactory(cellData -> new TextFieldTableCell<RotateItem, String>() {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                // set same kit with same background
-                String basicStyle = "-fx-alignment: center-left; ";
-                RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
-
-                if (rotateItem == null || rotateItem.isDuplicate() || !rotateItem.isKit()) {
-                    setStyle(basicStyle);
-                } else if (rotateItem.isKit() && rotateItem.getKitName().equals(rotateSelectedKit)) {
-                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
-                } else {
-                    setStyle(basicStyle);
-                }
-            }
-
-            @Override
-            public void commitEdit(String newValue) {
-            }
-        });
+        rotateKitColumn.setCellFactory(readOnlyStringCell);
 
         rotatePartColumn.setCellValueFactory(cellData -> cellData.getValue().partNumberProperty());
-        rotatePartColumn.setCellFactory(cellData -> new TextFieldTableCell<RotateItem, String>() {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                // set same kit with same background
-                String basicStyle = "-fx-alignment: center-left; ";
-                RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
-
-                if (rotateItem == null || rotateItem.isDuplicate()) {
-                    setStyle(basicStyle);
-                } else if (!rotateItem.isKit() && rotateItem.getPartNumber().equals(rotateSelectedPart)) {
-                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
-                } else if (rotateItem.isKit() && rotateItem.getKitName().equals(rotateSelectedKit)) {
-                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
-                } else {
-                    setStyle(basicStyle);
-                }
-            }
-
-            @Override
-            public void commitEdit(String newValue) {
-            }
-        });
+        rotatePartColumn.setCellFactory(readOnlyStringCell);
 
         rotateNoColumn.setCellValueFactory(cellData -> cellData.getValue().serialNoProperty());
-        rotateNoColumn.setCellFactory(cellData -> new TextFieldTableCell<RotateItem, String>() {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-
-                // set same kit with same background
-                String basicStyle = "-fx-alignment: center-left; ";
-                RotateItem rotateItem = (RotateItem) this.getTableRow().getItem();
-                if (rotateItem == null || rotateItem.isDuplicate()) {
-                    setStyle(basicStyle);
-                } else if (!rotateItem.isKit() && rotateItem.getPartNumber().equals(rotateSelectedPart)) {
-                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
-                } else if (rotateItem.isKit() && rotateItem.getKitName().equals(rotateSelectedKit)) {
-                    setStyle(basicStyle + "-fx-background-color: #FFEB3B;");
-                } else {
-                    setStyle(basicStyle);
-                }
-            }
-
-            @Override
-            public void commitEdit(String newValue) {
-            }
-        });
+        rotateNoColumn.setCellFactory(readOnlyStringCell);
 
         rotateBacklogColumn.getStyleClass().add("my-table-column-number");
         rotateBacklogColumn.setCellValueFactory(cellData -> cellData.getValue().backlogProperty());
@@ -957,8 +927,7 @@ public class RootController {
         rotateRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
         rotateRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         rotateRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
-                    .remarkProperty().set(cellData.getNewValue());
+            cellData.getRowValue().remarkProperty().set(cellData.getNewValue());
             refreshAllTable();
             rotateTableView.requestFocus();
         });
@@ -972,6 +941,8 @@ public class RootController {
                 super.updateItem(item, empty);
                 if (item == null || empty) {
                     setStyle("");
+                } else if (item.getKitName().equals(rotateSelectedKit)) {
+                    setStyle("-fx-background-color: " + sameKitRowColor + ";");
                 } else if (item.isDuplicate()) {
                     setStyle("-fx-background-color: #607D8B;");
                 } else {
@@ -1045,16 +1016,15 @@ public class RootController {
                 int ratio = stockItem.getRotateItem().getRatio();
                 if (item.intValue() > stockItem.getStockQty()) {
                     setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
-                //} else if (ratio > 0 && (item.intValue() % ratio) != 0) {
-                //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                    //} else if (ratio > 0 && (item.intValue() % ratio) != 0) {
+                    //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
                 } else {
                     setStyle(basicStyle);
                 }
             }
         });
         stockApQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
-                    .applyQtyProperty().set(cellData.getNewValue().intValue());
+            cellData.getRowValue().applyQtyProperty().set(cellData.getNewValue().intValue());
             updateStockTableTotal();
             refreshAllTable();
             stockTableView.requestFocus();
@@ -1063,8 +1033,7 @@ public class RootController {
         stockRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
         stockRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         stockRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
-                    .remarkProperty().set(cellData.getNewValue());
+            cellData.getRowValue().remarkProperty().set(cellData.getNewValue());
             refreshAllTable();
             stockTableView.requestFocus();
         });
@@ -1076,10 +1045,8 @@ public class RootController {
             @Override
             public void updateItem(StockItem item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item == null || empty) {
-                    setStyle("");
-                } else if (item.getPo().equals(stockSelectedPo)) {
-                    setStyle("-fx-background-color: #FFF176;");
+                if (item != null && item.getPo().equals(stockSelectedPo)) {
+                    setStyle("-fx-background-color: " + samePoRowColor + ";");
                 } else {
                     setStyle("");
                 }
@@ -1142,16 +1109,15 @@ public class RootController {
                 int ratio = purchaseItem.getRotateItem().getRatio();
                 if (item.intValue() > purchaseItem.getGrQty()) {
                     setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
-                //} else if (ratio > 0 && (item.intValue() % ratio) != 0) {
-                //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                } else if (ratio > 0 && (item.intValue() % ratio) != 0) {
+                    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
                 } else {
                     setStyle(basicStyle);
                 }
             }
         });
         purchaseApQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
-                    .applyQtyProperty().set(cellData.getNewValue().intValue());
+            cellData.getRowValue().applyQtyProperty().set(cellData.getNewValue().intValue());
             updatePurchaseTableTotal();
             refreshAllTable();
             purchaseTableView.requestFocus();
@@ -1165,8 +1131,7 @@ public class RootController {
         purchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
         purchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         purchaseRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
-                    .remarkProperty().set(cellData.getNewValue());
+            cellData.getRowValue().remarkProperty().set(cellData.getNewValue());
             refreshAllTable();
             purchaseTableView.requestFocus();
         });
@@ -1180,10 +1145,8 @@ public class RootController {
             @Override
             public void updateItem(PurchaseItem item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item == null || empty) {
-                    setStyle("");
-                } else if (item.getPo().equals(purchaseSelectedPo)) {
-                    setStyle("-fx-background-color: #FFF176;");
+                if (item != null && item.getPo().equals(purchaseSelectedPo)) {
+                    setStyle("-fx-background-color: " + samePoRowColor + ";");
                 } else {
                     setStyle("");
                 }
@@ -1246,16 +1209,15 @@ public class RootController {
                 int ratio = purchaseItem.getRotateItem().getRatio();
                 if (item.intValue() > purchaseItem.getGrQty()) {
                     setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
-                //} else if (ratio > 0(item.intValue() % ratio) != 0) {
-                //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                } else if (ratio > 0 && (item.intValue() % ratio) != 0) {
+                    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
                 } else {
                     setStyle(basicStyle);
                 }
             }
         });
         noneStPurchaseApQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
-                    .applyQtyProperty().set(cellData.getNewValue().intValue());
+            cellData.getRowValue().applyQtyProperty().set(cellData.getNewValue().intValue());
             updateNoneStPurchaseTableTotal();
             refreshAllTable();
             noneStPurchaseTableView.requestFocus();
@@ -1268,8 +1230,7 @@ public class RootController {
         noneStPurchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
         noneStPurchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         noneStPurchaseRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getTableView().getItems().get(cellData.getTablePosition().getRow())
-                    .remarkProperty().set(cellData.getNewValue());
+            cellData.getRowValue().remarkProperty().set(cellData.getNewValue());
             refreshAllTable();
             noneStPurchaseTableView.requestFocus();
         });
@@ -1282,10 +1243,8 @@ public class RootController {
             @Override
             public void updateItem(PurchaseItem item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item == null || empty) {
-                    setStyle("");
-                } else if (item.getPo().equals(noneStPurchaseSelectedPo)) {
-                    setStyle("-fx-background-color: #FFF176;");
+                if (item != null && item.getPo().equals(noneStPurchaseSelectedPo)) {
+                    setStyle("-fx-background-color: " + samePoRowColor + ";");
                 } else {
                     setStyle("");
                 }
@@ -1309,8 +1268,8 @@ public class RootController {
 
     private void handleSelectedRotateItem(RotateItem newRotateItem) {
         if (newRotateItem == null) {
-            stockTableView.setItems(emptyStockList);
-            noneStPurchaseTableView.setItems(emptyPurchaseList);
+            stockTableView.setItems(FXCollections.observableArrayList());
+            noneStPurchaseTableView.setItems(FXCollections.observableArrayList());
             return;
         }
 
@@ -1352,7 +1311,7 @@ public class RootController {
 
     private void handleSelectedStockItem(StockItem newStockItem) {
         if (newStockItem == null) {
-            purchaseTableView.setItems(emptyPurchaseList);
+            purchaseTableView.setItems(FXCollections.observableArrayList());
             return;
         }
 
@@ -1428,7 +1387,9 @@ public class RootController {
 
     private void updateRotateTable() {
 
-        rotateTableView.setItems(emptyRotateList);
+        rotateTableView.getFocusModel().focus(null);
+        rotateTableView.setItems(FXCollections.observableArrayList());
+
         ObservableList<RotateItem> obsList = collection.getRotateObsList();
         FilteredList<RotateItem> filteredData = new FilteredList<>(obsList, p -> true);
 
@@ -1473,7 +1434,8 @@ public class RootController {
 
     private void updateStockTable(RotateItem rotateItem) {
 
-        stockTableView.setItems(emptyStockList);
+        stockTableView.getFocusModel().focus(null);
+        stockTableView.setItems(FXCollections.observableArrayList());
         if (rotateItem.isDuplicate()) {
             stockTableView.setPlaceholder(new Label("重複的項目!! 我無法幫妳了 orz...."));
         } else {
@@ -1503,7 +1465,8 @@ public class RootController {
 
     private void updatePurchaseTable(StockItem stockItem) {
 
-        purchaseTableView.setItems(emptyPurchaseList);
+        purchaseTableView.getFocusModel().focus(null);
+        purchaseTableView.setItems(FXCollections.observableArrayList());
         if (!stockItem.getRotateItem().isDuplicate()) {
             ObservableList<PurchaseItem> obsList;
             if (purchaseShowAllToggle.isSelected()) {
@@ -1516,7 +1479,7 @@ public class RootController {
                 if (stockItem.getRotateItem().isKit() && showAllParts) {
                     obsList = stockItem.getRotateItem().getKitNode().getPurchaseItemListWithPo(stockItem.getPo());
                 } else {
-                    obsList = stockItem.getPurchaseItems();
+                    obsList = stockItem.getPurchaseItemList();
                 }
             }
 
@@ -1538,7 +1501,8 @@ public class RootController {
 
     private void updateNoneStPurchaseTable(RotateItem rotateItem) {
 
-        noneStPurchaseTableView.setItems(emptyPurchaseList);
+        noneStPurchaseTableView.getFocusModel().focus(null);
+        noneStPurchaseTableView.setItems(FXCollections.observableArrayList());
         if (!rotateItem.isDuplicate()) {
             ObservableList<PurchaseItem> obsList;
             if (rotateItem.isKit() && showAllParts) {
@@ -1566,7 +1530,7 @@ public class RootController {
         } else {
             for (StockItem stockItem : currentRotateItem.getStockItemObsList()) {
                 if (stockItem.isMainStockItem()) {
-                    for (PurchaseItem purchaseItem : stockItem.getPurchaseItems()) {
+                    for (PurchaseItem purchaseItem : stockItem.getPurchaseItemList()) {
                         applySetTotal += purchaseItem.getApplySet();
                     }
                 }

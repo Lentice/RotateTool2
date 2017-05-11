@@ -29,12 +29,13 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     private int rowNum;
     private RotateItem rotateItem;
 
-    private boolean isDuplicate;
     private StockItem firstStockItem = this;
     private boolean isMainStockItem = true;
-    private List<StockItem> duplicateStockItems;
 
-    private ObservableList<PurchaseItem> purchaseItems = FXCollections.observableArrayList();
+    private boolean isDuplicate;
+    private List<StockItem> stockDuplicatePoItemList;
+
+    private ObservableList<PurchaseItem> purchaseItemList = FXCollections.observableArrayList();
 
     public StockItem(int rowNum, String po,
                      int stockQty, String lot, String dc, int applyQty, String remark) {
@@ -48,19 +49,6 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.remark = new SimpleStringProperty(remark);
 
         this.rowNum = rowNum;
-    }
-
-    public void clear() {
-        duplicateStockItems = null;
-        purchaseItems = null;
-
-        po = null;
-        stockQty = null;
-        lot = null;
-        dc = null;
-        earliestGrDate = null;
-        applyQty = null;
-        remark = null;
     }
 
     public void setRotateItem(RotateItem rotateItem) {
@@ -79,11 +67,11 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         assert isMainStockItem;
         if (!isDuplicate) {
             isDuplicate = true;
-            duplicateStockItems = new ArrayList<>();
-            duplicateStockItems.add(this);
+            stockDuplicatePoItemList = new ArrayList<>();
+            stockDuplicatePoItemList.add(this);
         }
 
-        duplicateStockItems.add(item);
+        stockDuplicatePoItemList.add(item);
         item.setDuplicate(this);
     }
 
@@ -93,8 +81,8 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         this.firstStockItem = firstItem;
         this.isMainStockItem = false;
 
-        this.duplicateStockItems = firstItem.getDuplicateStockItems();
-        this.purchaseItems = firstItem.getPurchaseItems();
+        this.stockDuplicatePoItemList = firstItem.getStockDuplicatePoItemList();
+        this.purchaseItemList = firstItem.getPurchaseItemList();
         this.earliestGrDate = firstItem.earliestGrDateProperty();
     }
 
@@ -204,26 +192,24 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         log.debug(String.format("Add purchase: %s, %s, %s, %s, %d",
                 rotateItem.getKitName(), rotateItem.getPartNumber(), item.getPo(), item.getGrDate(), item.getGrQty()));
 
-        Date purchaseDate = DateUtil.parse(item.getGrDate());
-        Date earliestDate = DateUtil.parse(earliestGrDate.get());
-        if (purchaseDate != null && earliestDate == null) {
-            earliestGrDate.set(item.getGrDate());
-        } else if (purchaseDate != null && purchaseDate.before(earliestDate)) {
-            earliestGrDate.set(item.getGrDate());
+        Date grDate = DateUtil.parse(item.getGrDate());
+        Date earliestDate = DateUtil.parse(getEarliestGrDate());
+        if (grDate != null && (earliestDate == null || grDate.before(earliestDate))) {
+            this.earliestGrDate.set(item.getGrDate());
         }
 
-        purchaseItems.add(item);
+        purchaseItemList.add(item);
         item.setStock(this);
         item.setRotate(rotateItem, false);
     }
 
-    public List<StockItem> getDuplicateStockItems() {
-        return duplicateStockItems;
+    public List<StockItem> getStockDuplicatePoItemList() {
+        return stockDuplicatePoItemList;
     }
 
-    public ObservableList<PurchaseItem> getPurchaseItems() {
-        purchaseItems.sort(PurchaseItem::compareTo);
-        return purchaseItems;
+    public ObservableList<PurchaseItem> getPurchaseItemList() {
+        purchaseItemList.sort(PurchaseItem::compareTo);
+        return purchaseItemList;
     }
 
 }
