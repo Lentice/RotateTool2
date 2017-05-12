@@ -15,9 +15,9 @@ public class StreamingRow implements Row {
         this.rowIndex = rowIndex;
     }
 
-    public void addCell(Cell cell) {
-        cellMap.put(cell.getColumnIndex(), cell);
-        maxColumnIndex = Math.max(cell.getColumnIndex(), maxColumnIndex);
+    public void addCell(int columnIndex, Cell cell) {
+        cellMap.put(columnIndex, cell);
+        maxColumnIndex = Math.max(columnIndex, maxColumnIndex);
     }
 
     public TIntObjectMap<Cell> getCellMap() {

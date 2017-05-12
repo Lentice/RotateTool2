@@ -27,7 +27,6 @@ public class StreamingCell implements Cell {
     private String type;
     private String cachedFormulaResultType;
     private Row row;
-    private CellStyle cellStyle;
 
     public StreamingCell(int columnIndex, int rowIndex, boolean use1904Dates) {
         this.columnIndex = columnIndex;
@@ -91,10 +90,6 @@ public class StreamingCell implements Cell {
         this.row = row;
     }
 
-    @Override
-    public void setCellStyle(CellStyle cellStyle) {
-        this.cellStyle = cellStyle;
-    }
 
   /* Supported */
 
@@ -256,14 +251,6 @@ public class StreamingCell implements Cell {
     }
 
     /**
-     * @return the style of the cell
-     */
-    @Override
-    public CellStyle getCellStyle() {
-        return this.cellStyle;
-    }
-
-    /**
      * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
      *
      * @return a formula for the cell
@@ -316,9 +303,19 @@ public class StreamingCell implements Cell {
 
   /* Not supported */
 
+    @Override
+    public CellStyle getCellStyle() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Not supported
      */
+    @Override
+    public void setCellStyle(CellStyle cellStyle) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public void setCellType(int cellType) {
         throw new UnsupportedOperationException();

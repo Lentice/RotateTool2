@@ -19,11 +19,14 @@ public class Main extends Application {
     RotateCollection collection = new RotateCollection();
     RootController controller;
 
+    private boolean maxStage = false;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         loadSetting();
 
         this.primaryStage = primaryStage;
+        this.primaryStage.setMaximized(maxStage);
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("view/Root.fxml"));
@@ -32,13 +35,10 @@ public class Main extends Application {
         this.primaryStage.getIcons().add(
                 new Image(Main.class.getResourceAsStream("/images/AppIcon.png")));
         this.primaryStage.setScene(new Scene(root));
-        this.primaryStage.setMaximized(true);
         this.primaryStage.show();
 
         controller = loader.getController();
         controller.setMainApp(this);
-
-
     }
 
     @Override
@@ -47,10 +47,14 @@ public class Main extends Application {
     }
 
     private void loadSetting() {
-        //controller.loadSetting();
+        Preferences prefs = Preferences.userNodeForPackage(Main.class);
+
+        maxStage = Boolean.valueOf(prefs.get("maxStage", "false"));
     }
 
     private void saveSetting() {
+        Preferences prefs = Preferences.userNodeForPackage(Main.class);
+        prefs.put("maxStage", String.valueOf(primaryStage.isMaximized()));
         controller.saveSetting();
     }
 

@@ -37,6 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 
 public class RootController {
@@ -86,6 +87,21 @@ public class RootController {
 
     @FXML
     private JFXColorPicker kitGroupColorPicker;
+
+    @FXML
+    private JFXColorPicker apQtyEqualPmQtyColorPicker;
+
+    @FXML
+    private JFXColorPicker apQtyExceedColorPicker;
+
+    @FXML
+    private JFXColorPicker apQtyMultipleColorPicker;
+
+    @FXML
+    private JFXColorPicker apQtyNotEqualColorPicker;
+
+    @FXML
+    private JFXButton restoreColorButton;
 
     @FXML
     private TextField settingRotateFirstRow;
@@ -357,9 +373,12 @@ public class RootController {
     private DoubleProperty stockProgressProperty = new SimpleDoubleProperty(0);
     private DoubleProperty purchaseProgressProperty = new SimpleDoubleProperty(0);
 
-    private String sameKitRowColor = "#DCEDC8";
-    private String samePoRowColor = "#DCEDC8"; //FFEB3B
-
+    private String sameKitRowColor = "#FFFFFF";
+    private String samePoRowColor = "#FFFFFF";
+    private String apQtyEqualPmQtyColor = "#FFFFFF";
+    private String apQtyExceedwColor = "#FFFFFF";
+    private String apQtyNotMultipleColor = "#FFFFFF";
+    private String apQtyNotEqualColor = "#FFFFFF";
 
     public RootController() {
 
@@ -377,7 +396,7 @@ public class RootController {
         initialPurchaseTable();
         initialNoneStockPurchaseTable();
 
-        kitGroupColorPicker.setValue(Color.valueOf(sameKitRowColor));
+        refreshAllColorPicker();
     }
 
     public void saveSetting() {
@@ -405,6 +424,10 @@ public class RootController {
 
         prefs.put("sameKitRowColor", sameKitRowColor);
         prefs.put("samePoRowColor", samePoRowColor);
+        prefs.put("samePoRowColor", apQtyEqualPmQtyColor);
+        prefs.put("samePoRowColor", apQtyExceedwColor);
+        prefs.put("samePoRowColor", apQtyNotMultipleColor);
+        prefs.put("samePoRowColor", apQtyNotEqualColor);
 
         prefs.put("settingStockFirstRow", settingStockFirstRow.getText());
         prefs.put("settingStockKitNameCol", settingStockKitNameCol.getText());
@@ -491,7 +514,12 @@ public class RootController {
         settingRotateRemarkCol.setText(prefs.get("settingRotateRemarkCol", "AS"));
 
         sameKitRowColor = (prefs.get("sameKitRowColor", "#DCEDC8"));
-        samePoRowColor = (prefs.get("samePoRowColor", "#DCEDC8"));
+//        samePoRowColor = (prefs.get("samePoRowColor", "#DCEDC8"));
+        samePoRowColor = sameKitRowColor;
+        apQtyEqualPmQtyColor = (prefs.get("apQtyEqualPmQtyColor", "#4CAF50"));
+        apQtyExceedwColor = (prefs.get("apQtyExceedwColor", "#EF5350"));
+        apQtyNotMultipleColor = (prefs.get("apQtyNotMultipleColor", "#BA68C8"));
+        apQtyNotEqualColor = (prefs.get("apQtyNotEqualColor", "#FFAB91"));
 
         settingStockFirstRow.setText(prefs.get("settingStockFirstRow", "2"));
         settingStockKitNameCol.setText(prefs.get("settingStockKitNameCol", "G"));
@@ -623,11 +651,64 @@ public class RootController {
     void handleKitGroupColorPicker(ActionEvent event) {
         Color c = kitGroupColorPicker.getValue();
         sameKitRowColor = String.format("#%02X%02X%02X",
-                (int) (c.getRed() * 255),
-                (int) (c.getGreen() * 255),
-                (int) (c.getBlue() * 255));
+                (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
         samePoRowColor = sameKitRowColor;
         refreshAllTable();
+    }
+
+    @FXML
+    void handleApQtyEqualPmQtyColorPicker(ActionEvent event) {
+        Color c = apQtyEqualPmQtyColorPicker.getValue();
+        apQtyEqualPmQtyColor = String.format("#%02X%02X%02X",
+                (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
+        refreshAllTable();
+    }
+
+    @FXML
+    void handleApQtyExceedColorPicker(ActionEvent event) {
+        Color c = apQtyExceedColorPicker.getValue();
+        apQtyExceedwColor = String.format("#%02X%02X%02X",
+                (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
+        refreshAllTable();
+    }
+
+    @FXML
+    void handleApQtyNotMultipleColorPicker(ActionEvent event) {
+        Color c = apQtyMultipleColorPicker.getValue();
+        apQtyNotMultipleColor = String.format("#%02X%02X%02X",
+                (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
+        refreshAllTable();
+    }
+
+    @FXML
+    void handleApQtyNotEqualColorPicker(ActionEvent event) {
+        Color c = apQtyNotEqualColorPicker.getValue();
+        apQtyNotEqualColor = String.format("#%02X%02X%02X",
+                (int) (c.getRed() * 255), (int) (c.getGreen() * 255), (int) (c.getBlue() * 255));
+        refreshAllTable();
+    }
+
+    @FXML
+    void handleRestoreColor(ActionEvent event) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("注意");
+            alert.setHeaderText("所有顏色設定將被重置為預設值");
+            alert.setContentText("是否執行重置?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                sameKitRowColor = "#DCEDC8";
+                samePoRowColor = "#DCEDC8";
+                apQtyEqualPmQtyColor = "#4CAF50";   // green
+                apQtyExceedwColor = "#EF5350";      // red
+                apQtyNotMultipleColor = "#BA68C8";  // purple
+                apQtyNotEqualColor = "#FFAB91";          // orange
+
+                refreshAllColorPicker();
+                refreshAllTable();
+            }
+        });
     }
 
     @FXML
@@ -899,13 +980,13 @@ public class RootController {
                 int pmQty = rotateItem.getPmQty();
                 int ratio = rotateItem.getRatio();
                 if (item.intValue() > pmQty) {
-                    setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyExceedwColor + ";");
                 } else if (rotateItem.getStockApplyQtyTotal() != rotateItem.getPurchasesApplyQtyTotal()) {
-                    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyNotEqualColor + ";");
                 } else if (ratio > 0 && (rotateItem.getStockApplyQtyTotal() % ratio) != 0) {
-                    setStyle(basicStyle + "-fx-background-color: #FFAB91;"); // orange
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyNotMultipleColor + ";");
                 } else if (item.intValue() == pmQty) {
-                    setStyle(basicStyle + "-fx-background-color: #4CAF50;"); // green
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyEqualPmQtyColor + ";"); // green
                 } else {
                     setStyle(basicStyle);
                 }
@@ -944,7 +1025,7 @@ public class RootController {
                 } else if (item.getKitName().equals(rotateSelectedKit)) {
                     setStyle("-fx-background-color: " + sameKitRowColor + ";");
                 } else if (item.isDuplicate()) {
-                    setStyle("-fx-background-color: #607D8B;");
+                    setStyle("-fx-background-color: #607D8B;");  // gray
                 } else {
                     setStyle("");
                 }
@@ -1015,9 +1096,9 @@ public class RootController {
 
                 int ratio = stockItem.getRotateItem().getRatio();
                 if (item.intValue() > stockItem.getStockQty()) {
-                    setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyExceedwColor + ";");
                     //} else if (ratio > 0 && (item.intValue() % ratio) != 0) {
-                    //    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                    //    setStyle(basicStyle + "-fx-background-color: "+apQtyNotMultipleColor+";");
                 } else {
                     setStyle(basicStyle);
                 }
@@ -1108,9 +1189,9 @@ public class RootController {
 
                 int ratio = purchaseItem.getRotateItem().getRatio();
                 if (item.intValue() > purchaseItem.getGrQty()) {
-                    setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyExceedwColor + ";");
                 } else if (ratio > 0 && (item.intValue() % ratio) != 0) {
-                    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyNotMultipleColor + ";");
                 } else {
                     setStyle(basicStyle);
                 }
@@ -1208,9 +1289,9 @@ public class RootController {
 
                 int ratio = purchaseItem.getRotateItem().getRatio();
                 if (item.intValue() > purchaseItem.getGrQty()) {
-                    setStyle(basicStyle + "-fx-background-color: #ef5350;"); // red
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyExceedwColor + ";"); // red
                 } else if (ratio > 0 && (item.intValue() % ratio) != 0) {
-                    setStyle(basicStyle + "-fx-background-color: #BA68C8;"); // purple
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyNotMultipleColor + ";");
                 } else {
                     setStyle(basicStyle);
                 }
@@ -1250,6 +1331,14 @@ public class RootController {
                 }
             }
         });
+    }
+
+    private void refreshAllColorPicker() {
+        kitGroupColorPicker.setValue(Color.valueOf(sameKitRowColor));
+        apQtyEqualPmQtyColorPicker.setValue(Color.valueOf(apQtyEqualPmQtyColor));
+        apQtyExceedColorPicker.setValue(Color.valueOf(apQtyExceedwColor));
+        apQtyMultipleColorPicker.setValue(Color.valueOf(apQtyNotMultipleColor));
+        apQtyNotEqualColorPicker.setValue(Color.valueOf(apQtyNotEqualColor));
     }
 
     private void refreshAllTable() {

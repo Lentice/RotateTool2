@@ -1,5 +1,6 @@
 package lahome.rotateTool.Util.Excel;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -151,11 +152,13 @@ public abstract class StreamingReader extends DefaultHandler {
     }
 
     private void getCoordinate(String coord) {
-        for (int i = 0; i < coord.length(); i++) {
+        for (int i = 1; i < coord.length(); i++) {
             if (isNumber(coord.charAt(i))) {
                 try {
+                    if (curCol == 0)
+                        curRow = Integer.valueOf(coord.substring(i)) - 1;
+
                     curCol = CellReference.convertColStringToIndex(coord.substring(0, i));
-                    curRow = Integer.valueOf(coord.substring(i)) - 1;
                 } catch (NumberFormatException ignore) {
                 }
                 break;
@@ -177,7 +180,7 @@ public abstract class StreamingReader extends DefaultHandler {
                 getCoordinate(postion);
             }
             currentCell = new StreamingCell(curCol, curRow, useDate1904);
-            setFormatString(currentCell);
+            //setFormatString(currentCell);
 
             String cellType = attributes.getValue("t");
             if (cellType != null) {
@@ -186,15 +189,15 @@ public abstract class StreamingReader extends DefaultHandler {
                 currentCell.setType("n");
             }
 
-            cellStyleString = attributes.getValue("s");
-            if (cellStyleString != null) {
-                try {
-                    int index = Integer.parseInt(cellStyleString);
-                    currentCell.setCellStyle(stylesTable.getStyleAt(index));
-                } catch (NumberFormatException nfe) {
+            //cellStyleString = attributes.getValue("s");
+            //if (cellStyleString != null) {
+                //try {
+                    //int index = Integer.parseInt(cellStyleString);
+                    //currentCell.setCellStyle(stylesTable.getStyleAt(index));
+                //} catch (NumberFormatException nfe) {
                     //log.warn("Ignoring invalid style index {}", indexStr);
-                }
-            }
+                //}
+            //}
         } else if ("dimension".equals(name)) {
             String ref = attributes.getValue("ref");
             // ref is formatted as A1 or A1:F25. Take the last numbers of this string and use it as lastRowNum
@@ -244,7 +247,7 @@ public abstract class StreamingReader extends DefaultHandler {
             if (row == null) {
                 row = new StreamingRow(curRow);
             }
-            row.addCell(currentCell);
+            row.addCell(curCol, currentCell);
             curCol++;
         } else if ("f".equals(name)) {
             currentCell.setFormula(lastContents);
