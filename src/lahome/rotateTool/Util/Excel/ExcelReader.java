@@ -108,12 +108,18 @@ public class ExcelReader {
         return cellGetString(cell).trim();
     }
 
-    private String getDc(Row row, int column) throws Exception {
+    private int getDc(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
-            return "";
+            return 0;
         }
-        return cellGetString(cell).trim();
+        int dc = (int)cellGetValue(cell);
+        if (dc / 100 > 99)
+            return 0;
+        if (dc / 100 > 53)
+            return 0;
+
+        return dc;
     }
 
     private int getApQty(Row row, int column) throws Exception {
@@ -217,7 +223,9 @@ public class ExcelReader {
                     case Cell.CELL_TYPE_NUMERIC:
                         return cell.getNumericCellValue();
                     case Cell.CELL_TYPE_STRING:
-                        return Double.parseDouble(numTrim(cell.getStringCellValue().trim()));
+                        return Double.valueOf(numTrim(cell.getStringCellValue().trim()));
+                    default:
+                        return 0;
                 }
             } else if (cellType == Cell.CELL_TYPE_STRING) {
                 String str = numTrim(cell.getStringCellValue().trim());
@@ -236,6 +244,8 @@ public class ExcelReader {
                     Thread.currentThread().getStackTrace()[1].getLineNumber(),
                     cell.getRowIndex(), cell.getColumnIndex()));
 
+            return 0;
+        } catch (NumberFormatException e) {
             return 0;
         } catch (Exception e) {
             log.error("failed!", e);
@@ -397,7 +407,7 @@ public class ExcelReader {
 
                     int stockQty = getStockQty(row, ExcelSettings.stockStQtyColumn);
                     String lot = getLot(row, ExcelSettings.stockLotColumn);
-                    String dc = getDc(row, ExcelSettings.stockDcColumn);
+                    int dc = getDc(row, ExcelSettings.stockDcColumn);
                     int applyQty = getApQty(row, ExcelSettings.stockApQtyColumn);
                     String remark = getRemark(row, ExcelSettings.stockRemarkColumn);
 

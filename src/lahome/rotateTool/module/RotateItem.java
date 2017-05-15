@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-public class RotateItem extends RecursiveTreeObject<RotateItem> {
+public class RotateItem {
     private static final Logger log = LogManager.getLogger(RotateItem.class.getName());
 
     private boolean isKit;

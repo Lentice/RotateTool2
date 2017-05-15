@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class StockItem extends RecursiveTreeObject<StockItem> {
+public class StockItem {
     private static final Logger log = LogManager.getLogger(StockItem.class.getName());
 
     private StringProperty po;
     private IntegerProperty stockQty;
     private StringProperty lot;
-    private StringProperty dc;
+    private IntegerProperty dc;
     private StringProperty earliestGrDate;
     private IntegerProperty applyQty;
     private StringProperty remark;
@@ -38,12 +38,12 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
     private ObservableList<PurchaseItem> purchaseItemList = FXCollections.observableArrayList();
 
     public StockItem(int rowNum, String po,
-                     int stockQty, String lot, String dc, int applyQty, String remark) {
+                     int stockQty, String lot, int dc, int applyQty, String remark) {
 
         this.po = new SimpleStringProperty(po);
         this.stockQty = new SimpleIntegerProperty(stockQty);
         this.lot = new SimpleStringProperty(lot);
-        this.dc = new SimpleStringProperty(dc);
+        this.dc = new SimpleIntegerProperty(dc);
         this.earliestGrDate = new SimpleStringProperty("");
         this.applyQty = new SimpleIntegerProperty(applyQty);
         this.remark = new SimpleStringProperty(remark);
@@ -156,11 +156,11 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         return lot;
     }
 
-    public String getDc() {
+    public int getDc() {
         return dc.get();
     }
 
-    public StringProperty dcProperty() {
+    public IntegerProperty dcProperty() {
         return dc;
     }
 
@@ -212,4 +212,7 @@ public class StockItem extends RecursiveTreeObject<StockItem> {
         return purchaseItemList;
     }
 
+    public String getPartNumber() {
+        return rotateItem.getPartNumber();
+    }
 }

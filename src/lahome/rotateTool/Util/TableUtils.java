@@ -1,21 +1,29 @@
 package lahome.rotateTool.Util;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
+import lahome.rotateTool.Main;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.StringTokenizer;
 
 public class TableUtils {
 
+    private static NumberFormat numberFormatter = NumberFormat.getNumberInstance();
+
     /**
      * Install the keyboard handler:
-     *   + CTRL + C = copy to clipboard
+     * + CTRL + C = copy to clipboard
+     *
      * @param table
      */
     public static void installCopyPasteHandler(TableView<?> table) {
@@ -32,27 +40,41 @@ public class TableUtils {
     public static class TableKeyEventHandler implements EventHandler<KeyEvent> {
 
         KeyCodeCombination copyKeyCodeCompination = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
+        KeyCodeCombination pasteKeyCodeCompination = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY);
 
         public void handle(final KeyEvent keyEvent) {
 
             if (copyKeyCodeCompination.match(keyEvent)) {
 
-                if( keyEvent.getSource() instanceof TableView) {
+                if (keyEvent.getSource() instanceof TableView) {
 
                     // copy to clipboard
-                    copySelectionToClipboard( (TableView<?>) keyEvent.getSource());
+                    copySelectionToClipboard((TableView<?>) keyEvent.getSource());
 
                     System.out.println("Selection copied to clipboard");
 
                     // event is handled, consume it
                     keyEvent.consume();
-
                 }
+            } else if (pasteKeyCodeCompination.match(keyEvent)) {
 
+                if (keyEvent.getSource() instanceof TableView) {
+
+                    // copy to clipboard
+                    pasteFromClipboard((TableView<?>) keyEvent.getSource());
+
+                    System.out.println("Selection copied to clipboard");
+
+                    // event is handled, consume it
+                    keyEvent.consume();
+                }
+            } else if (keyEvent.getCode() == KeyCode.DELETE) {
+                if (keyEvent.getSource() instanceof TableView) {
+                    deleteSelectCells((TableView<?>) keyEvent.getSource());
+                    keyEvent.consume();
+                }
             }
-
         }
-
     }
 
     /**
@@ -72,13 +94,6 @@ public class TableUtils {
             int row = position.getRow();
             int col = position.getColumn();
 
-            Object cell = (Object) table.getColumns().get(col).getCellData(row);
-
-            // null-check: provide empty string for nulls
-            if (cell == null) {
-                cell = "";
-            }
-
             // determine whether we advance in a row (tab) or a column
             // (newline).
             if (prevRow == row) {
@@ -92,7 +107,32 @@ public class TableUtils {
             }
 
             // create string from cell
-            String text = cell.toString();
+            String text = "";
+
+            Object observableValue = (Object) table.getColumns().get(col).getCellObservableValue( row);
+
+            // null-check: provide empty string for nulls
+            if (observableValue == null) {
+                text = "";
+            }
+            else if( observableValue instanceof DoubleProperty) { // TODO: handle boolean etc
+
+                text = numberFormatter.format( ((DoubleProperty) observableValue).get());
+
+            }
+            else if( observableValue instanceof IntegerProperty) {
+
+                text = numberFormatter.format( ((IntegerProperty) observableValue).get());
+
+            }
+            else if( observableValue instanceof StringProperty) {
+
+                text = ((StringProperty) observableValue).get();
+
+            }
+            else {
+                System.out.println("Unsupported observable value: " + observableValue);
+            }
 
             // add new item to clipboard
             clipboardString.append(text);
@@ -107,5 +147,135 @@ public class TableUtils {
 
         // set clipboard content
         Clipboard.getSystemClipboard().setContent(clipboardContent);
+
+
+    }
+
+    public static void pasteFromClipboard( TableView<?> table) {
+
+        // abort if there's not cell selected to start with
+        if( table.getSelectionModel().getSelectedCells().size() == 0) {
+            return;
+        }
+
+        // get the cell position to start with
+        TablePosition pasteCellPosition = table.getSelectionModel().getSelectedCells().get(0);
+
+        System.out.println("Pasting into cell " + pasteCellPosition);
+
+        String pasteString = Clipboard.getSystemClipboard().getString();
+
+        System.out.println(pasteString);
+
+        int rowClipboard = -1;
+
+        StringTokenizer rowTokenizer = new StringTokenizer( pasteString, "\n");
+        while( rowTokenizer.hasMoreTokens()) {
+
+            rowClipboard++;
+
+            String rowString = rowTokenizer.nextToken();
+
+            StringTokenizer columnTokenizer = new StringTokenizer( rowString, "\t");
+
+            int colClipboard = -1;
+
+            while( columnTokenizer.hasMoreTokens()) {
+
+                colClipboard++;
+
+                // get next cell data from clipboard
+                String clipboardCellContent = columnTokenizer.nextToken();
+
+                // calculate the position in the table cell
+                int rowTable = pasteCellPosition.getRow() + rowClipboard;
+                int colTable = pasteCellPosition.getColumn() + colClipboard;
+
+                // skip if we reached the end of the table
+                if( rowTable >= table.getItems().size()) {
+                    continue;
+                }
+                if( colTable >= table.getColumns().size()) {
+                    continue;
+                }
+
+                // System.out.println( rowClipboard + "/" + colClipboard + ": " + cell);
+
+                // get cell
+                TableColumn tableColumn = table.getColumns().get(colTable);
+                ObservableValue observableValue = tableColumn.getCellObservableValue(rowTable);
+
+                System.out.println( rowTable + "/" + colTable + ": " +observableValue);
+
+                // TODO: handle boolean, etc
+                if( observableValue instanceof DoubleProperty) {
+
+                    try {
+
+                        double value = numberFormatter.parse(clipboardCellContent).doubleValue();
+                        ((DoubleProperty) observableValue).set(value);
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                else if( observableValue instanceof IntegerProperty) {
+
+                    try {
+
+                        int value = NumberFormat.getInstance().parse(clipboardCellContent).intValue();
+                        ((IntegerProperty) observableValue).set(value);
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                else if( observableValue instanceof StringProperty) {
+
+                    ((StringProperty) observableValue).set(clipboardCellContent);
+
+                } else {
+
+                    System.out.println("Unsupported observable value: " + observableValue);
+
+                }
+
+                System.out.println(rowTable + "/" + colTable);
+            }
+
+        }
+
+    }
+
+
+    public static void deleteSelectCells(TableView<?> table) {
+
+        // abort if there's not cell selected to start with
+        if (table.getSelectionModel().getSelectedCells().size() == 0) {
+            return;
+        }
+
+        ObservableList<TablePosition> positionList = table.getSelectionModel().getSelectedCells();
+        for (TablePosition position : positionList) {
+
+            int row = position.getRow();
+            int col = position.getColumn();
+
+            ObservableValue observableValue = table.getColumns().get(col).getCellObservableValue(row);
+            if (observableValue instanceof DoubleProperty) {
+                ((DoubleProperty) observableValue).set(0);
+            } else if (observableValue instanceof IntegerProperty) {
+                ((IntegerProperty) observableValue).set(0);
+
+            } else if (observableValue instanceof StringProperty) {
+                ((StringProperty) observableValue).set("");
+            } else {
+                System.out.println("Unsupported observable value: " + observableValue);
+            }
+        }
+
+        Main.refreshAllTable();
     }
 }

@@ -164,10 +164,12 @@
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                                                          </rowConstraints>
                                                          <children>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Same Kit or PO" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Same Kit in rotate" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -179,7 +181,7 @@
                                                                <GridPane.margin>
                                                                   <Insets bottom="2.0" top="2.0" />
                                                                </GridPane.margin></JFXColorPicker>
-                                                            <JFXButton fx:id="restoreColorButton" focusTraversable="false" onAction="#handleRestoreColor" prefHeight="9999.0" prefWidth="9999.0" style="-fx-background-color: #B0BEC5;" text="恢復預設值" GridPane.rowIndex="7">
+                                                            <JFXButton fx:id="restoreColorButton" focusTraversable="false" onAction="#handleRestoreColor" prefHeight="9999.0" prefWidth="9999.0" style="-fx-background-color: #B0BEC5;" text="恢復預設值" GridPane.rowIndex="9">
                                                                <GridPane.margin>
                                                                   <Insets top="20.0" />
                                                                </GridPane.margin>
@@ -187,7 +189,7 @@
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </JFXButton>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="超過數量" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="超過數量" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -195,27 +197,27 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <JFXColorPicker fx:id="apQtyExceedColorPicker" focusTraversable="false" onAction="#handleApQtyExceedColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                            <JFXColorPicker fx:id="apQtyExceedColorPicker" focusTraversable="false" onAction="#handleApQtyExceedColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                                                <GridPane.margin>
                                                                   <Insets bottom="2.0" top="2.0" />
                                                                </GridPane.margin>
                                                             </JFXColorPicker>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="不是Ratio倍數" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="不是Ratio倍數" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                                <GridPane.margin>
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin></Text>
-                                                            <JFXColorPicker fx:id="apQtyMultipleColorPicker" focusTraversable="false" onAction="#handleApQtyNotMultipleColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="庫存與進貨不相等" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                                                            <JFXColorPicker fx:id="apQtyMultipleColorPicker" focusTraversable="false" onAction="#handleApQtyNotMultipleColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="庫存與進貨不相等" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                                <GridPane.margin>
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin></Text>
-                                                            <JFXColorPicker fx:id="apQtyNotEqualColorPicker" focusTraversable="false" onAction="#handleApQtyNotEqualColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                            <JFXColorPicker fx:id="apQtyNotEqualColorPicker" focusTraversable="false" onAction="#handleApQtyNotEqualColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                                                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Group:">
                                                                <font>
                                                                   <Font size="14.0" />
@@ -224,7 +226,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty:" GridPane.rowIndex="2">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty:" GridPane.rowIndex="4">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -232,7 +234,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="等於PM Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="等於PM Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -240,7 +242,19 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <JFXColorPicker fx:id="apQtyEqualPmQtyColorPicker" focusTraversable="false" onAction="#handleApQtyEqualPmQtyColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                            <JFXColorPicker fx:id="apQtyEqualPmQtyColorPicker" focusTraversable="false" onAction="#handleApQtyEqualPmQtyColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Same PO" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Same PO &amp; Part" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <JFXColorPicker fx:id="poGroupColorPicker" focusTraversable="false" onAction="#handlePoGroupColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                            <JFXColorPicker fx:id="partPoGroupColorPicker" focusTraversable="false" onAction="#handlePartPoGroupColorPicker" prefHeight="9999.0" prefWidth="9999.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                          </children>
                                                       </GridPane>
                                                    </content>
@@ -866,8 +880,8 @@
                                                             <TableColumn fx:id="noneStPurchaseGrDateColumn" minWidth="20.0" prefWidth="50.0" text="GR Date" />
                                                             <TableColumn fx:id="noneStPurchaseGrQtyColumn" minWidth="20.0" prefWidth="63.0" text="GR Qty" />
                                                             <TableColumn fx:id="noneStPurchaseApQtyColumn" minWidth="20.0" prefWidth="50.0" text="Ap Qty" />
-                                                            <TableColumn fx:id="noneStPurchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
                                                             <TableColumn fx:id="noneStPurchaseRemarkColumn" minWidth="20.0" prefWidth="150.0" text="Remark" />
+                                                            <TableColumn fx:id="noneStPurchaseApplySetColumn" minWidth="20.0" prefWidth="50.0" text="Ap Set" />
                                                          </columns>
                                                       </TableView>
                                                    </children>
@@ -966,7 +980,7 @@
                                                             <Insets left="10.0" right="10.0" />
                                                          </padding>
                                                       </HBox>
-                                                      <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #FFF176;">
+                                                      <HBox fx:id="currentPartPoTotalHBox" alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #FFF176;">
                                                          <children>
                                                             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current PO &amp; Part:">
                                                                <font>
@@ -1098,8 +1112,8 @@
                                                             <TableColumn fx:id="purchaseGrDateColumn" minWidth="20.0" prefWidth="143.0" text="GR Date" />
                                                             <TableColumn fx:id="purchaseGrQtyColumn" minWidth="20.0" prefWidth="64.0" text="GR Qty" />
                                                             <TableColumn fx:id="purchaseApQtyColumn" minWidth="20.0" prefWidth="72.0" text="Ap Qty" />
-                                                            <TableColumn fx:id="purchaseApplySetColumn" minWidth="20.0" prefWidth="76.0" text="Ap Set" />
                                                             <TableColumn fx:id="purchaseRemarkColumn" minWidth="0.0" prefWidth="8.0" text="Remark" />
+                                                            <TableColumn fx:id="purchaseApplySetColumn" minWidth="20.0" prefWidth="76.0" text="Ap Set" />
                                                          </columns>
                                                       </TableView>
                                                    </children>

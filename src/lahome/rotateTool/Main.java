@@ -17,7 +17,7 @@ public class Main extends Application {
     private Stage primaryStage;
 
     RotateCollection collection = new RotateCollection();
-    RootController controller;
+    static RootController controller;
 
     private boolean maxStage = false;
 
@@ -31,7 +31,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("view/Root.fxml"));
         Parent root = loader.load();
-        this.primaryStage.setTitle("LA Rotate Tool 1.0.0");
+        this.primaryStage.setTitle("LA Rotate Tool 1.0.1");
         this.primaryStage.getIcons().add(
                 new Image(Main.class.getResourceAsStream("/images/AppIcon.png")));
         this.primaryStage.setScene(new Scene(root));
@@ -40,6 +40,11 @@ public class Main extends Application {
         controller = loader.getController();
         controller.setMainApp(this);
     }
+
+    public static void refreshAllTable() {
+        controller.refreshAllTable();
+    }
+
 
     @Override
     public void stop(){

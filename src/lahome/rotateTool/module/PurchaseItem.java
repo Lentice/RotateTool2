@@ -5,7 +5,7 @@ import javafx.beans.property.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
+public class PurchaseItem {
     private static final Logger log = LogManager.getLogger(PurchaseItem.class.getName());
 
     private StringProperty po;
@@ -141,4 +141,7 @@ public class PurchaseItem extends RecursiveTreeObject<PurchaseItem> {
         return remark;
     }
 
+    public String getPartNumber() {
+        return rotateItem.getPartNumber();
+    }
 }
