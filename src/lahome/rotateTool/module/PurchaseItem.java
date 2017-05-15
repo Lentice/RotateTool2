@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 public class PurchaseItem {
     private static final Logger log = LogManager.getLogger(PurchaseItem.class.getName());
 
-    private StringProperty po;
-    private StringProperty grDate;
-    private IntegerProperty grQty;
+    private ReadOnlyStringWrapper po;
+    private ReadOnlyStringWrapper grDate;
+    private ReadOnlyIntegerWrapper grQty;
     private IntegerProperty applyQty;
     private IntegerProperty applySet;
     private StringProperty remark;
@@ -23,9 +23,9 @@ public class PurchaseItem {
     public PurchaseItem(int rowNum, String po, String grDate, int grQty,
                         int applyQty, String remark) {
 
-        this.po = new SimpleStringProperty(po);
-        this.grDate = new SimpleStringProperty(grDate);
-        this.grQty = new SimpleIntegerProperty(grQty);
+        this.po = new ReadOnlyStringWrapper(po);
+        this.grDate = new ReadOnlyStringWrapper(grDate);
+        this.grQty = new ReadOnlyIntegerWrapper(grQty);
         this.applyQty = new SimpleIntegerProperty(applyQty);
         this.applySet = new SimpleIntegerProperty(0);
         this.remark = new SimpleStringProperty(remark);
@@ -97,24 +97,24 @@ public class PurchaseItem {
         return po.get();
     }
 
-    public StringProperty poProperty() {
-        return po;
+    public ReadOnlyStringProperty poProperty() {
+        return po.getReadOnlyProperty();
     }
 
     public String getGrDate() {
         return grDate.get();
     }
 
-    public StringProperty grDateProperty() {
-        return grDate;
+    public ReadOnlyStringProperty grDateProperty() {
+        return grDate.getReadOnlyProperty();
     }
 
     public int getGrQty() {
         return grQty.get();
     }
 
-    public IntegerProperty grQtyProperty() {
-        return grQty;
+    public ReadOnlyIntegerProperty grQtyProperty() {
+        return grQty.getReadOnlyProperty();
     }
 
     public int getApplyQty() {

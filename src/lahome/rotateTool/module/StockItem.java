@@ -1,10 +1,7 @@
 package lahome.rotateTool.module;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lahome.rotateTool.Util.DateUtil;
@@ -18,11 +15,11 @@ import java.util.List;
 public class StockItem {
     private static final Logger log = LogManager.getLogger(StockItem.class.getName());
 
-    private StringProperty po;
-    private IntegerProperty stockQty;
-    private StringProperty lot;
-    private IntegerProperty dc;
-    private StringProperty earliestGrDate;
+    private ReadOnlyStringWrapper po;
+    private ReadOnlyIntegerWrapper stockQty;
+    private ReadOnlyStringWrapper lot;
+    private ReadOnlyIntegerWrapper dc;
+    ReadOnlyStringWrapper earliestGrDate;
     private IntegerProperty applyQty;
     private StringProperty remark;
 
@@ -40,11 +37,11 @@ public class StockItem {
     public StockItem(int rowNum, String po,
                      int stockQty, String lot, int dc, int applyQty, String remark) {
 
-        this.po = new SimpleStringProperty(po);
-        this.stockQty = new SimpleIntegerProperty(stockQty);
-        this.lot = new SimpleStringProperty(lot);
-        this.dc = new SimpleIntegerProperty(dc);
-        this.earliestGrDate = new SimpleStringProperty("");
+        this.po = new ReadOnlyStringWrapper(po);
+        this.stockQty = new ReadOnlyIntegerWrapper(stockQty);
+        this.lot = new ReadOnlyStringWrapper(lot);
+        this.dc = new ReadOnlyIntegerWrapper(dc);
+        this.earliestGrDate = new ReadOnlyStringWrapper("");
         this.applyQty = new SimpleIntegerProperty(applyQty);
         this.remark = new SimpleStringProperty(remark);
 
@@ -83,7 +80,7 @@ public class StockItem {
 
         this.stockDuplicatePoItemList = firstItem.getStockDuplicatePoItemList();
         this.purchaseItemList = firstItem.getPurchaseItemList();
-        this.earliestGrDate = firstItem.earliestGrDateProperty();
+        this.earliestGrDate = firstItem.earliestGrDate;
     }
 
     public int compareTo(StockItem item) {
@@ -136,40 +133,40 @@ public class StockItem {
         return po.get();
     }
 
-    public StringProperty poProperty() {
-        return po;
+    public ReadOnlyStringProperty poProperty() {
+        return po.getReadOnlyProperty();
     }
 
     public int getStockQty() {
         return stockQty.get();
     }
 
-    public IntegerProperty stockQtyProperty() {
-        return stockQty;
+    public ReadOnlyIntegerProperty stockQtyProperty() {
+        return stockQty.getReadOnlyProperty();
     }
 
     public String getLot() {
         return lot.get();
     }
 
-    public StringProperty lotProperty() {
-        return lot;
+    public ReadOnlyStringProperty lotProperty() {
+        return lot.getReadOnlyProperty();
     }
 
     public int getDc() {
         return dc.get();
     }
 
-    public IntegerProperty dcProperty() {
-        return dc;
+    public ReadOnlyIntegerProperty dcProperty() {
+        return dc.getReadOnlyProperty();
     }
 
     public String getEarliestGrDate() {
         return earliestGrDate.get();
     }
 
-    public StringProperty earliestGrDateProperty() {
-        return earliestGrDate;
+    public ReadOnlyStringProperty earliestGrDateProperty() {
+        return earliestGrDate.getReadOnlyProperty();
     }
 
     public int getApplyQty() {

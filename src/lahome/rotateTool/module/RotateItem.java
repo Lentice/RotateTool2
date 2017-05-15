@@ -20,17 +20,17 @@ public class RotateItem {
     private boolean isRotateValid = true;
     private int rowNum;
 
-    private ReadOnlyStringProperty kitName;
-    private ReadOnlyStringProperty partNumber;
-    private ReadOnlyStringProperty backlog;
-    private IntegerProperty pmQty;
-    private IntegerProperty stockApplyQtyTotal;
-    private ReadOnlyStringProperty ratio;
-    private IntegerProperty applySet;
+    private ReadOnlyStringWrapper kitName;
+    private ReadOnlyStringWrapper partNumber;
+    private ReadOnlyStringWrapper backlog;
+    private ReadOnlyIntegerWrapper pmQty;
+    private ReadOnlyIntegerWrapper stockApplyQtyTotal;
+    private ReadOnlyStringWrapper ratio;
+    private ReadOnlyIntegerWrapper applySet;
     private StringProperty remark;
 
-    private IntegerProperty purchasesApplyQtyTotal;
     private ReadOnlyStringWrapper serialNo;
+    private int purchasesApplyQtyTotal;
 
     private List<RotateItem> duplicateRotateItems;
 
@@ -42,17 +42,18 @@ public class RotateItem {
         if (kitName == null)
             kitName = "";
 
-        this.kitName = new SimpleStringProperty(kitName);
-        this.partNumber = new SimpleStringProperty(partNum);
-        this.backlog = new SimpleStringProperty(backlog);
-        this.pmQty = new SimpleIntegerProperty(pmQty);
-        this.stockApplyQtyTotal = new SimpleIntegerProperty(0);
-        this.ratio = new SimpleStringProperty(ratio);
-        this.applySet = new SimpleIntegerProperty(0);
+        this.kitName = new ReadOnlyStringWrapper(kitName);
+        this.partNumber = new ReadOnlyStringWrapper(partNum);
+        this.backlog = new ReadOnlyStringWrapper(backlog);
+        this.pmQty = new ReadOnlyIntegerWrapper(pmQty);
+        this.stockApplyQtyTotal = new ReadOnlyIntegerWrapper(0);
+        this.ratio = new ReadOnlyStringWrapper(ratio);
+        this.applySet = new ReadOnlyIntegerWrapper(0);
         this.remark = new SimpleStringProperty(remark);
 
-        this.purchasesApplyQtyTotal = new SimpleIntegerProperty(0);
         this.serialNo = new ReadOnlyStringWrapper("A");
+
+        this.purchasesApplyQtyTotal = 0;
 
         this.isKit = !kitName.isEmpty();
         this.rowNum = rowNum;
@@ -133,7 +134,7 @@ public class RotateItem {
     }
 
     public ReadOnlyStringProperty kitNameProperty() {
-        return kitName;
+        return kitName.getReadOnlyProperty();
     }
 
     public String getPartNumber() {
@@ -141,7 +142,7 @@ public class RotateItem {
     }
 
     public ReadOnlyStringProperty partNumberProperty() {
-        return partNumber;
+        return partNumber.getReadOnlyProperty();
     }
 
     public String getBacklog() {
@@ -149,15 +150,15 @@ public class RotateItem {
     }
 
     public ReadOnlyStringProperty backlogProperty() {
-        return backlog;
+        return backlog.getReadOnlyProperty();
     }
 
     public int getPmQty() {
         return pmQty.get();
     }
 
-    public IntegerProperty pmQtyProperty() {
-        return pmQty;
+    public ReadOnlyIntegerProperty pmQtyProperty() {
+        return pmQty.getReadOnlyProperty();
     }
 
     public int getRatio() {
@@ -169,7 +170,7 @@ public class RotateItem {
     }
 
     public ReadOnlyStringProperty ratioProperty() {
-        return ratio;
+        return ratio.getReadOnlyProperty();
     }
 
 
@@ -182,8 +183,8 @@ public class RotateItem {
         return stockApplyQtyTotal.get();
     }
 
-    public IntegerProperty stockApplyQtyTotalProperty() {
-        return stockApplyQtyTotal;
+    public ReadOnlyIntegerProperty stockApplyQtyTotalProperty() {
+        return stockApplyQtyTotal.getReadOnlyProperty();
     }
 
     public void addStockApplyQtyTotal(int qty) {
@@ -191,15 +192,11 @@ public class RotateItem {
     }
 
     public int getPurchasesApplyQtyTotal() {
-        return purchasesApplyQtyTotal.get();
-    }
-
-    public IntegerProperty purchasesApplyQtyTotalProperty() {
         return purchasesApplyQtyTotal;
     }
 
     public void addPurchasesApplyQtyTotal(int qty) {
-        purchasesApplyQtyTotal.set(purchasesApplyQtyTotal.intValue() + qty);
+        purchasesApplyQtyTotal += qty;
     }
 
 
@@ -211,8 +208,8 @@ public class RotateItem {
         return applySet.get();
     }
 
-    public IntegerProperty applySetProperty() {
-        return applySet;
+    public ReadOnlyIntegerProperty applySetProperty() {
+        return applySet.getReadOnlyProperty();
     }
 
     public StringProperty remarkProperty() {
