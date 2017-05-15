@@ -724,7 +724,7 @@
                                                             <Insets right="10.0" />
                                                          </HBox.margin>
                                                       </ImageView>
-                                                      <JFXTextField fx:id="rotateFilterField" focusTraversable="false" prefColumnCount="200" prefWidth="200.0">
+                                                      <JFXTextField fx:id="rotateFilterField" focusTraversable="false" prefColumnCount="200" prefWidth="200.0" promptText="Search Kit or Part">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -815,7 +815,21 @@
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
                                                 </Label>
-                                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+                                                <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <ImageView fx:id="filterIcon2" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                                         <HBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </HBox.margin>
+                                                      </ImageView>
+                                                      <JFXTextField fx:id="noneStPurchaseFilterField" focusTraversable="false" prefColumnCount="200" prefWidth="200.0" promptText="Search PO">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </JFXTextField>
+                                                   </children>
+                                                </HBox>
+                                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0">
                                                    <children>
                                                       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
                                                          <children>
@@ -1047,7 +1061,7 @@
                                                    </font>
                                                 </Label>
                                                 <JFXToggleButton fx:id="purchaseShowAllToggle" focusTraversable="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="24.0" text="Show All" toggleColor="#009485" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0" />
-                                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+                                                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0">
                                                    <children>
                                                       <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #B3E5FC;">
                                                          <children>

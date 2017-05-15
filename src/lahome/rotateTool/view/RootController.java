@@ -327,6 +327,12 @@ public class RootController {
     private Label purchaseApSetTotal;
 
     @FXML
+    private ImageView filterIcon2;
+
+    @FXML
+    private JFXTextField noneStPurchaseFilterField;
+
+    @FXML
     private TableView<PurchaseItem> noneStPurchaseTableView;
 
     @FXML
@@ -403,6 +409,7 @@ public class RootController {
     private void initialize() {
 
         filterIcon.setImage(new Image(Main.class.getResourceAsStream("/images/active-search-2-48.png")));
+        filterIcon2.setImage(new Image(Main.class.getResourceAsStream("/images/active-search-2-48.png")));
         exportToExcelButton.setVisible(false);
 
         initialRotateTable();
@@ -1459,6 +1466,8 @@ public class RootController {
 
     private void handleSelectedRotateItem(RotateItem newRotateItem) {
         if (newRotateItem == null) {
+            rotateSelectedKit = "";
+            rotateSelectedPart = "";
             stockTableView.setItems(FXCollections.observableArrayList());
             noneStPurchaseTableView.setItems(FXCollections.observableArrayList());
             return;
@@ -1519,6 +1528,7 @@ public class RootController {
         updateStockTableTotal();
 
         syncToPurchaseTable(newStockItem.getPartNumber(), newStockItem.getPo());
+        syncToNoStPurchaseTable(newStockItem.getPartNumber(), newStockItem.getRemark());
     }
 
 
@@ -1537,6 +1547,8 @@ public class RootController {
 
     private void handleSelectedNoneStockPurchaseItem(PurchaseItem newPurchaseItem) {
         if (newPurchaseItem == null) {
+            noneStPurchaseSelectedPo = "";
+            noneStPurchaseSelectedPart = "";
             return;
         }
 
@@ -1603,6 +1615,25 @@ public class RootController {
             purchaseTableView.getSelectionModel().clearSelection();
             purchasePoColumn.setVisible(false);
             purchasePoColumn.setVisible(true);
+        }
+    }
+
+    private void syncToNoStPurchaseTable(String partNumber, String remark) {
+        int row = 0;
+        for (PurchaseItem item : noneStPurchaseTableView.getItems()) {
+            if (item.getPartNumber().equals(partNumber) && remark.toUpperCase().contains(item.getPo().toUpperCase())) {
+                noneStPurchaseTableView.scrollTo(Math.max(row - 3, 0));
+                noneStPurchaseTableView.getSelectionModel().clearAndSelect(row, noneStPurchaseApQtyColumn);
+                return;
+            }
+            row++;
+        }
+
+        if (noneStPurchaseTableView.getItems().size() > 0) {
+            noneStPurchaseTableView.getFocusModel().focus(null);
+            noneStPurchaseTableView.getSelectionModel().clearSelection();
+            noneStPurchasePoColumn.setVisible(false);
+            noneStPurchasePoColumn.setVisible(true);
         }
     }
 
@@ -1680,11 +1711,6 @@ public class RootController {
 
         updateStockTableTotal();
 
-        if (rotateItem.isKit() && showAllParts) {
-            stockPmQty.setText(String.valueOf(rotateItem.getKitNode().pmQtyProperty()));
-        } else {
-            stockPmQty.setText(String.valueOf(rotateItem.getPmQty()));
-        }
     }
 
     private void updatePurchaseTable(StockItem stockItem) {
@@ -1741,8 +1767,22 @@ public class RootController {
                 obsList = rotateItem.getNoneStockPurchaseItemObsList();
             }
 
-            SortedList<PurchaseItem> sortedData = new SortedList<>(obsList);
-            sortedData.comparatorProperty().bind(purchaseTableView.comparatorProperty());
+            FilteredList<PurchaseItem> filteredData = new FilteredList<>(obsList, p -> true);
+
+
+            ChangeListener listener = (ChangeListener<String>) (ov, oldVal, newVal) -> filteredData.setPredicate(purchaseItem -> {
+                // If filter text is empty, display all persons.
+                if (newVal == null || newVal.isEmpty()) {
+                    return true;
+                }
+
+                return purchaseItem.getPo().toLowerCase().contains(newVal.toLowerCase());
+            });
+
+            noneStPurchaseFilterField.textProperty().addListener(listener);
+
+            SortedList<PurchaseItem> sortedData = new SortedList<>(filteredData);
+            sortedData.comparatorProperty().bind(noneStPurchaseTableView.comparatorProperty());
             noneStPurchaseTableView.setItems(sortedData);
             if (obsList.size() > 0) {
                 noneStPurchaseTableView.getSelectionModel().select(0, noneStPurchaseApQtyColumn);
@@ -1779,11 +1819,18 @@ public class RootController {
         int currentPoStQtyTotal = 0;
         int currentPoApplyQtyTotal = 0;
 
+        int pmQty = 0;
+
         ObservableList<StockItem> list = stockTableView.getItems();
         if (list != null) {
             for (StockItem stockItem : list) {
-                stQtyTotal += stockItem.getStockQty();
-                applyQtyTotal += stockItem.getApplyQty();
+                if (stockSelectedPart.equals(stockItem.getPartNumber())) {
+                    stQtyTotal += stockItem.getStockQty();
+                    applyQtyTotal += stockItem.getApplyQty();
+
+                    if (pmQty == 0)
+                        pmQty = stockItem.getRotateItem().getPmQty();
+                }
 
                 if (stockSelectedPart.equals(stockItem.getRotateItem().getPartNumber()) &&
                         stockSelectedPo.equals(stockItem.getPo())) {
@@ -1792,6 +1839,8 @@ public class RootController {
                 }
             }
         }
+
+        stockPmQty.setText(String.valueOf(pmQty));
 
         stockStQtyTotal.setText(String.valueOf(stQtyTotal));
         stockApQtyTotal.setText(String.valueOf(applyQtyTotal));
