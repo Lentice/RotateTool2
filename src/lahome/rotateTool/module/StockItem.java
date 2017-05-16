@@ -22,6 +22,8 @@ public class StockItem {
     private IntegerProperty applyQty;
     private StringProperty remark;
 
+    private int purchaseApplyQtyTotal;
+
     private int rowNum;
     private RotateItem rotateItem;
 
@@ -45,6 +47,8 @@ public class StockItem {
         this.earliestGrDate = new ReadOnlyStringWrapper("");
         this.applyQty = new SimpleIntegerProperty(applyQty);
         this.remark = new SimpleStringProperty(remark);
+
+        purchaseApplyQtyTotal = 0;
 
         this.rowNum = rowNum;
     }
@@ -118,6 +122,20 @@ public class StockItem {
         }
     }
 
+    public void addPurchaseItem(PurchaseItem item) {
+        log.debug(String.format("Add purchase: %s, %s, %s, %s, %d",
+                rotateItem.getKitName(), rotateItem.getPartNumber(), item.getPo(), item.getGrDate(), item.getGrQty()));
+
+        Date grDate = DateUtil.parse(item.getGrDate());
+        Date earliestDate = DateUtil.parse(getEarliestGrDate());
+        if (grDate != null && (earliestDate == null || grDate.before(earliestDate))) {
+            this.earliestGrDate.set(item.getGrDate());
+        }
+
+        purchaseItemList.add(item);
+        item.setRotateAndStock(rotateItem, this);
+    }
+
     public boolean isMainStockItem() {
         return isMainStockItem;
     }
@@ -186,20 +204,14 @@ public class StockItem {
         return remark;
     }
 
-    public void addPurchaseItem(PurchaseItem item) {
-        log.debug(String.format("Add purchase: %s, %s, %s, %s, %d",
-                rotateItem.getKitName(), rotateItem.getPartNumber(), item.getPo(), item.getGrDate(), item.getGrQty()));
-
-        Date grDate = DateUtil.parse(item.getGrDate());
-        Date earliestDate = DateUtil.parse(getEarliestGrDate());
-        if (grDate != null && (earliestDate == null || grDate.before(earliestDate))) {
-            this.earliestGrDate.set(item.getGrDate());
-        }
-
-        purchaseItemList.add(item);
-        item.setStock(this);
-        item.setRotate(rotateItem, false);
+    public int getPurchaseApplyQtyTotal() {
+        return purchaseApplyQtyTotal;
     }
+
+    public void addPurchaseApplyQtyTotal(int qty) {
+        purchaseApplyQtyTotal += qty;
+    }
+
 
     public List<StockItem> getStockDuplicatePoItemList() {
         return stockDuplicatePoItemList;

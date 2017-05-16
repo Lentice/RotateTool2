@@ -1302,7 +1302,7 @@ public class RootController {
                 int ratio = purchaseItem.getRotateItem().getRatio();
                 if (item.intValue() > purchaseItem.getGrQty()) {
                     setStyle(basicStyle + "-fx-background-color: " + apQtyExceedColor + ";");
-                } else if (ratio > 0 && (item.intValue() % ratio) != 0) {
+                } else if (ratio > 0 && (purchaseItem.getApplyQtyTotal() % ratio) != 0) {
                     setStyle(basicStyle + "-fx-background-color: " + apQtyNotMultipleColor + ";");
                 } else {
                     setStyle(basicStyle);

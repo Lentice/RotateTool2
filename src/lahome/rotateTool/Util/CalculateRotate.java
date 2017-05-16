@@ -287,12 +287,15 @@ public class CalculateRotate {
     }
 
     private static void clearForAutoCalc(RotateCollection collection) {
+        for (RotateItem rotateItem : collection.getRotateObsList()) {
+            undoManager.appendInput(rotateItem.remarkProperty(), "");
+        }
+
         for (StockItem stockItem : collection.getStockItemList()) {
+            stockItem.setAutoCalculated(false);
+
             undoManager.appendInput(stockItem.applyQtyProperty(), 0);
             undoManager.appendInput(stockItem.remarkProperty(), "");
-
-
-            stockItem.setAutoCalculated(false);
         }
 
         for (PurchaseItem purchaseItem : collection.getPurchaseItemList()) {

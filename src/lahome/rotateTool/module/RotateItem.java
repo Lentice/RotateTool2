@@ -114,7 +114,7 @@ public class RotateItem {
 
     public void addNoneStockPurchase(PurchaseItem purchaseItem) {
         noneStockPurchaseItemObsList.add(purchaseItem);
-        purchaseItem.setRotate(this, true);
+        purchaseItem.setRotateAndStock(this, null);
     }
 
     public int getRowNum() {

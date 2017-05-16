@@ -17,7 +17,6 @@ public class PurchaseItem {
     private int rowNum;
     private StockItem stockItem;
     private RotateItem rotateItem;
-    private boolean isNoneStock;
 
     public PurchaseItem(int rowNum, String po, String grDate, int grQty,
                         int applyQty, String remark) {
@@ -30,7 +29,6 @@ public class PurchaseItem {
         this.remark = new SimpleStringProperty(remark);
 
         this.rowNum = rowNum;
-        this.isNoneStock = false;
 
     }
 
@@ -43,22 +41,28 @@ public class PurchaseItem {
         this.remark = null;
     }
 
-    public void setStock(StockItem stockItem) {
-        this.stockItem = stockItem;
-    }
+    public void setRotateAndStock(RotateItem rotateItem, StockItem stockItem) {
+        assert rotateItem != null;
 
-    public void setRotate(RotateItem rotateItem, boolean isNoneStock) {
-        this.isNoneStock = isNoneStock;
         this.rotateItem = rotateItem;
+        this.stockItem = stockItem;
 
         updateApplySet();
+
         this.rotateItem.addPurchasesApplyQtyTotal(getApplyQty());
+        if (this.stockItem != null) {
+            this.stockItem.addPurchaseApplyQtyTotal(getApplyQty());
+        }
 
         this.applyQty.addListener((observable, oldValue, newValue) -> {
             updateApplySet();
 
             if (this.rotateItem != null) {
                 this.rotateItem.addPurchasesApplyQtyTotal(newValue.intValue() - oldValue.intValue());
+            }
+
+            if (this.stockItem != null) {
+                this.stockItem.addPurchaseApplyQtyTotal(newValue.intValue() - oldValue.intValue());
             }
         });
     }
@@ -142,5 +146,9 @@ public class PurchaseItem {
 
     public String getPartNumber() {
         return rotateItem.getPartNumber();
+    }
+
+    public int getApplyQtyTotal() {
+        return stockItem.getPurchaseApplyQtyTotal();
     }
 }
