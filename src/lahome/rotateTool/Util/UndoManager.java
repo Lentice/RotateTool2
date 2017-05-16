@@ -1,10 +1,11 @@
 package lahome.rotateTool.Util;
 
-import javafx.beans.property.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.TablePosition;
 
-import javax.swing.text.TableView;
-import java.util.Objects;
 import java.util.Stack;
 
 /**
@@ -104,7 +105,7 @@ public class UndoManager {
         Object newValue;
         private TablePosition<?, ?> tablePostion;
 
-        public Command(int tag, Object observableValue, Object newValue) {
+        Command(int tag, Object observableValue, Object newValue) {
             this.tag = tag;
             this.observableValue = observableValue;
             this.newValue = newValue;
@@ -120,7 +121,7 @@ public class UndoManager {
             }
         }
 
-        public Command(int tag, Object observableValue, Object newValue, TablePosition<?, ?> tablePosition) {
+        Command(int tag, Object observableValue, Object newValue, TablePosition<?, ?> tablePosition) {
             this(tag, observableValue, newValue);
             this.tablePostion = tablePosition;
         }
@@ -164,7 +165,7 @@ public class UndoManager {
             }
         }
 
-        public int getTag() {
+        int getTag() {
             return tag;
         }
     }

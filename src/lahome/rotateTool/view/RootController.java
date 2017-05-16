@@ -11,17 +11,13 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -35,9 +31,9 @@ import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.NumberStringConverter;
 import lahome.rotateTool.Main;
 import lahome.rotateTool.Util.CalculateRotate;
-import lahome.rotateTool.Util.Excel.ExcelSettings;
 import lahome.rotateTool.Util.Excel.ExcelReader;
 import lahome.rotateTool.Util.Excel.ExcelSaver;
+import lahome.rotateTool.Util.Excel.ExcelSettings;
 import lahome.rotateTool.Util.TableUtils;
 import lahome.rotateTool.Util.UndoManager;
 import lahome.rotateTool.module.*;
@@ -45,8 +41,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
@@ -384,8 +378,8 @@ public class RootController {
     private File latestDir = new File(System.getProperty("user.dir"));
     private String rotateSelectedKit = "";
     private String rotateSelectedPart = "";
-    private String stockSelectedPart = "";
     private String stockSelectedPo = "";
+    private String stockSelectedPart = "";
     private String purchaseSelectedPo = "";
     private String noneStPurchaseSelectedPo = "";
     private String noneStPurchaseSelectedPart = "";
@@ -1001,65 +995,6 @@ public class RootController {
         });
     }
 
-    public static class DragSelectionCell<S,T> extends TextFieldTableCell<S,T> {
-
-        public DragSelectionCell(StringConverter<T> converter) {
-            super(converter);
-            initMouseDrag();
-        }
-
-        public DragSelectionCell() {
-            super();
-            initMouseDrag();
-        }
-
-        public static <S> Callback<TableColumn<S,String>, TableCell<S,String>> forTableColumn() {
-            return forTableColumn(new DefaultStringConverter());
-        }
-
-        public static <S,T> Callback<TableColumn<S,T>, TableCell<S,T>> forTableColumn(
-                final StringConverter<T> converter) {
-            return list -> new DragSelectionCell<>(converter);
-        }
-
-        private void initMouseDrag() {
-            setOnDragDetected(event -> {
-                startFullDrag();
-                //log.info("DragDetected");
-            });
-            setOnMouseDragEntered(event -> {
-                performSelection(getTableView(), getTableColumn(), getIndex());
-                //log.info("DragEntered");
-            });
-
-            setOnMouseReleased(event -> {
-                getTableView().getSelectionModel().clearAndSelect(getIndex(), getTableColumn());
-            });
-        }
-
-        protected void performSelection(TableView<S> table, TableColumn<S, T> column, int index) {
-            final TablePositionBase anchor = TableCellBehavior.getAnchor(table, table.getFocusModel().getFocusedCell());
-            int columnIndex = table.getVisibleLeafIndex(column);
-
-            int minRowIndex = Math.min(anchor.getRow(), index);
-            int maxRowIndex = Math.max(anchor.getRow(), index);
-            TableColumnBase minColumn = anchor.getColumn() < columnIndex ? anchor.getTableColumn() : column;
-            TableColumnBase maxColumn = anchor.getColumn() >= columnIndex ? anchor.getTableColumn() : column;
-
-            table.getSelectionModel().clearSelection();
-            final int minColumnIndex = table.getVisibleLeafIndex((TableColumn) minColumn);
-            final int maxColumnIndex = table.getVisibleLeafIndex((TableColumn) maxColumn);
-            for (int _row = minRowIndex; _row <= maxRowIndex; _row++) {
-                for (int _col = minColumnIndex; _col <= maxColumnIndex; _col++) {
-                    table.getSelectionModel().select(_row, table.getVisibleLeafColumn(_col));
-                }
-            }
-
-            table.getFocusModel().focus(maxRowIndex, column);
-        }
-    }
-
-
     private void initialRotateTable() {
         rotateTableView.getSelectionModel().setCellSelectionEnabled(true);
         rotateTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -1144,7 +1079,7 @@ public class RootController {
         rotateRemarkColumn.setCellFactory(DragSelectionCell.forTableColumn());
         rotateRemarkColumn.setOnEditCommit(cellData -> {
             UndoManager.getInstance().newInput(cellData.getRowValue().remarkProperty(),
-                     cellData.getNewValue());
+                    cellData.getNewValue());
             refreshAllTable();
             rotateTableView.requestFocus();
         });
@@ -1264,7 +1199,7 @@ public class RootController {
         stockApQtyColumn.setOnEditCommit(cellData -> {
             UndoManager.getInstance().newInput(
                     cellData.getRowValue().applyQtyProperty(),
-                     cellData.getNewValue().intValue());
+                    cellData.getNewValue().intValue());
             updateStockTableTotal();
             refreshAllTable();
             stockTableView.requestFocus();
@@ -1275,7 +1210,7 @@ public class RootController {
         stockRemarkColumn.setOnEditCommit(cellData -> {
             UndoManager.getInstance().newInput(
                     cellData.getRowValue().remarkProperty(),
-                   cellData.getNewValue());
+                    cellData.getNewValue());
             refreshAllTable();
             stockTableView.requestFocus();
         });
@@ -1757,24 +1692,24 @@ public class RootController {
         if (!rotateFilterListenerAdded) {
             rotateFilterListenerAdded = true;
 
-            ChangeListener listener = (ChangeListener<String>) (ov, oldVal, newVal) -> filteredData.setPredicate(rotateItem -> {
-                // If filter text is empty, display all persons.
-                if (newVal == null || newVal.isEmpty()) {
-                    return true;
-                }
+            rotateFilterField.textProperty().addListener((ov, oldVal, newVal) ->
+                    filteredData.setPredicate(rotateItem -> {
+                        // If filter text is empty, display all persons.
+                        if (newVal == null || newVal.isEmpty()) {
+                            return true;
+                        }
 
-                // Compare first name and last name of every person with filter text.
-                String lowerCaseFilter = newVal.toLowerCase();
+                        // Compare first name and last name of every person with filter text.
+                        String lowerCaseFilter = newVal.toLowerCase();
 
-                if (rotateItem.getKitName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches first name.
-                } else if (rotateItem.getPartNumber().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; // Filter matches last name.
-                }
-                return false; // Does not match.
-            });
-
-            rotateFilterField.textProperty().addListener(listener);
+                        if (rotateItem.getKitName().toLowerCase().contains(lowerCaseFilter)) {
+                            return true; // Filter matches first name.
+                        } else if (rotateItem.getPartNumber().toLowerCase().contains(lowerCaseFilter)) {
+                            return true; // Filter matches last name.
+                        }
+                        return false; // Does not match.
+                    })
+            );
         }
 
         // 3. Wrap the FilteredList in a SortedList.
@@ -1878,17 +1813,14 @@ public class RootController {
 
             FilteredList<PurchaseItem> filteredData = new FilteredList<>(obsList, p -> true);
 
-
-            ChangeListener listener = (ChangeListener<String>) (ov, oldVal, newVal) -> filteredData.setPredicate(purchaseItem -> {
-                // If filter text is empty, display all persons.
-                if (newVal == null || newVal.isEmpty()) {
-                    return true;
-                }
-
-                return purchaseItem.getPo().toLowerCase().contains(newVal.toLowerCase());
-            });
-
-            noneStPurchaseFilterField.textProperty().addListener(listener);
+            noneStPurchaseFilterField.textProperty().addListener((ov, oldVal, newVal) ->
+                    filteredData.setPredicate(purchaseItem -> {
+                        if (newVal == null || newVal.isEmpty()) {
+                            return true;
+                        }
+                        return purchaseItem.getPo().toLowerCase().contains(newVal.toLowerCase());
+                    })
+            );
 
             SortedList<PurchaseItem> sortedData = new SortedList<>(filteredData);
             sortedData.comparatorProperty().bind(noneStPurchaseTableView.comparatorProperty());

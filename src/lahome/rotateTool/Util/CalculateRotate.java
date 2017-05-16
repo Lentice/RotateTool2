@@ -6,7 +6,6 @@ import lahome.rotateTool.module.RotateItem;
 import lahome.rotateTool.module.StockItem;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -125,7 +124,6 @@ public class CalculateRotate {
 
                     undoManager.appendInput(purchaseItem.applyQtyProperty(),
                             applyQty + oldApplyQty);
-                    //purchaseItem.applyQtyProperty().set(applyQty + oldApplyQty);
 
                     expectQty -= applyQty;
                     if (expectQty <= 0)
@@ -148,14 +146,15 @@ public class CalculateRotate {
 
                         undoManager.appendInput(purchaseItem.applyQtyProperty(),
                                 applyQty + oldApplyQty);
-                        //purchaseItem.applyQtyProperty().set(applyQty + oldApplyQty);
+
                         String remark = purchaseItem.getRemark();
                         if (remark.isEmpty())
                             remark += "實退 " + po;
                         else
                             remark += ", " + po;
 
-                        purchaseItem.remarkProperty().set(remark);
+                        undoManager.appendInput(purchaseItem.remarkProperty(),
+                                remark);
 
                         expectQty -= applyQty;
                         if (expectQty <= 0)
@@ -189,10 +188,8 @@ public class CalculateRotate {
 
                     undoManager.appendInput(stockItem.applyQtyProperty(),
                             applyQty + oldApplyQty);
-                    //stockItem.applyQtyProperty().set(applyQty + oldApplyQty);
 
                     if (useNoneStPurchase) {
-                        //stockItem.remarkProperty().set(remark.toString());
                         undoManager.appendInput(stockItem.remarkProperty(),
                                 remark.toString());
                     }
@@ -296,18 +293,11 @@ public class CalculateRotate {
 
 
             stockItem.setAutoCalculated(false);
-//            stockItem.applyQtyProperty().set(0);
-//            stockItem.remarkProperty().set("");
         }
 
         for (PurchaseItem purchaseItem : collection.getPurchaseItemList()) {
             undoManager.appendInput(purchaseItem.applyQtyProperty(), 0);
-            //undoManager.appendInput(purchaseItem.applySetProperty(), 0);
             undoManager.appendInput(purchaseItem.remarkProperty(), "");
-
-//            purchaseItem.applyQtyProperty().set(0);
-//            purchaseItem.applySetProperty().set(0);
-//            purchaseItem.remarkProperty().set("");
         }
     }
 
