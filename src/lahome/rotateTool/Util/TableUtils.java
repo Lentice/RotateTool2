@@ -1,8 +1,6 @@
 package lahome.rotateTool.Util;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -17,7 +15,7 @@ import java.text.ParseException;
 import java.util.StringTokenizer;
 
 public class TableUtils {
-
+    static UndoManager undoManager;
     private static NumberFormat numberFormatter = NumberFormat.getNumberInstance();
 
     /**
@@ -30,7 +28,9 @@ public class TableUtils {
 
         // install copy/paste keyboard handler
         table.setOnKeyPressed(new TableKeyEventHandler());
-
+        if (undoManager == null) {
+            undoManager = UndoManager.getInstance();
+        }
     }
 
     /**
@@ -41,32 +41,35 @@ public class TableUtils {
 
         KeyCodeCombination copyKeyCodeCompination = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
         KeyCodeCombination pasteKeyCodeCompination = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY);
+        KeyCodeCombination cutKeyCodeCompination = new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_ANY);
+        KeyCodeCombination undoKeyCodeCompination = new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_ANY);
+        KeyCodeCombination redoKeyCodeCompination = new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_ANY);
 
         public void handle(final KeyEvent keyEvent) {
 
             if (copyKeyCodeCompination.match(keyEvent)) {
-
                 if (keyEvent.getSource() instanceof TableView) {
-
-                    // copy to clipboard
                     copySelectionToClipboard((TableView<?>) keyEvent.getSource());
-
-                    System.out.println("Selection copied to clipboard");
-
-                    // event is handled, consume it
                     keyEvent.consume();
                 }
             } else if (pasteKeyCodeCompination.match(keyEvent)) {
-
                 if (keyEvent.getSource() instanceof TableView) {
-
-                    // copy to clipboard
                     pasteFromClipboard((TableView<?>) keyEvent.getSource());
-
-                    System.out.println("Selection copied to clipboard");
-
-                    // event is handled, consume it
                     keyEvent.consume();
+                }
+            } else if (cutKeyCodeCompination.match(keyEvent)) {
+                if (keyEvent.getSource() instanceof TableView) {
+                    copySelectionToClipboard((TableView<?>) keyEvent.getSource());
+                    deleteSelectCells((TableView<?>) keyEvent.getSource());
+                    keyEvent.consume();
+                }
+            } else if (undoKeyCodeCompination.match(keyEvent)) {
+                if (keyEvent.getSource() instanceof TableView) {
+                    undoManager.undo();
+                }
+            } else if (redoKeyCodeCompination.match(keyEvent)) {
+                if (keyEvent.getSource() instanceof TableView) {
+                    undoManager.redo();
                 }
             } else if (keyEvent.getCode() == KeyCode.DELETE) {
                 if (keyEvent.getSource() instanceof TableView) {
@@ -79,6 +82,7 @@ public class TableUtils {
 
     /**
      * Get table selection and copy it to the clipboard.
+     *
      * @param table
      */
     public static void copySelectionToClipboard(TableView<?> table) {
@@ -97,40 +101,32 @@ public class TableUtils {
             // determine whether we advance in a row (tab) or a column
             // (newline).
             if (prevRow == row) {
-
                 clipboardString.append('\t');
-
             } else if (prevRow != -1) {
-
                 clipboardString.append('\n');
-
             }
 
             // create string from cell
             String text = "";
 
-            Object observableValue = (Object) table.getColumns().get(col).getCellObservableValue( row);
+            Object observableValue = (Object) table.getColumns().get(col).getCellObservableValue(row);
 
             // null-check: provide empty string for nulls
             if (observableValue == null) {
                 text = "";
-            }
-            else if( observableValue instanceof DoubleProperty) { // TODO: handle boolean etc
-
-                text = numberFormatter.format( ((DoubleProperty) observableValue).get());
-
-            }
-            else if( observableValue instanceof IntegerProperty) {
-
-                text = numberFormatter.format( ((IntegerProperty) observableValue).get());
-
-            }
-            else if( observableValue instanceof StringProperty) {
-
+            } else if (observableValue instanceof DoubleProperty) { // TODO: handle boolean etc
+                text = numberFormatter.format(((DoubleProperty) observableValue).get());
+            } else if (observableValue instanceof IntegerProperty) {
+                text = numberFormatter.format(((IntegerProperty) observableValue).get());
+            } else if (observableValue instanceof StringProperty) {
                 text = ((StringProperty) observableValue).get();
-
-            }
-            else {
+            } else if (observableValue instanceof ReadOnlyDoubleProperty) {
+                text = numberFormatter.format(((ReadOnlyDoubleProperty) observableValue).get());
+            } else if (observableValue instanceof ReadOnlyIntegerProperty) {
+                text = numberFormatter.format(((ReadOnlyIntegerProperty) observableValue).get());
+            } else if (observableValue instanceof ReadOnlyStringProperty) {
+                text = ((ReadOnlyStringProperty) observableValue).get();
+            } else {
                 System.out.println("Unsupported observable value: " + observableValue);
             }
 
@@ -151,10 +147,10 @@ public class TableUtils {
 
     }
 
-    public static void pasteFromClipboard( TableView<?> table) {
+    public static void pasteFromClipboard(TableView<?> table) {
 
         // abort if there's not cell selected to start with
-        if( table.getSelectionModel().getSelectedCells().size() == 0) {
+        if (table.getSelectionModel().getSelectedCells().size() == 0) {
             return;
         }
 
@@ -169,18 +165,18 @@ public class TableUtils {
 
         int rowClipboard = -1;
 
-        StringTokenizer rowTokenizer = new StringTokenizer( pasteString, "\n");
-        while( rowTokenizer.hasMoreTokens()) {
+        StringTokenizer rowTokenizer = new StringTokenizer(pasteString, "\n");
+        while (rowTokenizer.hasMoreTokens()) {
 
             rowClipboard++;
 
             String rowString = rowTokenizer.nextToken();
 
-            StringTokenizer columnTokenizer = new StringTokenizer( rowString, "\t");
+            StringTokenizer columnTokenizer = new StringTokenizer(rowString, "\t");
 
             int colClipboard = -1;
 
-            while( columnTokenizer.hasMoreTokens()) {
+            while (columnTokenizer.hasMoreTokens()) {
 
                 colClipboard++;
 
@@ -192,10 +188,10 @@ public class TableUtils {
                 int colTable = pasteCellPosition.getColumn() + colClipboard;
 
                 // skip if we reached the end of the table
-                if( rowTable >= table.getItems().size()) {
+                if (rowTable >= table.getItems().size()) {
                     continue;
                 }
-                if( colTable >= table.getColumns().size()) {
+                if (colTable >= table.getColumns().size()) {
                     continue;
                 }
 
@@ -205,41 +201,27 @@ public class TableUtils {
                 TableColumn tableColumn = table.getColumns().get(colTable);
                 ObservableValue observableValue = tableColumn.getCellObservableValue(rowTable);
 
-                System.out.println( rowTable + "/" + colTable + ": " +observableValue);
+                System.out.println(rowTable + "/" + colTable + ": " + observableValue);
 
                 // TODO: handle boolean, etc
-                if( observableValue instanceof DoubleProperty) {
-
+                if (observableValue instanceof DoubleProperty) {
                     try {
-
                         double value = numberFormatter.parse(clipboardCellContent).doubleValue();
                         ((DoubleProperty) observableValue).set(value);
-
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-
-                }
-                else if( observableValue instanceof IntegerProperty) {
-
+                } else if (observableValue instanceof IntegerProperty) {
                     try {
-
                         int value = NumberFormat.getInstance().parse(clipboardCellContent).intValue();
                         ((IntegerProperty) observableValue).set(value);
-
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-
-                }
-                else if( observableValue instanceof StringProperty) {
-
+                } else if (observableValue instanceof StringProperty) {
                     ((StringProperty) observableValue).set(clipboardCellContent);
-
                 } else {
-
                     System.out.println("Unsupported observable value: " + observableValue);
-
                 }
 
                 System.out.println(rowTable + "/" + colTable);
@@ -257,6 +239,8 @@ public class TableUtils {
             return;
         }
 
+        undoManager.newInput();
+
         ObservableList<TablePosition> positionList = table.getSelectionModel().getSelectedCells();
         for (TablePosition position : positionList) {
 
@@ -265,12 +249,11 @@ public class TableUtils {
 
             ObservableValue observableValue = table.getColumns().get(col).getCellObservableValue(row);
             if (observableValue instanceof DoubleProperty) {
-                ((DoubleProperty) observableValue).set(0);
+                undoManager.appendInput(((DoubleProperty) observableValue), 0);
             } else if (observableValue instanceof IntegerProperty) {
-                ((IntegerProperty) observableValue).set(0);
-
+                undoManager.appendInput(((IntegerProperty) observableValue), 0);
             } else if (observableValue instanceof StringProperty) {
-                ((StringProperty) observableValue).set("");
+                undoManager.appendInput(((StringProperty) observableValue), "");
             } else {
                 System.out.println("Unsupported observable value: " + observableValue);
             }

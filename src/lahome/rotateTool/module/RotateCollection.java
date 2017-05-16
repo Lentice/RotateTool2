@@ -20,6 +20,8 @@ public class RotateCollection {
     private List<StockItem> stockItemList = new ArrayList<>();
     private List<PurchaseItem> purchaseItemList = new ArrayList<>();
 
+    int maxDc = 0;
+
     private String getRotateKey(String kitName, String partNum) {
         return StringUtils.remove(kitName + partNum, '-');
     }
@@ -50,6 +52,8 @@ public class RotateCollection {
 
         stockItemList.add(item);
         rotateItem.addStockItem(item);
+
+        maxDc = Math.max(maxDc, item.getDc());
     }
 
     public void addPurchase(RotateItem rotateItem, PurchaseItem item) {
@@ -85,4 +89,7 @@ public class RotateCollection {
         return kitNodeMap;
     }
 
+    public int getMaxDc() {
+        return maxDc;
+    }
 }

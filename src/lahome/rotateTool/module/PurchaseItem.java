@@ -12,7 +12,7 @@ public class PurchaseItem {
     private ReadOnlyStringWrapper grDate;
     private ReadOnlyIntegerWrapper grQty;
     private IntegerProperty applyQty;
-    private IntegerProperty applySet;
+    private ReadOnlyIntegerWrapper applySet;
     private StringProperty remark;
 
     private int rowNum;
@@ -27,7 +27,7 @@ public class PurchaseItem {
         this.grDate = new ReadOnlyStringWrapper(grDate);
         this.grQty = new ReadOnlyIntegerWrapper(grQty);
         this.applyQty = new SimpleIntegerProperty(applyQty);
-        this.applySet = new SimpleIntegerProperty(0);
+        this.applySet = new ReadOnlyIntegerWrapper(0);
         this.remark = new SimpleStringProperty(remark);
 
         this.rowNum = rowNum;
@@ -129,8 +129,8 @@ public class PurchaseItem {
         return applySet.get();
     }
 
-    public IntegerProperty applySetProperty() {
-        return applySet;
+    public ReadOnlyIntegerProperty applySetProperty() {
+        return applySet.getReadOnlyProperty();
     }
 
     public String getRemark() {

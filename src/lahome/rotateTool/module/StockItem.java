@@ -29,6 +29,8 @@ public class StockItem {
     private StockItem firstStockItem = this;
     private boolean isMainStockItem = true;
 
+    private boolean isAutoCalculated = false;
+
     private boolean isDuplicate;
     private List<StockItem> stockDuplicatePoItemList;
 
@@ -211,5 +213,13 @@ public class StockItem {
 
     public String getPartNumber() {
         return rotateItem.getPartNumber();
+    }
+
+    public boolean isAutoCalculated() {
+        return isAutoCalculated;
+    }
+
+    public void setAutoCalculated(boolean autoCalculated) {
+        isAutoCalculated = autoCalculated;
     }
 }

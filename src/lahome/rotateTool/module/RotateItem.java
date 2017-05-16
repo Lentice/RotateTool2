@@ -22,7 +22,7 @@ public class RotateItem {
 
     private ReadOnlyStringWrapper kitName;
     private ReadOnlyStringWrapper partNumber;
-    private ReadOnlyStringWrapper backlog;
+    private ReadOnlyIntegerWrapper backlog;
     private ReadOnlyIntegerWrapper pmQty;
     private ReadOnlyIntegerWrapper stockApplyQtyTotal;
     private ReadOnlyStringWrapper ratio;
@@ -38,13 +38,13 @@ public class RotateItem {
     private ObservableList<StockItem> stockItemObsList = FXCollections.observableArrayList();
     private ObservableList<PurchaseItem> noneStockPurchaseItemObsList = FXCollections.observableArrayList();
 
-    public RotateItem(int rowNum, String kitName, String partNum, String backlog, int pmQty, String ratio, String remark) {
+    public RotateItem(int rowNum, String kitName, String partNum, int backlog, int pmQty, String ratio, String remark) {
         if (kitName == null)
             kitName = "";
 
         this.kitName = new ReadOnlyStringWrapper(kitName);
         this.partNumber = new ReadOnlyStringWrapper(partNum);
-        this.backlog = new ReadOnlyStringWrapper(backlog);
+        this.backlog = new ReadOnlyIntegerWrapper(backlog);
         this.pmQty = new ReadOnlyIntegerWrapper(pmQty);
         this.stockApplyQtyTotal = new ReadOnlyIntegerWrapper(0);
         this.ratio = new ReadOnlyStringWrapper(ratio);
@@ -145,11 +145,11 @@ public class RotateItem {
         return partNumber.getReadOnlyProperty();
     }
 
-    public String getBacklog() {
+    public int getBacklog() {
         return backlog.get();
     }
 
-    public ReadOnlyStringProperty backlogProperty() {
+    public ReadOnlyIntegerProperty backlogProperty() {
         return backlog.getReadOnlyProperty();
     }
 
@@ -242,6 +242,7 @@ public class RotateItem {
     public void setSerialNo(String serialNo) {
         this.serialNo.set(serialNo);
     }
+
     public ReadOnlyStringProperty serialNoProperty() {
         return serialNo.getReadOnlyProperty();
     }
@@ -265,11 +266,11 @@ public class RotateItem {
     public ObservableList<PurchaseItem> getPurchaseItemList() {
         ObservableList<PurchaseItem> list = FXCollections.observableArrayList();
 
-            for (StockItem stockItem : stockItemObsList) {
-                if (stockItem.isMainStockItem()) {
-                    list.addAll(stockItem.getPurchaseItemList());
-                }
+        for (StockItem stockItem : stockItemObsList) {
+            if (stockItem.isMainStockItem()) {
+                list.addAll(stockItem.getPurchaseItemList());
             }
+        }
 
         list.sort(PurchaseItem::compareTo);
         return list;

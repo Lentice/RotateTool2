@@ -53,7 +53,7 @@ public class ExcelReader {
         if (kitName.contains("空白"))
             kitName = "";
 
-        return kitName;
+        return kitName.trim().toUpperCase();
     }
 
     private String getPartNumber(Row row, int column) throws Exception {
@@ -62,16 +62,16 @@ public class ExcelReader {
             return "";
         }
 
-        return cellGetString(cell).trim();
+        return cellGetString(cell).trim().toUpperCase();
     }
 
-    private String getBacklog(Row row, int column) throws Exception {
+    private int getBacklog(Row row, int column) throws Exception {
         Cell cell = row.getCell(column);
         if (cell == null) {
-            return "";
+            return -1;
         }
 
-        return cellGetString(cell).trim();
+        return (int) cellGetValue(cell);
     }
 
     private int getExpectQty(Row row, int column) throws Exception {
@@ -88,7 +88,7 @@ public class ExcelReader {
             return "";
         }
 
-        return cellGetString(cell).trim();
+        return cellGetString(cell).trim().toUpperCase();
     }
 
     private int getStockQty(Row row, int column) throws Exception {
@@ -345,7 +345,7 @@ public class ExcelReader {
                     if (pmQty == 0)
                         return;
 
-                    String backlog = getBacklog(row, ExcelSettings.rotateBacklogColumn);
+                    int backlog = getBacklog(row, ExcelSettings.rotateBacklogColumn);
 
                     String ratio = getRatio(row, ExcelSettings.rotateRatioColumn);
                     String remark = getRemark(row, ExcelSettings.rotateRemarkColumn);

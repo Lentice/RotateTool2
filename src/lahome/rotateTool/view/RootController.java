@@ -1,6 +1,7 @@
 package lahome.rotateTool.view;
 
 import com.jfoenix.controls.*;
+import com.sun.javafx.scene.control.behavior.TableCellBehavior;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -10,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -18,6 +20,8 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -26,18 +30,23 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.NumberStringConverter;
 import lahome.rotateTool.Main;
+import lahome.rotateTool.Util.CalculateRotate;
 import lahome.rotateTool.Util.Excel.ExcelSettings;
 import lahome.rotateTool.Util.Excel.ExcelReader;
 import lahome.rotateTool.Util.Excel.ExcelSaver;
 import lahome.rotateTool.Util.TableUtils;
+import lahome.rotateTool.Util.UndoManager;
 import lahome.rotateTool.module.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
@@ -210,7 +219,7 @@ public class RootController {
     private TableColumn<RotateItem, String> rotateNoColumn;
 
     @FXML
-    private TableColumn<RotateItem, String> rotateBacklogColumn;
+    private TableColumn<RotateItem, Number> rotateBacklogColumn;
 
     @FXML
     private TableColumn<RotateItem, Number> rotatePmQtyColumn;
@@ -408,8 +417,8 @@ public class RootController {
     @FXML
     private void initialize() {
 
-        filterIcon.setImage(new Image(Main.class.getResourceAsStream("/images/active-search-2-48.png")));
-        filterIcon2.setImage(new Image(Main.class.getResourceAsStream("/images/active-search-2-48.png")));
+        //filterIcon.setImage(new Image(Main.class.getResourceAsStream("/lahome/rotateTool/view/images/active-search-2-48.png")));
+        //filterIcon2.setImage(new Image(Main.class.getResourceAsStream("/lahome/rotateTool/view/images/active-search-2-48.png")));
         exportToExcelButton.setVisible(false);
 
         initialRotateTable();
@@ -798,6 +807,26 @@ public class RootController {
         }).start();
     }
 
+    @FXML
+    void handleAutoCalcButton() {
+        int minDc = collection.getMaxDc() - 200;
+        TextInputDialog dialog = new TextInputDialog(String.valueOf(minDc));
+        dialog.setTitle("自動計算");
+        dialog.setHeaderText("自動計算所有的 Apply Qty。\n※注意：當前的Apply Qty及Remark都會先被清除。");
+        dialog.setContentText("請輸入D/C允許的最小值:");
+
+        Optional<String> result = dialog.showAndWait();
+        try {
+            result.ifPresent(s -> {
+                CalculateRotate.doCalculate(collection, Integer.valueOf(s));
+                rotateTableView.getSelectionModel().clearAndSelect(0, rotateApplySetColumn);
+            });
+        } catch (Exception e) {
+            log.error("failed!", e);
+        }
+
+    }
+
     private void configExcelSettings() {
         ExcelSettings.setRotateConfig(
                 pathAgingReport.getText(),
@@ -923,7 +952,7 @@ public class RootController {
                 int row = rotateTableView.getSelectionModel().getSelectedIndex();
                 row++;
                 if (row < rotateTableView.getItems().size()) {
-                    rotateTableView.getSelectionModel().select(row, rotateApplySetColumn);
+                    rotateTableView.getSelectionModel().clearAndSelect(row, rotateApplySetColumn);
                     rotateTableView.scrollTo(Math.max(row - 3, 0));
                     rotateTableView.scrollToColumn(rotateApplySetColumn);
                 }
@@ -936,7 +965,7 @@ public class RootController {
                 int row = rotateTableView.getSelectionModel().getSelectedIndex();
                 row--;
                 if (row >= 0) {
-                    rotateTableView.getSelectionModel().select(row, rotateApplySetColumn);
+                    rotateTableView.getSelectionModel().clearAndSelect(row, rotateApplySetColumn);
                     rotateTableView.scrollTo(Math.max(row - 3, 0));
                     rotateTableView.scrollToColumn(rotateApplySetColumn);
                 }
@@ -972,20 +1001,81 @@ public class RootController {
         });
     }
 
+    public static class DragSelectionCell<S,T> extends TextFieldTableCell<S,T> {
+
+        public DragSelectionCell(StringConverter<T> converter) {
+            super(converter);
+            initMouseDrag();
+        }
+
+        public DragSelectionCell() {
+            super();
+            initMouseDrag();
+        }
+
+        public static <S> Callback<TableColumn<S,String>, TableCell<S,String>> forTableColumn() {
+            return forTableColumn(new DefaultStringConverter());
+        }
+
+        public static <S,T> Callback<TableColumn<S,T>, TableCell<S,T>> forTableColumn(
+                final StringConverter<T> converter) {
+            return list -> new DragSelectionCell<>(converter);
+        }
+
+        private void initMouseDrag() {
+            setOnDragDetected(event -> {
+                startFullDrag();
+                //log.info("DragDetected");
+            });
+            setOnMouseDragEntered(event -> {
+                performSelection(getTableView(), getTableColumn(), getIndex());
+                //log.info("DragEntered");
+            });
+
+            setOnMouseReleased(event -> {
+                getTableView().getSelectionModel().clearAndSelect(getIndex(), getTableColumn());
+            });
+        }
+
+        protected void performSelection(TableView<S> table, TableColumn<S, T> column, int index) {
+            final TablePositionBase anchor = TableCellBehavior.getAnchor(table, table.getFocusModel().getFocusedCell());
+            int columnIndex = table.getVisibleLeafIndex(column);
+
+            int minRowIndex = Math.min(anchor.getRow(), index);
+            int maxRowIndex = Math.max(anchor.getRow(), index);
+            TableColumnBase minColumn = anchor.getColumn() < columnIndex ? anchor.getTableColumn() : column;
+            TableColumnBase maxColumn = anchor.getColumn() >= columnIndex ? anchor.getTableColumn() : column;
+
+            table.getSelectionModel().clearSelection();
+            final int minColumnIndex = table.getVisibleLeafIndex((TableColumn) minColumn);
+            final int maxColumnIndex = table.getVisibleLeafIndex((TableColumn) maxColumn);
+            for (int _row = minRowIndex; _row <= maxRowIndex; _row++) {
+                for (int _col = minColumnIndex; _col <= maxColumnIndex; _col++) {
+                    table.getSelectionModel().select(_row, table.getVisibleLeafColumn(_col));
+                }
+            }
+
+            table.getFocusModel().focus(maxRowIndex, column);
+        }
+    }
+
+
     private void initialRotateTable() {
         rotateTableView.getSelectionModel().setCellSelectionEnabled(true);
+        rotateTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         rotateTableView.setEditable(true);
+
         TableUtils.installCopyPasteHandler(rotateTableView);
 
         Callback<TableColumn<RotateItem, String>, TableCell<RotateItem, String>> readOnlyStringCell
-                = p -> new TextFieldTableCell<RotateItem, String>(new DefaultStringConverter()) {
+                = p -> new DragSelectionCell<RotateItem, String>(new DefaultStringConverter()) {
             @Override
             public void commitEdit(String newValue) {
             }
         };
 
         Callback<TableColumn<RotateItem, Number>, TableCell<RotateItem, Number>> readOnlyNumberCell
-                = p -> new TextFieldTableCell<RotateItem, Number>(new NumberStringConverter()) {
+                = p -> new DragSelectionCell<RotateItem, Number>(new NumberStringConverter()) {
             @Override
             public void commitEdit(Number newValue) {
             }
@@ -1002,7 +1092,7 @@ public class RootController {
 
         rotateBacklogColumn.getStyleClass().add("my-table-column-number");
         rotateBacklogColumn.setCellValueFactory(cellData -> cellData.getValue().backlogProperty());
-        rotateBacklogColumn.setCellFactory(readOnlyStringCell);
+        rotateBacklogColumn.setCellFactory(readOnlyNumberCell);
 
         rotatePmQtyColumn.getStyleClass().add("my-table-column-number");
         rotatePmQtyColumn.setCellValueFactory(cellData -> cellData.getValue().pmQtyProperty());
@@ -1010,7 +1100,7 @@ public class RootController {
 
         rotateApQtyColumn.getStyleClass().add("my-table-column-number");
         rotateApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().stockApplyQtyTotalProperty());
-        rotateApQtyColumn.setCellFactory(cellData -> new TextFieldTableCell<RotateItem, Number>(new NumberStringConverter()) {
+        rotateApQtyColumn.setCellFactory(cellData -> new DragSelectionCell<RotateItem, Number>(new NumberStringConverter()) {
             @Override
             public void updateItem(Number item, boolean empty) {
                 super.updateItem(item, empty);
@@ -1031,9 +1121,9 @@ public class RootController {
                 } else if (ratio > 0 && (rotateItem.getStockApplyQtyTotal() % ratio) != 0) {
                     setStyle(basicStyle + "-fx-background-color: " + apQtyNotMultipleColor + ";");
                 } else if (item.intValue() == pmQty) {
-                    setStyle(basicStyle + "-fx-background-color: " + apQtyEqualPmQtyColor + ";"); // green
+                    setStyle(basicStyle + "-fx-background-color: " + apQtyEqualPmQtyColor + ";");
                 } else {
-                    setStyle(basicStyle + "-fx-background-color: #ffffff;");
+                    setStyle(basicStyle);
                 }
             }
 
@@ -1051,9 +1141,10 @@ public class RootController {
         rotateApplySetColumn.setCellFactory(readOnlyNumberCell);
 
         rotateRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
-        rotateRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        rotateRemarkColumn.setCellFactory(DragSelectionCell.forTableColumn());
         rotateRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getRowValue().remarkProperty().set(cellData.getNewValue());
+            UndoManager.getInstance().newInput(cellData.getRowValue().remarkProperty(),
+                     cellData.getNewValue());
             refreshAllTable();
             rotateTableView.requestFocus();
         });
@@ -1067,10 +1158,12 @@ public class RootController {
                 super.updateItem(item, empty);
                 if (item == null || empty) {
                     setStyle("");
-                } else if (item.getKitName().equals(rotateSelectedKit)) {
-                    setStyle("-fx-background-color: " + sameKitGroupColor + ";");
                 } else if (item.isDuplicate()) {
                     setStyle("-fx-background-color: #607D8B;");  // gray
+                } else if (item.isKit() && item.getKitName().equals(rotateSelectedKit)) {
+                    setStyle("-fx-background-color: " + sameKitGroupColor + ";");
+                } else if (!item.isKit() && item.getPartNumber().equals(rotateSelectedPart)) {
+                    setStyle("-fx-background-color: " + sameKitGroupColor + ";");
                 } else {
                     setStyle("");
                 }
@@ -1089,21 +1182,21 @@ public class RootController {
         TableUtils.installCopyPasteHandler(stockTableView);
 
         Callback<TableColumn<StockItem, String>, TableCell<StockItem, String>> readOnlyStringCell
-                = p -> new TextFieldTableCell<StockItem, String>() {
+                = p -> new DragSelectionCell<StockItem, String>() {
             @Override
             public void commitEdit(String newValue) {
             }
         };
 
         Callback<TableColumn<StockItem, Number>, TableCell<StockItem, Number>> readOnlyNumberCell
-                = p -> new TextFieldTableCell<StockItem, Number>(new NumberStringConverter()) {
+                = p -> new DragSelectionCell<StockItem, Number>(new NumberStringConverter()) {
             @Override
             public void commitEdit(Number newValue) {
             }
         };
 
         Callback<TableColumn<StockItem, String>, TableCell<StockItem, String>> samePoGroupStringCell
-                = p -> new TextFieldTableCell<StockItem, String>() {
+                = p -> new DragSelectionCell<StockItem, String>() {
             @Override
             public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -1147,7 +1240,7 @@ public class RootController {
 
         stockApQtyColumn.getStyleClass().add("my-table-column-number");
         stockApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
-        stockApQtyColumn.setCellFactory(cellData -> new TextFieldTableCell<StockItem, Number>(new NumberStringConverter()) {
+        stockApQtyColumn.setCellFactory(cellData -> new DragSelectionCell<StockItem, Number>(new NumberStringConverter()) {
             @Override
             public void updateItem(Number item, boolean empty) {
                 super.updateItem(item, empty);
@@ -1169,16 +1262,20 @@ public class RootController {
             }
         });
         stockApQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getRowValue().applyQtyProperty().set(cellData.getNewValue().intValue());
+            UndoManager.getInstance().newInput(
+                    cellData.getRowValue().applyQtyProperty(),
+                     cellData.getNewValue().intValue());
             updateStockTableTotal();
             refreshAllTable();
             stockTableView.requestFocus();
         });
 
         stockRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
-        stockRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        stockRemarkColumn.setCellFactory(DragSelectionCell.forTableColumn());
         stockRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getRowValue().remarkProperty().set(cellData.getNewValue());
+            UndoManager.getInstance().newInput(
+                    cellData.getRowValue().remarkProperty(),
+                   cellData.getNewValue());
             refreshAllTable();
             stockTableView.requestFocus();
         });
@@ -1207,21 +1304,21 @@ public class RootController {
         TableUtils.installCopyPasteHandler(purchaseTableView);
 
         Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> readOnlyStringCell
-                = p -> new TextFieldTableCell<PurchaseItem, String>() {
+                = p -> new DragSelectionCell<PurchaseItem, String>() {
             @Override
             public void commitEdit(String newValue) {
             }
         };
 
         Callback<TableColumn<PurchaseItem, Number>, TableCell<PurchaseItem, Number>> readOnlyNumberCell
-                = p -> new TextFieldTableCell<PurchaseItem, Number>(new NumberStringConverter()) {
+                = p -> new DragSelectionCell<PurchaseItem, Number>(new NumberStringConverter()) {
             @Override
             public void commitEdit(Number newValue) {
             }
         };
 
         Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> samePoGroupStringCell
-                = p -> new TextFieldTableCell<PurchaseItem, String>() {
+                = p -> new DragSelectionCell<PurchaseItem, String>() {
             @Override
             public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -1259,7 +1356,7 @@ public class RootController {
 
         purchaseApQtyColumn.getStyleClass().add("my-table-column-number");
         purchaseApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
-        purchaseApQtyColumn.setCellFactory(cellData -> new TextFieldTableCell<PurchaseItem, Number>(new NumberStringConverter()) {
+        purchaseApQtyColumn.setCellFactory(cellData -> new DragSelectionCell<PurchaseItem, Number>(new NumberStringConverter()) {
             @Override
             public void updateItem(Number item, boolean empty) {
                 super.updateItem(item, empty);
@@ -1282,7 +1379,8 @@ public class RootController {
             }
         });
         purchaseApQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getRowValue().applyQtyProperty().set(cellData.getNewValue().intValue());
+            UndoManager.getInstance().newInput(cellData.getRowValue().applyQtyProperty(),
+                    cellData.getNewValue().intValue());
             updatePurchaseTableTotal();
             refreshAllTable();
             purchaseTableView.requestFocus();
@@ -1290,13 +1388,14 @@ public class RootController {
 
         purchaseApplySetColumn.getStyleClass().add("my-table-column-number");
         purchaseApplySetColumn.setCellValueFactory(cellData -> cellData.getValue().applySetProperty());
-        purchaseApplySetColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
+        purchaseApplySetColumn.setCellFactory(DragSelectionCell.forTableColumn(new NumberStringConverter()));
         purchaseApplySetColumn.setCellFactory(readOnlyNumberCell);
 
         purchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
-        purchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        purchaseRemarkColumn.setCellFactory(DragSelectionCell.forTableColumn());
         purchaseRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getRowValue().remarkProperty().set(cellData.getNewValue());
+            UndoManager.getInstance().newInput(cellData.getRowValue().remarkProperty(),
+                    cellData.getNewValue());
             refreshAllTable();
             purchaseTableView.requestFocus();
         });
@@ -1327,21 +1426,21 @@ public class RootController {
         TableUtils.installCopyPasteHandler(noneStPurchaseTableView);
 
         Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> readOnlyStringCell
-                = p -> new TextFieldTableCell<PurchaseItem, String>() {
+                = p -> new DragSelectionCell<PurchaseItem, String>() {
             @Override
             public void commitEdit(String newValue) {
             }
         };
 
         Callback<TableColumn<PurchaseItem, Number>, TableCell<PurchaseItem, Number>> readOnlyNumberCell
-                = p -> new TextFieldTableCell<PurchaseItem, Number>(new NumberStringConverter()) {
+                = p -> new DragSelectionCell<PurchaseItem, Number>(new NumberStringConverter()) {
             @Override
             public void commitEdit(Number newValue) {
             }
         };
 
         Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> samePoGroupStringCell
-                = p -> new TextFieldTableCell<PurchaseItem, String>() {
+                = p -> new DragSelectionCell<PurchaseItem, String>() {
             @Override
             public void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -1379,7 +1478,7 @@ public class RootController {
 
         noneStPurchaseApQtyColumn.getStyleClass().add("my-table-column-number");
         noneStPurchaseApQtyColumn.setCellValueFactory(cellData -> cellData.getValue().applyQtyProperty());
-        noneStPurchaseApQtyColumn.setCellFactory(cellData -> new TextFieldTableCell<PurchaseItem, Number>(new NumberStringConverter()) {
+        noneStPurchaseApQtyColumn.setCellFactory(cellData -> new DragSelectionCell<PurchaseItem, Number>(new NumberStringConverter()) {
             @Override
             public void updateItem(Number item, boolean empty) {
                 super.updateItem(item, empty);
@@ -1402,7 +1501,8 @@ public class RootController {
             }
         });
         noneStPurchaseApQtyColumn.setOnEditCommit(cellData -> {
-            cellData.getRowValue().applyQtyProperty().set(cellData.getNewValue().intValue());
+            UndoManager.getInstance().newInput(cellData.getRowValue().applyQtyProperty(),
+                    cellData.getNewValue().intValue());
             updateNoneStPurchaseTableTotal();
             refreshAllTable();
             noneStPurchaseTableView.requestFocus();
@@ -1413,9 +1513,10 @@ public class RootController {
         noneStPurchaseApplySetColumn.setCellFactory(readOnlyNumberCell);
 
         noneStPurchaseRemarkColumn.setCellValueFactory(cellData -> cellData.getValue().remarkProperty());
-        noneStPurchaseRemarkColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        noneStPurchaseRemarkColumn.setCellFactory(DragSelectionCell.forTableColumn());
         noneStPurchaseRemarkColumn.setOnEditCommit(cellData -> {
-            cellData.getRowValue().remarkProperty().set(cellData.getNewValue());
+            UndoManager.getInstance().newInput(cellData.getRowValue().remarkProperty(),
+                    cellData.getNewValue());
             refreshAllTable();
             noneStPurchaseTableView.requestFocus();
         });
@@ -1451,30 +1552,36 @@ public class RootController {
     }
 
     public void refreshAllTable() {
-        rotateKitColumn.setVisible(false);
-        rotateKitColumn.setVisible(true);
+        rotateTableView.refresh();
+//        rotateKitColumn.setVisible(false);
+//        rotateKitColumn.setVisible(true);
 
-        stockPoColumn.setVisible(false);
-        stockPoColumn.setVisible(true);
+        stockTableView.refresh();
+//        stockPoColumn.setVisible(false);
+//        stockPoColumn.setVisible(true);
 
-        purchasePoColumn.setVisible(false);
-        purchasePoColumn.setVisible(true);
+        purchaseTableView.refresh();
+//        purchasePoColumn.setVisible(false);
+//        purchasePoColumn.setVisible(true);
 
-        noneStPurchasePoColumn.setVisible(false);
-        noneStPurchasePoColumn.setVisible(true);
+        noneStPurchaseTableView.refresh();
+//        noneStPurchasePoColumn.setVisible(false);
+//        noneStPurchasePoColumn.setVisible(true);
     }
 
     private void handleSelectedRotateItem(RotateItem newRotateItem) {
         if (newRotateItem == null) {
             rotateSelectedKit = "";
             rotateSelectedPart = "";
+            currentRotateItem = null;
             stockTableView.setItems(FXCollections.observableArrayList());
             noneStPurchaseTableView.setItems(FXCollections.observableArrayList());
             return;
         }
 
-        rotateKitColumn.setVisible(false);
-        rotateKitColumn.setVisible(true);
+        rotateTableView.refresh();
+//        rotateKitColumn.setVisible(false);
+//        rotateKitColumn.setVisible(true);
 
         boolean kitUpdate = currentRotateItem == null || !newRotateItem.isKit() ||
                 !newRotateItem.getKitName().equals(currentRotateItem.getKitName());
@@ -1502,9 +1609,8 @@ public class RootController {
             stockPartNumCombo.setValue(newRotateItem.getPartNumber());
         }
 
-
-        updateStockTable(newRotateItem);
         updateNoneStPurchaseTable(newRotateItem);
+        updateStockTable(newRotateItem);
 
         updateRotateTableTotal();
     }
@@ -1517,8 +1623,9 @@ public class RootController {
             return;
         }
 
-        stockPoColumn.setVisible(false);
-        stockPoColumn.setVisible(true);
+        stockTableView.refresh();
+//        stockPoColumn.setVisible(false);
+//        stockPoColumn.setVisible(true);
 
         currentStockItem = newStockItem;
         stockSelectedPo = newStockItem.getPo();
@@ -1538,8 +1645,9 @@ public class RootController {
             return;
         }
 
-        purchasePoColumn.setVisible(false);
-        purchasePoColumn.setVisible(true);
+        purchaseTableView.refresh();
+//        purchasePoColumn.setVisible(false);
+//        purchasePoColumn.setVisible(true);
 
         purchaseSelectedPo = newPurchaseItem.getPo();
         updatePurchaseTableTotal();
@@ -1552,8 +1660,9 @@ public class RootController {
             return;
         }
 
-        noneStPurchasePoColumn.setVisible(false);
-        noneStPurchasePoColumn.setVisible(true);
+        noneStPurchaseTableView.refresh();
+//        noneStPurchasePoColumn.setVisible(false);
+//        noneStPurchasePoColumn.setVisible(true);
 
         noneStPurchaseSelectedPo = newPurchaseItem.getPo();
         noneStPurchaseSelectedPart = newPurchaseItem.getPartNumber();
@@ -1578,13 +1687,13 @@ public class RootController {
 
         if (rotateItem != null) {
             showAllParts = false;
-            updateStockTable(rotateItem);
             updateNoneStPurchaseTable(rotateItem);
+            updateStockTable(rotateItem);
         } else {
             if (!showAllParts) {
                 showAllParts = true;
-                updateStockTable(currentRotateItem);
                 updateNoneStPurchaseTable(currentRotateItem);
+                updateStockTable(currentRotateItem);
             }
         }
     }
@@ -1611,7 +1720,7 @@ public class RootController {
 
         if (purchaseTableView.getItems().size() > 0) {
             //purchaseTableView.scrollTo(0);
-            purchaseTableView.getFocusModel().focus(null);
+            purchaseTableView.getFocusModel().focus(-1);
             purchaseTableView.getSelectionModel().clearSelection();
             purchasePoColumn.setVisible(false);
             purchasePoColumn.setVisible(true);
@@ -1630,7 +1739,7 @@ public class RootController {
         }
 
         if (noneStPurchaseTableView.getItems().size() > 0) {
-            noneStPurchaseTableView.getFocusModel().focus(null);
+            noneStPurchaseTableView.getFocusModel().focus(-1);
             noneStPurchaseTableView.getSelectionModel().clearSelection();
             noneStPurchasePoColumn.setVisible(false);
             noneStPurchasePoColumn.setVisible(true);
@@ -1639,7 +1748,7 @@ public class RootController {
 
     private void updateRotateTable() {
 
-        rotateTableView.getFocusModel().focus(null);
+        rotateTableView.getFocusModel().focus(-1);
         rotateTableView.setItems(FXCollections.observableArrayList());
 
         ObservableList<RotateItem> obsList = collection.getRotateObsList();
@@ -1677,7 +1786,7 @@ public class RootController {
         // 5. Add sorted (and filtered) data to the table.
         rotateTableView.setItems(sortedData);
         if (obsList.size() > 0) {
-            rotateTableView.getSelectionModel().select(0, rotateApplySetColumn);
+            rotateTableView.getSelectionModel().clearAndSelect(0, rotateApplySetColumn);
         }
 
         rotateTableView.requestFocus();
@@ -1686,7 +1795,7 @@ public class RootController {
 
     private void updateStockTable(RotateItem rotateItem) {
         stockTableUpdateTag++;
-        stockTableView.getFocusModel().focus(null);
+        stockTableView.getFocusModel().focus(-1);
         stockTableView.setItems(FXCollections.observableArrayList());
         if (rotateItem.isDuplicate()) {
             stockTableView.setPlaceholder(new Label("重複的項目!! 我無法幫妳了 orz...."));
@@ -1705,7 +1814,7 @@ public class RootController {
 
             stockTableView.setItems(sortedData);
             if (obsList.size() > 0) {
-                stockTableView.getSelectionModel().select(0, stockApQtyColumn);
+                stockTableView.getSelectionModel().clearAndSelect(0, stockApQtyColumn);
             }
         }
 
@@ -1719,7 +1828,7 @@ public class RootController {
         }
         purchaseTableUpdateTag = stockTableUpdateTag;
 
-        purchaseTableView.getFocusModel().focus(null);
+        purchaseTableView.getFocusModel().focus(-1);
         purchaseTableView.setItems(FXCollections.observableArrayList());
         if (!stockItem.getRotateItem().isDuplicate()) {
             ObservableList<PurchaseItem> obsList;
@@ -1741,7 +1850,7 @@ public class RootController {
             sortedData.comparatorProperty().bind(purchaseTableView.comparatorProperty());
             purchaseTableView.setItems(sortedData);
             if (obsList.size() > 0) {
-                purchaseTableView.getSelectionModel().select(0, purchaseApQtyColumn);
+                purchaseTableView.getSelectionModel().clearAndSelect(0, purchaseApQtyColumn);
             }
         }
 
@@ -1757,7 +1866,7 @@ public class RootController {
 
     private void updateNoneStPurchaseTable(RotateItem rotateItem) {
 
-        noneStPurchaseTableView.getFocusModel().focus(null);
+        noneStPurchaseTableView.getFocusModel().focus(-1);
         noneStPurchaseTableView.setItems(FXCollections.observableArrayList());
         if (!rotateItem.isDuplicate()) {
             ObservableList<PurchaseItem> obsList;
@@ -1785,7 +1894,7 @@ public class RootController {
             sortedData.comparatorProperty().bind(noneStPurchaseTableView.comparatorProperty());
             noneStPurchaseTableView.setItems(sortedData);
             if (obsList.size() > 0) {
-                noneStPurchaseTableView.getSelectionModel().select(0, noneStPurchaseApQtyColumn);
+                noneStPurchaseTableView.getSelectionModel().clearAndSelect(0, noneStPurchaseApQtyColumn);
             }
         }
 
