@@ -15,8 +15,8 @@ public class Main extends Application {
 
     private Stage primaryStage;
 
-    RotateCollection collection = new RotateCollection();
-    static RootController controller;
+    private RotateCollection collection = new RotateCollection();
+    private static RootController controller;
 
     private boolean maxStage = false;
 

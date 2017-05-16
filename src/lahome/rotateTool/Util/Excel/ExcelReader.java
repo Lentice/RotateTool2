@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import java.util.Date;
 import java.util.Locale;
 
+@SuppressWarnings("unused")
 public class ExcelReader {
     private static final Logger log = LogManager.getLogger(ExcelReader.class.getName());
 
@@ -172,6 +173,7 @@ public class ExcelReader {
         return (int) cellGetValue(cell);
     }
 
+    @SuppressWarnings("deprecation")
     private String cellGetString(Cell cell) {
         int cellType = cell.getCellType();
         try {
@@ -215,6 +217,7 @@ public class ExcelReader {
         return "";
     }
 
+    @SuppressWarnings("deprecation")
     private double cellGetValue(Cell cell) {
         try {
             int cellType = cell.getCellType();

@@ -4,6 +4,7 @@ import javafx.beans.property.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@SuppressWarnings("WeakerAccess")
 public class PurchaseItem {
     private static final Logger log = LogManager.getLogger(PurchaseItem.class.getName());
 

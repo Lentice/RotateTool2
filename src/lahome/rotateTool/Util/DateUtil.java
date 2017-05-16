@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 
+@SuppressWarnings("unused")
 public class DateUtil {
 
     private static final String LOCAL_DATE_PATTERN = "yyyy/MM/dd";
@@ -44,6 +45,7 @@ public class DateUtil {
         return LOCAL_DATE_FORMATTER.format(date);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static LocalDate parseToLocalDate(String dateString) {
         try {
             return LOCAL_DATE_FORMATTER.parse(dateString, LocalDate::from);

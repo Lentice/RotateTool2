@@ -8,9 +8,7 @@ import javafx.scene.control.TablePosition;
 
 import java.util.Stack;
 
-/**
- * Created by Administrator on 2017/5/15.
- */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class UndoManager {
 
     private static UndoManager instance = null;

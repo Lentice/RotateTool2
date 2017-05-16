@@ -376,10 +376,13 @@ public class RootController {
     private String rotateSelectedPart = "";
     private String stockSelectedPo = "";
     private String stockSelectedPart = "";
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private String purchaseSelectedPo = "";
     private String noneStPurchaseSelectedPo = "";
     private String noneStPurchaseSelectedPart = "";
+
     private boolean showAllParts = true;
+    @SuppressWarnings("FieldCanBeLocal")
     private final String ALL_PARTS = "All";
     private RotateItem currentRotateItem;
     private StockItem currentStockItem;
@@ -419,6 +422,8 @@ public class RootController {
 
     public void saveSetting() {
         String path;
+
+        @SuppressWarnings("SpellCheckingInspection")
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
 
         prefs.put("LatestDir", latestDir.getPath());
@@ -512,7 +517,9 @@ public class RootController {
         prefs.put("NoneStPurchaseRemarkWidth", String.valueOf(noneStPurchaseRemarkColumn.getWidth()));
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void loadSetting() {
+        @SuppressWarnings("SpellCheckingInspection")
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
 
         latestDir = new File(prefs.get("LatestDir", System.getProperty("user.dir")));
@@ -900,6 +907,7 @@ public class RootController {
         }).start();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void showAlertWarning(String title, String header, String content, String detail) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -1811,6 +1819,7 @@ public class RootController {
 
             noneStPurchaseFilterField.textProperty().addListener((ov, oldVal, newVal) ->
                     filteredData.setPredicate(purchaseItem -> {
+                        //noinspection SimplifiableIfStatement
                         if (newVal == null || newVal.isEmpty()) {
                             return true;
                         }

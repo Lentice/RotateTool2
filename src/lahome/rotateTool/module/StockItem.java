@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class StockItem {
     private static final Logger log = LogManager.getLogger(StockItem.class.getName());
 

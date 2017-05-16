@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import java.util.Calendar;
 import java.util.Date;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class StreamingCell implements Cell {
 
     private static final String FALSE_AS_STRING = "0";
@@ -132,6 +133,7 @@ public class StreamingCell implements Cell {
      *
      * @return the cell type
      */
+    @SuppressWarnings("deprecation")
     @Override
     public int getCellType() {
         return getCellTypeEnum().getCode();
@@ -193,6 +195,7 @@ public class StreamingCell implements Cell {
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
      * @throws NumberFormatException if the cell value isn't a parsable <code>double</code>.
      */
+    @SuppressWarnings("deprecation")
     @Override
     public Date getDateCellValue() {
         if (getCellType() == CELL_TYPE_STRING) {
@@ -207,6 +210,7 @@ public class StreamingCell implements Cell {
      *
      * @return the value of the cell as a date
      */
+    @SuppressWarnings("deprecation")
     @Override
     public boolean getBooleanCellValue() {
         int cellType = getCellType();
@@ -222,7 +226,7 @@ public class StreamingCell implements Cell {
         }
     }
 
-    private static RuntimeException typeMismatch(int expectedTypeCode, int actualTypeCode, boolean isFormulaCell) {
+    private static RuntimeException typeMismatch(int expectedTypeCode, int actualTypeCode, @SuppressWarnings("SameParameterValue") boolean isFormulaCell) {
         String msg = "Cannot get a "
                 + getCellTypeName(expectedTypeCode) + " value from a "
                 + getCellTypeName(actualTypeCode) + " " + (isFormulaCell ? "formula " : "") + "cell";
@@ -232,6 +236,7 @@ public class StreamingCell implements Cell {
     /**
      * Used to help format error messages
      */
+    @SuppressWarnings("deprecation")
     private static String getCellTypeName(int cellTypeCode) {
         switch (cellTypeCode) {
             case CELL_TYPE_BLANK:
@@ -270,6 +275,7 @@ public class StreamingCell implements Cell {
      * {@link #CELL_TYPE_BOOLEAN}, {@link #CELL_TYPE_ERROR}) depending
      * on the cached value of the formula
      */
+    @SuppressWarnings("deprecation")
     @Override
     public int getCachedFormulaResultType() {
         if (type != null && "str".equals(type)) {

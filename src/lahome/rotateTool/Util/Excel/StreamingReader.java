@@ -21,6 +21,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import java.io.InputStream;
 import java.util.Iterator;
 
+@SuppressWarnings("WeakerAccess")
 public abstract class StreamingReader extends DefaultHandler {
 
     // 共享字符串表

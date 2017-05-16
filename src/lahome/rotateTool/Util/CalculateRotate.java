@@ -8,9 +8,6 @@ import lahome.rotateTool.module.StockItem;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Administrator on 2017/5/14.
- */
 public class CalculateRotate {
 
     private static UndoManager undoManager;

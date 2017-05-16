@@ -5,6 +5,7 @@ import org.apache.poi.ss.util.CellReference;
 /**
  * Created by Administrator on 2017/5/6.
  */
+@SuppressWarnings("WeakerAccess")
 public class ExcelSettings {
 
     public static String rotateFilePath;

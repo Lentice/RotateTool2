@@ -12,9 +12,7 @@ import lahome.rotateTool.module.StockItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Created by Administrator on 2017/5/6.
- */
+@SuppressWarnings("WeakerAccess")
 public class ExcelSaver {
     private static final Logger log = LogManager.getLogger(PurchaseItem.class.getName());
 
@@ -65,12 +63,12 @@ public class ExcelSaver {
             Dispatch workbooks = excel.getProperty("Workbooks").toDispatch();
             Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant(ExcelSettings.rotateFilePath)).toDispatch();
             Dispatch sheets = Dispatch.get(workbook, "Worksheets").toDispatch();//獲得所有的Sheet
-            int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
+            //int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
             Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{ExcelSettings.rotateSheetIndex}, new int[1]).toDispatch();
-            String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
-            Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
-            Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
-            int rowCount = Dispatch.get(row, "Count").getInt();//excel的使用的行數
+            //String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
+            //Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
+            //Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
+            //int rowCount = Dispatch.get(row, "Count").getInt();//excel的使用的行數
 
             currentSheet = sheet;
 
@@ -115,12 +113,12 @@ public class ExcelSaver {
             Dispatch workbooks = excel.getProperty("Workbooks").toDispatch();
             Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant(ExcelSettings.stockFilePath)).toDispatch();
             Dispatch sheets = Dispatch.get(workbook, "Worksheets").toDispatch();//獲得所有的Sheet
-            int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
+            //int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
             Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{ExcelSettings.stockSheetIndex}, new int[1]).toDispatch();
-            String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
-            Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
-            Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
-            int rowCount = Dispatch.get(row, "Count").getInt();//excel的使用的行數
+            //String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
+            //Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
+            //Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
+            //int rowCount = Dispatch.get(row, "Count").getInt();//excel的使用的行數
 
             currentSheet = sheet;
 
@@ -161,12 +159,12 @@ public class ExcelSaver {
             Dispatch workbooks = excel.getProperty("Workbooks").toDispatch();
             Dispatch workbook = Dispatch.call(workbooks, "Open", new Variant(ExcelSettings.purchaseFilePath)).toDispatch();
             Dispatch sheets = Dispatch.get(workbook, "Worksheets").toDispatch();//獲得所有的Sheet
-            int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
+            //int SheetCount = Dispatch.get(sheets, "Count").getInt();//獲得有多少個sheet
             Dispatch sheet = Dispatch.invoke(sheets, "Item", Dispatch.Get, new Object[]{ExcelSettings.purchaseSheetIndex}, new int[1]).toDispatch();
-            String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
-            Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
-            Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
-            int rowCount = Dispatch.get(row, "Count").getInt();//excel的使用的行數
+            //String sheetName = Dispatch.get(sheet, "Name").toString();//獲得sheet的名字
+            //Dispatch userRange = Dispatch.call(sheet, "UsedRange").toDispatch();//獲取Excel使用的sheet
+            //Dispatch row = Dispatch.call(userRange, "Rows").toDispatch();
+            //int rowCount = Dispatch.get(row, "Count").getInt();//excel的使用的行數
 
             currentSheet = sheet;
 

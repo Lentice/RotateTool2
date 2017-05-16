@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class RotateItem {
     private static final Logger log = LogManager.getLogger(RotateItem.class.getName());
 

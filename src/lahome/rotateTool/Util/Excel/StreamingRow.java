@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.*;
 
 import java.util.Iterator;
 
+@SuppressWarnings("WeakerAccess")
 public class StreamingRow implements Row {
     private int rowIndex;
     private int maxColumnIndex;
