@@ -6,7 +6,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
-import lahome.rotateTool.view.RootController;
 
 /**
  * Created by LenticeTsai on 2017/5/16.

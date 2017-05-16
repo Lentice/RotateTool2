@@ -294,6 +294,33 @@ public class StreamingCell implements Cell {
     }
 
     /**
+     * Get the value of the cell as a XSSFRichTextString
+     * <p>
+     * For numeric cells we throw an exception. For blank cells we return an empty string.
+     * For formula cells we return the pre-calculated value if a string, otherwise an exception
+     * </p>
+     *
+     * @return the value of the cell as a XSSFRichTextString
+     */
+    @Override
+    public XSSFRichTextString getRichStringCellValue() {
+        CellType cellType = getCellTypeEnum();
+        XSSFRichTextString rt;
+        switch (cellType) {
+            case BLANK:
+                rt = new XSSFRichTextString("");
+                break;
+            case STRING:
+                rt = new XSSFRichTextString(getStringCellValue());
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+        return rt;
+    }
+
+
+    /**
      * Not supported
      */
     @Override
@@ -383,32 +410,6 @@ public class StreamingCell implements Cell {
     @Override
     public void setCellFormula(String formula) throws FormulaParseException {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Get the value of the cell as a XSSFRichTextString
-     * <p>
-     * For numeric cells we throw an exception. For blank cells we return an empty string.
-     * For formula cells we return the pre-calculated value if a string, otherwise an exception
-     * </p>
-     *
-     * @return the value of the cell as a XSSFRichTextString
-     */
-    @Override
-    public XSSFRichTextString getRichStringCellValue() {
-        CellType cellType = getCellTypeEnum();
-        XSSFRichTextString rt;
-        switch (cellType) {
-            case BLANK:
-                rt = new XSSFRichTextString("");
-                break;
-            case STRING:
-                rt = new XSSFRichTextString(getStringCellValue());
-                break;
-            default:
-                throw new UnsupportedOperationException();
-        }
-        return rt;
     }
 
     /**

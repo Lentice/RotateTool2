@@ -1,6 +1,5 @@
 package lahome.rotateTool.module;
 
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import gnu.trove.map.hash.THashMap;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -8,7 +7,8 @@ import javafx.collections.ObservableList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RotateItem {
     private static final Logger log = LogManager.getLogger(RotateItem.class.getName());

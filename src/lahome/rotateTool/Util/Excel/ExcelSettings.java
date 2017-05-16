@@ -1,9 +1,6 @@
 package lahome.rotateTool.Util.Excel;
 
-import javafx.beans.property.DoubleProperty;
 import org.apache.poi.ss.util.CellReference;
-
-import java.util.Locale;
 
 /**
  * Created by Administrator on 2017/5/6.
