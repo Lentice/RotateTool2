@@ -124,8 +124,8 @@ public class StockItem {
     }
 
     public void addPurchaseItem(PurchaseItem item) {
-        log.debug(String.format("Add purchase: %s, %s, %s, %s, %d",
-                rotateItem.getKitName(), rotateItem.getPartNumber(), item.getPo(), item.getGrDate(), item.getGrQty()));
+//        log.debug(String.format("Add purchase: %s, %s, %s, %s, %d",
+//                rotateItem.getKitName(), rotateItem.getPartNumber(), item.getPo(), item.getGrDate(), item.getGrQty()));
 
         Date grDate = DateUtil.parse(item.getGrDate());
         Date earliestDate = DateUtil.parse(getEarliestGrDate());

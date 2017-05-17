@@ -96,9 +96,9 @@ public class RotateItem {
 
     public void addStockItem(StockItem item) {
 
-        log.debug(String.format("Add stock: %s, %s, %s, %s, %d, %s, %d",
-                getKitName(), getPartNumber(), getBacklog(), item.getPo(), item.getStockQty(), item.getDc(),
-                item.getApplyQty()));
+//        log.debug(String.format("Add stock: %s, %s, %s, %s, %d, %s, %d",
+//                getKitName(), getPartNumber(), getBacklog(), item.getPo(), item.getStockQty(), item.getDc(),
+//                item.getApplyQty()));
 
         item.setRotateItem(this);
 

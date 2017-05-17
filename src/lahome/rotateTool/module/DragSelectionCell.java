@@ -53,8 +53,10 @@ public class DragSelectionCell<S, T> extends TextFieldTableCell<S, T> {
         TableColumnBase minColumn = anchor.getColumn() < columnIndex ? anchor.getTableColumn() : column;
         TableColumnBase maxColumn = anchor.getColumn() >= columnIndex ? anchor.getTableColumn() : column;
 
-        final int minColumnIndex = table.getVisibleLeafIndex((TableColumn) minColumn);
-        final int maxColumnIndex = table.getVisibleLeafIndex((TableColumn) maxColumn);
+        @SuppressWarnings("unchecked")
+        final int minColumnIndex = table.getVisibleLeafIndex((TableColumn<S,?>) minColumn);
+        @SuppressWarnings("unchecked")
+        final int maxColumnIndex = table.getVisibleLeafIndex((TableColumn<S,?>) maxColumn);
 
         table.getSelectionModel().clearSelection();
         for (int _row = minRowIndex; _row <= maxRowIndex; _row++) {

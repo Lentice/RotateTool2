@@ -28,8 +28,8 @@ public class RotateCollection {
 
     public void addRotate(RotateItem item) {
 
-        log.debug(String.format("Add rotate: %s, %s, %d, %s",
-                item.getKitName(), item.getPartNumber(), item.getPmQty(), item.isKit() ? "K" : "S"));
+//        log.debug(String.format("Add rotate: %s, %s, %d, %s",
+//                item.getKitName(), item.getPartNumber(), item.getPmQty(), item.isKit() ? "K" : "S"));
 
         String key = getRotateKey(item.getKitName(), item.getPartNumber());
         RotateItem rotateItem = rotateItemMap.get(key);

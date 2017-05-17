@@ -127,8 +127,8 @@ public class UndoManager {
         void undo() {
             if (tablePostion != null) {
                 tablePostion.getTableView().requestFocus();
-                tablePostion.getTableView().scrollTo(tablePostion.getRow());
                 tablePostion.getTableView().scrollToColumnIndex(tablePostion.getColumn());
+                tablePostion.getTableView().scrollTo(tablePostion.getRow());
                 tablePostion.getTableView().getSelectionModel().clearAndSelect(
                         tablePostion.getRow()
                 );
