@@ -720,11 +720,11 @@
                                                       <Insets right="20.0" />
                                                    </padding>
                                                 </Label>
-                                                <HBox alignment="CENTER_RIGHT" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                                                <HBox alignment="CENTER_RIGHT" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0">
                                                    <children>
-                                                      <ImageView fx:id="filterIcon" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="filterIcon" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                          <HBox.margin>
-                                                            <Insets right="10.0" />
+                                                            <Insets right="5.0" />
                                                          </HBox.margin>
                                                          <image>
                                                             <Image url="@images/active-search-2-48.png" />
@@ -836,11 +836,11 @@
                                                       <Font name="System Bold" size="18.0" />
                                                    </font>
                                                 </Label>
-                                                <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                                                <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0">
                                                    <children>
-                                                      <ImageView fx:id="filterIcon2" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="filterIcon2" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                          <HBox.margin>
-                                                            <Insets right="10.0" />
+                                                            <Insets right="5.0" />
                                                          </HBox.margin>
                                                          <image>
                                                             <Image url="@images/active-search-2-48.png" />
@@ -1075,6 +1075,23 @@
                                                       </TableView>
                                                    </children>
                                                 </VBox>
+                                                <HBox alignment="CENTER_RIGHT" layoutX="302.0" layoutY="8.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <ImageView fx:id="filterIcon21" fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                                         <HBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </HBox.margin>
+                                                         <image>
+                                                            <Image url="@images/active-search-2-48.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                      <JFXTextField fx:id="stockFilterField" focusTraversable="false" prefColumnCount="200" prefWidth="200.0" promptText="Search PO">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </JFXTextField>
+                                                   </children>
+                                                </HBox>
                                              </children>
                                           </AnchorPane>
                                           <AnchorPane>

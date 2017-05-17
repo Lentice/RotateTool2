@@ -236,6 +236,9 @@ public class RootController {
     private ComboBox<String> stockPartNumCombo;
 
     @FXML
+    private JFXTextField stockFilterField;
+
+    @FXML
     private TableView<StockItem> stockTableView;
 
     @FXML
@@ -1748,7 +1751,20 @@ public class RootController {
                 obsList = rotateItem.getStockItemObsList();
             }
 
-            SortedList<StockItem> sortedData = new SortedList<>(obsList);
+
+
+            FilteredList<StockItem> filteredData = new FilteredList<>(obsList, p -> true);
+            stockFilterField.textProperty().addListener((ov, oldVal, newVal) ->
+                    filteredData.setPredicate(stockItem -> {
+                        //noinspection SimplifiableIfStatement
+                        if (newVal == null || newVal.isEmpty()) {
+                            return true;
+                        }
+                        return stockItem.getPo().toLowerCase().contains(newVal.toLowerCase());
+                    })
+            );
+
+            SortedList<StockItem> sortedData = new SortedList<>(filteredData);
             sortedData.comparatorProperty().bind(stockTableView.comparatorProperty());
 
             stockTableView.setItems(sortedData);
