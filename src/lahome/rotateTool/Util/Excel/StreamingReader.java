@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -32,22 +33,22 @@ public abstract class StreamingReader extends DefaultHandler {
 
     private boolean useDate1904 = false;
 
-    private String lastContents;
+    private StringBuilder lastContents = new StringBuilder(1024);
 
     private int sheetIndex = -1;
     private int curRow = 0;
     private int curCol = 0;
     private String cellStyleString;
     private StreamingCell currentCell;
-    private StreamingRow row;
+    private StreamingRow row = new StreamingRow(0);
 
     public void processAllSheets(String filename) throws Exception {
         OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ);
         XSSFReader r = new XSSFReader(pkg);
-        StylesTable styles = r.getStylesTable();
-        SharedStringsTable sst = r.getSharedStringsTable();
+        stylesTable = r.getStylesTable();
+        sst = r.getSharedStringsTable();
 
-        XMLReader parser = fetchSheetParser(sst, styles);
+        XMLReader parser = fetchSheetParser();
         Iterator<InputStream> sheets = r.getSheetsData();
         while (sheets.hasNext()) {
             curRow = 0;
@@ -59,15 +60,16 @@ public abstract class StreamingReader extends DefaultHandler {
         }
 
         pkg.revert();
+        IOUtils.closeQuietly(pkg);
     }
 
     public void processOneSheet(String filename, int sheetIndex) throws Exception {
         OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ);
         XSSFReader r = new XSSFReader(pkg);
-        StylesTable styles = r.getStylesTable();
-        SharedStringsTable sst = r.getSharedStringsTable();
+        stylesTable = r.getStylesTable();
+        sst = r.getSharedStringsTable();
 
-        XMLReader parser = fetchSheetParser(sst, styles);
+        XMLReader parser = fetchSheetParser();
 
         // To look up the Sheet Name / Sheet Order / rID,
         //  you need to processOneSheet the core Workbook stream.
@@ -79,13 +81,12 @@ public abstract class StreamingReader extends DefaultHandler {
 
         sheet.close();
         pkg.revert();
+        IOUtils.closeQuietly(pkg);
     }
 
 
-    public XMLReader fetchSheetParser(SharedStringsTable sst, StylesTable stylesTable) throws SAXException {
+    public XMLReader fetchSheetParser() throws SAXException {
         XMLReader parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
-        this.sst = sst;
-        this.stylesTable = stylesTable;
         parser.setContentHandler(this);
         return parser;
     }
@@ -114,56 +115,60 @@ public abstract class StreamingReader extends DefaultHandler {
         }
     }
 
-    private String formattedContents() {
+    private String formattedContents(String content) {
         switch (currentCell.getType()) {
             case "s":           //string stored in shared table
-                int idx = Integer.parseInt(lastContents);
+                int idx = Integer.parseInt(content);
                 return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
             case "inlineStr":   //inline string (not in sst)
-                return new XSSFRichTextString(lastContents).toString();
+                return new XSSFRichTextString(content).toString();
             case "str":         //forumla type
-                return '"' + lastContents + '"';
+                return '"' + content + '"';
             case "e":           //error type
-                return "ERROR:  " + lastContents;
+                return "ERROR:  " + content;
             case "n":           //numeric type
-//                if(currentCell.getNumericFormat() != null && lastContents.length() > 0) {
+//                if(currentCell.getNumericFormat() != null && content.length() > 0) {
 //                    return dataFormatter.formatRawCellContents(
-//                            Double.parseDouble(lastContents),
+//                            Double.parseDouble(content),
 //                            currentCell.getNumericFormatIndex(),
 //                            currentCell.getNumericFormat());
 //                } else {
-                return lastContents;
+                return content;
 //                }
             default:
-                return lastContents;
+                return content;
         }
     }
 
-    private String unformattedContents() {
+    private String unformattedContents(String content) {
         switch (currentCell.getType()) {
             case "s":           //string stored in shared table
-                int idx = Integer.parseInt(lastContents);
+                int idx = Integer.parseInt(content);
                 return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
             case "inlineStr":   //inline string (not in sst)
-                return new XSSFRichTextString(lastContents).toString();
+                return new XSSFRichTextString(content).toString();
             default:
-                return lastContents;
+                return content;
         }
     }
 
     private void getCoordinate(String coord) {
-        for (int i = 1; i < coord.length(); i++) {
-            if (isNumber(coord.charAt(i))) {
-                try {
-                    if (curCol == 0)
-                        curRow = Integer.valueOf(coord.substring(i)) - 1;
+        int col = 0;
+        int row = 0;
 
-                    curCol = CellReference.convertColStringToIndex(coord.substring(0, i));
-                } catch (NumberFormatException ignore) {
-                }
-                break;
+        for (int i = 0; i < coord.length(); i++) {
+            char ch = coord.charAt(i);
+            if (!isNumber(ch)) {
+                col = col * 26 + ch - 65 + 1;
+            } else if (curCol == 0) {
+                row = row * 10 + ch - 48;
             }
         }
+
+        if (curCol == 0)
+            curRow = row - 1;
+
+        curCol = col - 1;
     }
 
     private boolean isNumber(char c) {
@@ -179,7 +184,7 @@ public abstract class StreamingReader extends DefaultHandler {
             if (postion != null) {
                 getCoordinate(postion);
             }
-            currentCell = new StreamingCell(curCol, curRow, useDate1904);
+            currentCell = row.createCell(curCol);
             //setFormatString(currentCell);
 
             String cellType = attributes.getValue("t");
@@ -191,12 +196,12 @@ public abstract class StreamingReader extends DefaultHandler {
 
             //cellStyleString = attributes.getValue("s");
             //if (cellStyleString != null) {
-                //try {
-                    //int index = Integer.parseInt(cellStyleString);
-                    //currentCell.setCellStyle(stylesTable.getStyleAt(index));
-                //} catch (NumberFormatException nfe) {
-                    //log.warn("Ignoring invalid style index {}", indexStr);
-                //}
+            //try {
+            //int index = Integer.parseInt(cellStyleString);
+            //currentCell.setCellStyle(stylesTable.getStyleAt(index));
+            //} catch (NumberFormatException nfe) {
+            //log.warn("Ignoring invalid style index {}", indexStr);
+            //}
             //}
         } else if ("dimension".equals(name)) {
             String ref = attributes.getValue("ref");
@@ -215,6 +220,7 @@ public abstract class StreamingReader extends DefaultHandler {
             String rowNum = attributes.getValue("r");
             try {
                 curRow = Integer.parseInt(rowNum) - 1;
+                row.setRowNum(curRow);
             } catch (NumberFormatException ignore) {
             }
         } else if ("f".equals(name)) {  // formula
@@ -227,36 +233,38 @@ public abstract class StreamingReader extends DefaultHandler {
         }
 
         // clear
-        lastContents = "";
+        lastContents.setLength(0);
     }
 
     public void endElement(String uri, String localName, String name)
             throws SAXException {
 
         if ("v".equals(name) || "t".equals(name)) {
-
-            currentCell.setRawContents(unformattedContents());
-            currentCell.setContents(formattedContents());
+            String content = lastContents.toString();
+            currentCell.setRawContents(unformattedContents(content));
+            //currentCell.setContents(formattedContents(content));
 
         } else if ("row".equals(name)) {
             getRows(sheetIndex, row);
-            row = null;
+            //row = null;
             curCol = 0;
             curRow++;
+            row.clear();
+            row.setRowNum(curRow);
         } else if ("c".equals(name)) {
-            if (row == null) {
-                row = new StreamingRow(curRow);
-            }
-            row.addCell(curCol, currentCell);
+            //if (row == null) {
+            //    row = new StreamingRow(curRow);
+            //}
+            //row.addCell(curCol, currentCell);
             curCol++;
         } else if ("f".equals(name)) {
-            currentCell.setFormula(lastContents);
+            currentCell.setFormula(lastContents.toString());
         }
     }
 
     public void characters(char[] ch, int start, int length)
             throws SAXException {
-        lastContents += new String(ch, start, length);
+        lastContents.append(ch, start, length);
     }
 
     @Override

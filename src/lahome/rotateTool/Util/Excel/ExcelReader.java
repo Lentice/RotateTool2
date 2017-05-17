@@ -19,6 +19,7 @@ public class ExcelReader {
     private static final Logger log = LogManager.getLogger(ExcelReader.class.getName());
 
     private int lastRow = 0;
+    private double oldProgress;
 
     private RotateCollection collection;
 
@@ -114,7 +115,7 @@ public class ExcelReader {
         if (cell == null) {
             return 0;
         }
-        int dc = (int)cellGetValue(cell);
+        int dc = (int) cellGetValue(cell);
         if (dc / 100 > 99)
             return 0;
         if (dc / 100 > 53)
@@ -324,15 +325,20 @@ public class ExcelReader {
 
     public void loadRotateExcel(DoubleProperty rotateProgress) {
         lastRow = 0;
+        oldProgress = 0;
 
         StreamingReader reader = new StreamingReader() {
             @Override
             public void getRows(int sheetIndex, Row row) {
                 int rowNum = row.getRowNum() + 1;
 
-
-                if (lastRow > 0)
-                    rotateProgress.set((double) rowNum / lastRow);
+                if (lastRow > 0) {
+                    double progress = (double) rowNum / lastRow;
+                    if (progress >= oldProgress + 0.01) {
+                        rotateProgress.set(progress);
+                        oldProgress = progress;
+                    }
+                }
 
                 if (rowNum < ExcelSettings.rotateFirstDataRow)
                     return;
@@ -381,14 +387,20 @@ public class ExcelReader {
 
     public void loadStockExcel(DoubleProperty stockProgress) {
         lastRow = 0;
+        oldProgress = 0;
 
         StreamingReader reader = new StreamingReader() {
             @Override
             public void getRows(int sheetIndex, Row row) {
                 int rowNum = row.getRowNum() + 1;
 
-                if (lastRow > 0)
-                    stockProgress.set((double) rowNum / lastRow);
+                if (lastRow > 0) {
+                    double progress = (double) rowNum / lastRow;
+                    if (progress >= oldProgress + 0.01) {
+                        stockProgress.set(progress);
+                        oldProgress = progress;
+                    }
+                }
 
                 if (rowNum < ExcelSettings.stockFirstDataRow)
                     return;
@@ -444,14 +456,20 @@ public class ExcelReader {
 
     public void loadPurchaseExcel(DoubleProperty purchaseProgress) {
         lastRow = 0;
+        oldProgress = 0;
 
         StreamingReader reader = new StreamingReader() {
             @Override
             public void getRows(int sheetIndex, Row row) {
                 int rowNum = row.getRowNum() + 1;
 
-                if (lastRow > 0)
-                    purchaseProgress.set((double) rowNum / lastRow);
+                if (lastRow > 0) {
+                    double progress = (double) rowNum / lastRow;
+                    if (progress >= oldProgress + 0.01) {
+                        purchaseProgress.set(progress);
+                        oldProgress = progress;
+                    }
+                }
 
                 if (rowNum < ExcelSettings.rotateFirstDataRow)
                     return;

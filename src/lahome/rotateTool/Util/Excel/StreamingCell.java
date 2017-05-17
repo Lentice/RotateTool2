@@ -10,17 +10,16 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import java.util.Calendar;
 import java.util.Date;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"WeakerAccess"})
 public class StreamingCell implements Cell {
 
     private static final String FALSE_AS_STRING = "0";
     private static final String TRUE_AS_STRING = "1";
 
     private int columnIndex;
-    private int rowIndex;
     private final boolean use1904Dates;
 
-    private Object contents;
+    //private Object contents;
     private Object rawContents;
     private String formula;
     private String numericFormat;
@@ -29,22 +28,14 @@ public class StreamingCell implements Cell {
     private String cachedFormulaResultType;
     private Row row;
 
-    public StreamingCell(int columnIndex, int rowIndex, boolean use1904Dates) {
+    public StreamingCell(Row row, int columnIndex) {
+        this.row = row;
         this.columnIndex = columnIndex;
-        this.rowIndex = rowIndex;
-        this.use1904Dates = use1904Dates;
+        this.use1904Dates = false;
     }
 
     public String toString() {
         return getStringCellValue();
-    }
-
-    public Object getContents() {
-        return contents;
-    }
-
-    public void setContents(Object contents) {
-        this.contents = contents;
     }
 
     public Object getRawContents() {
@@ -87,11 +78,6 @@ public class StreamingCell implements Cell {
         this.type = type;
     }
 
-    public void setRow(Row row) {
-        this.row = row;
-    }
-
-
   /* Supported */
 
     /**
@@ -111,7 +97,7 @@ public class StreamingCell implements Cell {
      */
     @Override
     public int getRowIndex() {
-        return rowIndex;
+        return row.getRowNum();
     }
 
     /**
@@ -147,7 +133,7 @@ public class StreamingCell implements Cell {
      */
     @Override
     public CellType getCellTypeEnum() {
-        if (contents == null || type == null) {
+        if (rawContents == null || type == null) {
             return CellType.BLANK;
         } else if ("n".equals(type)) {
             return CellType.NUMERIC;
@@ -172,7 +158,7 @@ public class StreamingCell implements Cell {
      */
     @Override
     public String getStringCellValue() {
-        return contents == null ? "" : (String) contents;
+        return rawContents == null ? "" : (String) rawContents;
     }
 
     /**
@@ -279,7 +265,7 @@ public class StreamingCell implements Cell {
     @Override
     public int getCachedFormulaResultType() {
         if (type != null && "str".equals(type)) {
-            if (contents == null || cachedFormulaResultType == null) {
+            if (rawContents == null || cachedFormulaResultType == null) {
                 return CELL_TYPE_BLANK;
             } else if ("n".equals(cachedFormulaResultType)) {
                 return CELL_TYPE_NUMERIC;
@@ -349,6 +335,7 @@ public class StreamingCell implements Cell {
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void setCellType(int cellType) {
         throw new UnsupportedOperationException();

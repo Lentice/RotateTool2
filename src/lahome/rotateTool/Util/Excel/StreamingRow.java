@@ -1,7 +1,5 @@
 package lahome.rotateTool.Util.Excel;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import org.apache.poi.ss.usermodel.*;
 
 import java.util.Iterator;
@@ -9,21 +7,40 @@ import java.util.Iterator;
 @SuppressWarnings("WeakerAccess")
 public class StreamingRow implements Row {
     private int rowIndex;
-    private int maxColumnIndex;
-    private TIntObjectMap<Cell> cellMap = new TIntObjectHashMap<Cell>();
+    private int maxColumnIndex = -1;
+    //private ArrayList<Cell> cellMap = new ArrayList<Cell>(255);
+    private StreamingCell[] cellArray = new StreamingCell[127];
 
     public StreamingRow(int rowIndex) {
         this.rowIndex = rowIndex;
     }
 
-    public void addCell(int columnIndex, Cell cell) {
-        cellMap.put(columnIndex, cell);
-        maxColumnIndex = Math.max(columnIndex, maxColumnIndex);
+    public void clear() {
+        int minSize = Math.min(maxColumnIndex, cellArray.length);
+        for (int i = 0; i <= minSize; i++) {
+            if (cellArray[i] != null) {
+                cellArray[i].setRawContents(null);
+            }
+        }
+        maxColumnIndex = -1;
     }
 
-    public TIntObjectMap<Cell> getCellMap() {
-        return cellMap;
+    public StreamingCell createCell(int columnIndex) {
+        if (cellArray[columnIndex] == null) {
+            cellArray[columnIndex] = new StreamingCell(this, columnIndex);
+        }
+
+        maxColumnIndex = Math.max(columnIndex, maxColumnIndex);
+        return cellArray[columnIndex];
     }
+//}
+//    public void addCell(int columnIndex, Cell cell) {
+//        if (cellArray[columnIndex] == null) {
+//            cell = new StreamingCell(this, columnIndex);
+//
+//        cellArray[columnIndex] = cell;
+//        maxColumnIndex = Math.max(columnIndex, maxColumnIndex);
+//    }
 
     /**
      * Get row number this row represents
@@ -34,6 +51,12 @@ public class StreamingRow implements Row {
         return rowIndex;
     }
 
+
+    @Override
+    public void setRowNum(int rowNum) {
+        this.rowIndex = rowNum;
+    }
+
     /**
      * Get the cell representing a given column (logical cell) 0-based.  If you
      * ask for a cell that is not defined, you get a null.
@@ -42,7 +65,7 @@ public class StreamingRow implements Row {
      * @return Cell representing that column or null if undefined.
      */
     public Cell getCell(int cellColumnIndex) {
-        return cellMap.get(cellColumnIndex);
+        return cellArray[cellColumnIndex];
     }
 
     public int getMaxColumnIndex() {
@@ -87,11 +110,6 @@ public class StreamingRow implements Row {
     }
 
     @Override
-    public Cell createCell(int column) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     @Deprecated
     public Cell createCell(int column, int type) {
         throw new UnsupportedOperationException();
@@ -104,11 +122,6 @@ public class StreamingRow implements Row {
 
     @Override
     public void removeCell(Cell cell) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRowNum(int rowNum) {
         throw new UnsupportedOperationException();
     }
 
