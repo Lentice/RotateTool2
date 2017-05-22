@@ -282,9 +282,15 @@
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                          </rowConstraints>
                                                          <children>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Row" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sheet Index" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Row" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -292,7 +298,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kit Name" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kit Name" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -300,7 +306,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part Number" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part Number" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -308,7 +314,12 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PM Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Backlog" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PM Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -316,7 +327,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ratio" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -324,7 +335,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Set" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ratio" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -332,7 +343,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Set" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -340,7 +351,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Remark" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Remark" GridPane.halignment="RIGHT" GridPane.rowIndex="9" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -348,52 +359,52 @@
                                                                   <Insets top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <TextField fx:id="settingRotateFirstRow" alignment="CENTER" focusTraversable="false" promptText="列號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingRotateSheet" alignment="CENTER" focusTraversable="false" promptText="工作表次序" GridPane.columnIndex="1">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingRotateKitNameCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingRotateFirstRow" alignment="CENTER" focusTraversable="false" promptText="列號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingRotatePartNumCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingRotateKitNameCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingRotatePmQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingRotatePartNumCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingRotateApQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingRotateBacklogCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingRotateRatioCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingRotatePmQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingRotateApSetCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingRotateApQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingRotateRemarkCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingRotateRatioCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Backlog" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingRotateApSetCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
-                                                            </Text>
-                                                            <TextField fx:id="settingRotateBacklogCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                            </TextField>
+                                                            <TextField fx:id="settingRotateRemarkCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -422,9 +433,15 @@
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                          </rowConstraints>
                                                          <children>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Row" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sheet Index" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Row" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -432,7 +449,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kit Name" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kit Name" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -440,7 +457,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part Number" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part Number" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -448,7 +465,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PO" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PO" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -456,7 +473,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Stock Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -464,7 +481,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Remark" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -472,7 +489,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Stock Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Remark" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -480,7 +497,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Lot" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Lot" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -488,52 +505,57 @@
                                                                   <Insets top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <TextField fx:id="settingStockFirstRow" alignment="CENTER" focusTraversable="false" promptText="列號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <TextField fx:id="settingStockKitNameCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <TextField fx:id="settingStockPartNumCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <TextField fx:id="settingStockPoCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <TextField fx:id="settingStockStockQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <TextField fx:id="settingStockApQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <TextField fx:id="settingStockRemarkCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <TextField fx:id="settingStockLotCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                            </TextField>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="D/C" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="D/C" GridPane.halignment="RIGHT" GridPane.rowIndex="9" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </Text>
-                                                            <TextField fx:id="settingStockDcCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                                            <TextField fx:id="settingStockSheet" alignment="CENTER" focusTraversable="false" promptText="工作表次序" GridPane.columnIndex="1">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockFirstRow" alignment="CENTER" focusTraversable="false" promptText="列號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockKitNameCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockPartNumCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockPoCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockStockQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockApQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockRemarkCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockLotCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                            <TextField fx:id="settingStockDcCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -562,9 +584,15 @@
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                          </rowConstraints>
                                                          <children>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Row" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Sheet Index" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="First Row" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -572,7 +600,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kit Name" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Kit Name" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -580,7 +608,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part Number" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Part Number" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -588,7 +616,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PO" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PO" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -596,7 +624,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GrDate" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GrDate" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -604,7 +632,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GR Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="GR Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -612,7 +640,7 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Qty" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -620,7 +648,12 @@
                                                                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Remark" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Set" GridPane.halignment="RIGHT" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Text>
+                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Remark" GridPane.halignment="RIGHT" GridPane.rowIndex="9" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -628,52 +661,52 @@
                                                                   <Insets top="4.0" />
                                                                </GridPane.margin>
                                                             </Text>
-                                                            <TextField fx:id="settingPurchaseFirstRow" alignment="CENTER" focusTraversable="false" promptText="列號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingPurchaseSheet" alignment="CENTER" focusTraversable="false" promptText="工作表次序" GridPane.columnIndex="1">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingPurchaseKitNameCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingPurchaseFirstRow" alignment="CENTER" focusTraversable="false" promptText="列號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingPurchasePartNumCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingPurchaseKitNameCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingPurchasePoCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingPurchasePartNumCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingPurchaseApQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingPurchasePoCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingPurchaseGrDateCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingPurchaseGrDateCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingPurchaseGrQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingPurchaseGrQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <TextField fx:id="settingPurchaseRemarkCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingPurchaseApQtyCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
                                                             </TextField>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Apply Set" GridPane.halignment="RIGHT" GridPane.rowIndex="7" GridPane.valignment="CENTER">
+                                                            <TextField fx:id="settingPurchaseApSetCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
-                                                            </Text>
-                                                            <TextField fx:id="settingPurchaseApSetCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                            </TextField>
+                                                            <TextField fx:id="settingPurchaseRemarkCol" alignment="CENTER" focusTraversable="false" promptText="行號" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER">
                                                                <font>
                                                                   <Font size="14.0" />
                                                                </font>
@@ -735,21 +768,6 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </JFXTextField>
-                                                      <Button focusTraversable="false" mnemonicParsing="false" onAction="#handleAutoCalcButton" prefHeight="32.0" prefWidth="32.0">
-                                                         <graphic>
-                                                            <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@images/calculator.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                         <tooltip>
-                                                            <Tooltip text="自動計算所有ApplyQty" />
-                                                         </tooltip>
-                                                         <HBox.margin>
-                                                            <Insets left="10.0" />
-                                                         </HBox.margin>
-                                                      </Button>
                                                    </children>
                                                 </HBox>
                                                 <VBox layoutY="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
@@ -827,6 +845,18 @@
                                                       </TableView>
                                                    </children>
                                                 </VBox>
+                                                <Button focusTraversable="false" layoutX="112.0" layoutY="11.0" mnemonicParsing="false" onAction="#handleAutoCalcButton" prefHeight="32.0" prefWidth="32.0" AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="5.0">
+                                                   <graphic>
+                                                      <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@images/calculator.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="自動計算所有ApplyQty" />
+                                                   </tooltip>
+                                                </Button>
                                              </children>
                                           </AnchorPane>
                                           <AnchorPane>

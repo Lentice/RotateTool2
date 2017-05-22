@@ -9,7 +9,7 @@ import org.apache.poi.ss.util.CellReference;
 public class ExcelSettings {
 
     public static String rotateFilePath;
-    public static int rotateSheetIndex = 1;
+    public static int rotateSheetIndex;
     public static int rotateFirstDataRow;
     public static int rotateKitColumn;
     public static int rotatePartColumn;
@@ -21,7 +21,7 @@ public class ExcelSettings {
     public static int rotateRemarkColumn;
 
     public static String stockFilePath;
-    public static int stockSheetIndex = 1;
+    public static int stockSheetIndex;
     public static int stockFirstDataRow;
     public static int stockKitColumn;
     public static int stockPartColumn;
@@ -33,7 +33,7 @@ public class ExcelSettings {
     public static int stockRemarkColumn;
 
     public static String purchaseFilePath;
-    public static int purchaseSheetIndex = 1;
+    public static int purchaseSheetIndex;
     public static int purchaseFirstDataRow;
     public static int purchaseKitColumn;
     public static int purchasePartColumn;
@@ -45,11 +45,12 @@ public class ExcelSettings {
     public static int purchaseRemarkColumn;
 
     public static void setRotateConfig(
-            String filePath, int firstDataRow, String kitColStr, String partColStr, String backlogCol,
+            String filePath, int sheetIndex, int firstDataRow, String kitColStr, String partColStr, String backlogCol,
             String pmQtyColStr, String apQtyColStr, String ratioColStr, String applySetColStr,
             String remarkColStr) {
 
         rotateFilePath = filePath;
+        rotateSheetIndex = sheetIndex;
         rotateFirstDataRow = firstDataRow;
 
         rotateKitColumn = CellReference.convertColStringToIndex(kitColStr.toUpperCase());
@@ -63,12 +64,13 @@ public class ExcelSettings {
     }
 
     public static void setStockConfig(
-            String filePath, int firstDataRow, String kitColStr, String partColStr,
+            String filePath, int sheetIndex, int firstDataRow, String kitColStr, String partColStr,
             String poColStr, String stQtyColStr, String lotColStr, String dcColStr,
             String apQtyColStr, String remarkColStr) {
 
 
         stockFilePath = filePath;
+        stockSheetIndex = sheetIndex;
         stockFirstDataRow = firstDataRow;
 
         stockKitColumn = CellReference.convertColStringToIndex(kitColStr);
@@ -82,11 +84,12 @@ public class ExcelSettings {
     }
 
     public static void setPurchaseConfig(
-            String filePath, int firstDataRow, String kitColStr, String partColStr,
+            String filePath, int sheetIndex, int firstDataRow, String kitColStr, String partColStr,
             String poColStr, String grDateColStr, String grQtyColStr, String apQtyColStr,
             String setColStr, String remarkColStr) {
 
         purchaseFilePath = filePath;
+        purchaseSheetIndex = sheetIndex;
         purchaseFirstDataRow = firstDataRow;
 
         purchaseKitColumn = CellReference.convertColStringToIndex(kitColStr);

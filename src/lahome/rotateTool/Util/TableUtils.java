@@ -3,10 +3,9 @@ package lahome.rotateTool.Util;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import lahome.rotateTool.Main;
 
@@ -18,19 +17,21 @@ public class TableUtils {
     static UndoManager undoManager;
     private static NumberFormat numberFormatter = NumberFormat.getNumberInstance();
 
-    /**
-     * Install the keyboard handler:
-     * + CTRL + C = copy to clipboard
-     *
-     * @param table
-     */
-    public static void installCopyPasteHandler(TableView<?> table) {
+    public static void installMyHandler(TableView<?> table) {
 
-        // install copy/paste keyboard handler
         table.setOnKeyPressed(new TableKeyEventHandler());
         if (undoManager == null) {
             undoManager = UndoManager.getInstance();
         }
+
+//        MenuItem item = new MenuItem("Copy");
+//        item.setOnAction(event -> {
+//            copySelectionToClipboard(table);
+//        });
+//
+//        ContextMenu menu = new ContextMenu();
+//        menu.getItems().add(item);
+//        table.setContextMenu(menu);
     }
 
     /**

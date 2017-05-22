@@ -110,6 +110,9 @@ public class RootController {
     private JFXButton restoreColorButton;
 
     @FXML
+    private TextField settingRotateSheet;
+
+    @FXML
     private TextField settingRotateFirstRow;
 
     @FXML
@@ -137,6 +140,9 @@ public class RootController {
     private TextField settingRotateRemarkCol;
 
     @FXML
+    private TextField settingStockSheet;
+
+    @FXML
     private TextField settingStockFirstRow;
 
     @FXML
@@ -162,6 +168,9 @@ public class RootController {
 
     @FXML
     private TextField settingStockDcCol;
+
+    @FXML
+    private TextField settingPurchaseSheet;
 
     @FXML
     private TextField settingPurchaseFirstRow;
@@ -438,6 +447,15 @@ public class RootController {
         path = pathPurchaseFile.getText();
         prefs.put("PurchasePath", path != null ? path : "");
 
+        prefs.put("sameKitGroupColor", sameKitGroupColor);
+        prefs.put("samePartPoGroupColor", samePartPoGroupColor);
+        prefs.put("samePoGroupColor", samePoGroupColor);
+        prefs.put("apQtyEqualPmQtyColor", apQtyEqualPmQtyColor);
+        prefs.put("apQtyExceedColor", apQtyExceedColor);
+        prefs.put("apQtyNotMultipleColor", apQtyNotMultipleColor);
+        prefs.put("apQtyNotEqualColor", apQtyNotEqualColor);
+
+        prefs.put("settingRotateSheet", settingRotateSheet.getText());
         prefs.put("settingRotateFirstRow", settingRotateFirstRow.getText());
         prefs.put("settingRotateKitNameCol", settingRotateKitNameCol.getText());
         prefs.put("settingRotatePartNumCol", settingRotatePartNumCol.getText());
@@ -448,14 +466,7 @@ public class RootController {
         prefs.put("settingRotateApSetCol", settingRotateApSetCol.getText());
         prefs.put("settingRotateRemarkCol", settingRotateRemarkCol.getText());
 
-        prefs.put("sameKitGroupColor", sameKitGroupColor);
-        prefs.put("samePartPoGroupColor", samePartPoGroupColor);
-        prefs.put("samePoGroupColor", samePoGroupColor);
-        prefs.put("apQtyEqualPmQtyColor", apQtyEqualPmQtyColor);
-        prefs.put("apQtyExceedColor", apQtyExceedColor);
-        prefs.put("apQtyNotMultipleColor", apQtyNotMultipleColor);
-        prefs.put("apQtyNotEqualColor", apQtyNotEqualColor);
-
+        prefs.put("settingStockSheet", settingStockSheet.getText());
         prefs.put("settingStockFirstRow", settingStockFirstRow.getText());
         prefs.put("settingStockKitNameCol", settingStockKitNameCol.getText());
         prefs.put("settingStockPartNumCol", settingStockPartNumCol.getText());
@@ -466,6 +477,7 @@ public class RootController {
         prefs.put("settingStockLotCol", settingStockLotCol.getText());
         prefs.put("settingStockDcCol", settingStockDcCol.getText());
 
+        prefs.put("settingPurchaseSheet", settingPurchaseSheet.getText());
         prefs.put("settingPurchaseFirstRow", settingPurchaseFirstRow.getText());
         prefs.put("settingPurchaseKitNameCol", settingPurchaseKitNameCol.getText());
         prefs.put("settingPurchasePartNumCol", settingPurchasePartNumCol.getText());
@@ -533,6 +545,7 @@ public class RootController {
         pathStockFile.setText(prefs.get("StockPath", ""));
         pathPurchaseFile.setText(prefs.get("PurchasePath", ""));
 
+        settingRotateSheet.setText(prefs.get("settingRotateSheet", "1"));
         settingRotateFirstRow.setText(prefs.get("settingRotateFirstRow", "4"));
         settingRotateKitNameCol.setText(prefs.get("settingRotateKitNameCol", "F"));
         settingRotatePartNumCol.setText(prefs.get("settingRotatePartNumCol", "H"));
@@ -551,6 +564,7 @@ public class RootController {
         apQtyNotMultipleColor = (prefs.get("apQtyNotMultipleColor", "#BA68C8"));
         apQtyNotEqualColor = (prefs.get("apQtyNotEqualColor", "#FFAB91"));
 
+        settingStockSheet.setText(prefs.get("settingStockSheet", "1"));
         settingStockFirstRow.setText(prefs.get("settingStockFirstRow", "2"));
         settingStockKitNameCol.setText(prefs.get("settingStockKitNameCol", "G"));
         settingStockPartNumCol.setText(prefs.get("settingStockPartNumCol", "E"));
@@ -562,6 +576,7 @@ public class RootController {
         settingStockDcCol.setText(prefs.get("settingStockDcCol", "P"));
 
         purchaseShowAllToggle.setSelected(Boolean.valueOf(prefs.get("purchaseShowAllToggle", "true")));
+        settingPurchaseSheet.setText(prefs.get("settingPurchaseSheet", "1"));
         settingPurchaseFirstRow.setText(prefs.get("settingPurchaseFirstRow", "4"));
         settingPurchaseKitNameCol.setText(prefs.get("settingPurchaseKitNameCol", "B"));
         settingPurchasePartNumCol.setText(prefs.get("settingPurchasePartNumCol", "D"));
@@ -830,6 +845,7 @@ public class RootController {
     private void configExcelSettings() {
         ExcelSettings.setRotateConfig(
                 pathAgingReport.getText(),
+                Integer.valueOf(settingRotateSheet.getText()),
                 Integer.valueOf(settingRotateFirstRow.getText()),
                 settingRotateKitNameCol.getText(),
                 settingRotatePartNumCol.getText(),
@@ -843,6 +859,7 @@ public class RootController {
 
         ExcelSettings.setStockConfig(
                 pathStockFile.getText(),
+                Integer.valueOf(settingStockSheet.getText()),
                 Integer.valueOf(settingStockFirstRow.getText()),
                 settingStockKitNameCol.getText(),
                 settingStockPartNumCol.getText(),
@@ -856,6 +873,7 @@ public class RootController {
 
         ExcelSettings.setPurchaseConfig(
                 pathPurchaseFile.getText(),
+                Integer.valueOf(settingPurchaseSheet.getText()),
                 Integer.valueOf(settingPurchaseFirstRow.getText()),
                 settingPurchaseKitNameCol.getText(),
                 settingPurchasePartNumCol.getText(),
@@ -1007,7 +1025,7 @@ public class RootController {
         rotateTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         rotateTableView.setEditable(true);
 
-        TableUtils.installCopyPasteHandler(rotateTableView);
+        TableUtils.installMyHandler(rotateTableView);
 
         Callback<TableColumn<RotateItem, String>, TableCell<RotateItem, String>> readOnlyStringCell
                 = p -> new DragSelectionCell<RotateItem, String>(new DefaultStringConverter()) {
@@ -1121,7 +1139,7 @@ public class RootController {
         stockTableView.getSelectionModel().setCellSelectionEnabled(true);
         stockTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         stockTableView.setEditable(true);
-        TableUtils.installCopyPasteHandler(stockTableView);
+        TableUtils.installMyHandler(stockTableView);
 
         Callback<TableColumn<StockItem, String>, TableCell<StockItem, String>> readOnlyStringCell
                 = p -> new DragSelectionCell<StockItem, String>() {
@@ -1243,7 +1261,7 @@ public class RootController {
         purchaseTableView.getSelectionModel().setCellSelectionEnabled(true);
         purchaseTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         purchaseTableView.setEditable(true);
-        TableUtils.installCopyPasteHandler(purchaseTableView);
+        TableUtils.installMyHandler(purchaseTableView);
 
         Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> readOnlyStringCell
                 = p -> new DragSelectionCell<PurchaseItem, String>() {
@@ -1365,7 +1383,7 @@ public class RootController {
         noneStPurchaseTableView.getSelectionModel().setCellSelectionEnabled(true);
         noneStPurchaseTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         noneStPurchaseTableView.setEditable(true);
-        TableUtils.installCopyPasteHandler(noneStPurchaseTableView);
+        TableUtils.installMyHandler(noneStPurchaseTableView);
 
         Callback<TableColumn<PurchaseItem, String>, TableCell<PurchaseItem, String>> readOnlyStringCell
                 = p -> new DragSelectionCell<PurchaseItem, String>() {
@@ -1750,8 +1768,6 @@ public class RootController {
             } else {
                 obsList = rotateItem.getStockItemObsList();
             }
-
-
 
             FilteredList<StockItem> filteredData = new FilteredList<>(obsList, p -> true);
             stockFilterField.textProperty().addListener((ov, oldVal, newVal) ->

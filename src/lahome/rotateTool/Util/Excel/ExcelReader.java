@@ -379,7 +379,7 @@ public class ExcelReader {
         };
 
         try {
-            reader.processOneSheet(ExcelSettings.rotateFilePath, 1);
+            reader.processOneSheet(ExcelSettings.rotateFilePath, ExcelSettings.rotateSheetIndex);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -447,7 +447,7 @@ public class ExcelReader {
         };
 
         try {
-            reader.processOneSheet(ExcelSettings.stockFilePath, 1);
+            reader.processOneSheet(ExcelSettings.stockFilePath, ExcelSettings.stockSheetIndex);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -515,7 +515,7 @@ public class ExcelReader {
         };
 
         try {
-            reader.processOneSheet(ExcelSettings.purchaseFilePath, 1);
+            reader.processOneSheet(ExcelSettings.purchaseFilePath, ExcelSettings.purchaseSheetIndex);
         } catch (Exception e) {
             e.printStackTrace();
         }
