@@ -915,14 +915,14 @@
                                                 </Label>
                                                 <Button focusTraversable="false" layoutX="41.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleAutoCalcOneButton" AnchorPane.leftAnchor="45.0" AnchorPane.topAnchor="5.0">
                                                    <graphic>
-                                                      <ImageView fitHeight="24.0" fitWidth="24.0" onDragDetected="#handleAutoCalcOneButton" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@images/calculator.png" />
                                                          </image>
                                                       </ImageView>
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="自動計算當前庫存ApplyQty" />
+                                                      <Tooltip text="自動計算當前Kit或Single的ApplyQty" />
                                                    </tooltip>
                                                 </Button>
                                                 <HBox alignment="CENTER_RIGHT" layoutX="317.0" layoutY="31.0" maxHeight="-Infinity" prefHeight="20.0" spacing="5.0" style="-fx-background-color: #8BC34A;" AnchorPane.rightAnchor="0.0">
