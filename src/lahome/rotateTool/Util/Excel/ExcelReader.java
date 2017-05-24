@@ -52,8 +52,15 @@ public class ExcelReader {
         }
 
         String kitName = cellGetString(cell).trim();
-        if (kitName.contains("空白"))
+        if (kitName.contains("空白") || kitName.toUpperCase().equals("NA") || kitName.toUpperCase().equals("N/A")) {
             kitName = "";
+        } else if (kitName.toUpperCase().contains("SINGLE")) {
+            if (kitName.toUpperCase().equals("SINGLE") || kitName.toUpperCase().equals("(SINGLE)") ||
+                    kitName.toUpperCase().equals("( SINGLE )") || kitName.toUpperCase().equals("<SINGLE>") ||
+                    kitName.toUpperCase().equals("< SINGLE >")) {
+                kitName = "";
+            }
+        }
 
         return kitName.trim().toUpperCase();
     }
@@ -118,7 +125,7 @@ public class ExcelReader {
         int dc = (int) cellGetValue(cell);
         if (dc / 100 > 99)
             return 0;
-        if (dc / 100 > 53)
+        if (dc % 100 > 53)
             return 0;
 
         return dc;

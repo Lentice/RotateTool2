@@ -231,7 +231,6 @@ public class RotateItem {
         this.kitNode = kitNode;
     }
 
-
     public String getRemark() {
         return remark.get();
     }
@@ -272,6 +271,20 @@ public class RotateItem {
                 list.addAll(stockItem.getPurchaseItemList());
             }
         }
+
+        list.sort(PurchaseItem::compareTo);
+        return list;
+    }
+
+    public List<PurchaseItem> getStAndNoneStPurchaseItemList() {
+        List<PurchaseItem> list = new ArrayList<>();
+
+        for (StockItem stockItem : stockItemObsList) {
+            if (stockItem.isMainStockItem()) {
+                list.addAll(stockItem.getPurchaseItemList());
+            }
+        }
+        list.addAll(noneStockPurchaseItemObsList);
 
         list.sort(PurchaseItem::compareTo);
         return list;

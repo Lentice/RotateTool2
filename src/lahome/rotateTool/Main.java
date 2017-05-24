@@ -30,7 +30,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("view/Root.fxml"));
         Parent root = loader.load();
-        this.primaryStage.setTitle("LA Rotate Tool 1.0.3");
+        this.primaryStage.setTitle("LA Rotate Tool 1.0.6");
         this.primaryStage.getIcons().add(
                 new Image(Main.class.getResourceAsStream("/images/AppIcon.png")));
         this.primaryStage.setScene(new Scene(root));

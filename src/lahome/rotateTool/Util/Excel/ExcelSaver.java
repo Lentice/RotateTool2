@@ -77,12 +77,13 @@ public class ExcelSaver {
             for (RotateItem item : collection.getRotateObsList()) {
                 rotateProgressProperty.set((double)++itemCount / itemsTotal);
 
+                int rowNum = item.getRowNum();
+                writeCell(rowNum, ExcelSettings.rotateRemarkColumn, item.getRemark());
+
                 if (item.isDuplicate())
                     continue;
 
-                int rowNum = item.getRowNum();
                 writeCell(rowNum, ExcelSettings.rotateApQtyColumn, String.valueOf(item.getStockApplyQtyTotal()));
-                writeCell(rowNum, ExcelSettings.rotateRemarkColumn, item.getRemark());
                 if (item.isKit()) {
                     writeCell(rowNum, ExcelSettings.rotateApplySetColumn, String.valueOf(item.getApplySet()));
                 }
@@ -126,6 +127,7 @@ public class ExcelSaver {
             int itemsTotal = collection.getStockItemList().size();
             for (StockItem item : collection.getStockItemList()) {
                 stockProgressProperty.set((double)++itemCount / itemsTotal);
+
                 if (item.getRotateItem().isDuplicate())
                     continue;
 

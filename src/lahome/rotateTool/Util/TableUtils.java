@@ -3,35 +3,63 @@ package lahome.rotateTool.Util;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import lahome.rotateTool.Main;
+import lahome.rotateTool.Util.Excel.ExcelReader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
 public class TableUtils {
+    private static final Logger log = LogManager.getLogger(TableUtils.class.getName());
+
     static UndoManager undoManager;
     private static NumberFormat numberFormatter = NumberFormat.getNumberInstance();
 
+    private String lastKey = null;
+
     public static void installMyHandler(TableView<?> table) {
 
-        table.setOnKeyPressed(new TableKeyEventHandler());
         if (undoManager == null) {
             undoManager = UndoManager.getInstance();
         }
 
-//        MenuItem item = new MenuItem("Copy");
-//        item.setOnAction(event -> {
-//            copySelectionToClipboard(table);
-//        });
-//
-//        ContextMenu menu = new ContextMenu();
-//        menu.getItems().add(item);
-//        table.setContextMenu(menu);
+        table.setOnKeyPressed(new TableKeyEventHandler());
+        setContextMenu(table);
+    }
+
+    private static void setContextMenu(TableView<?> table) {
+        ContextMenu menu = new ContextMenu();
+        table.setContextMenu(menu);
+
+        MenuItem copy = new MenuItem("Copy", new ImageView(
+                new Image(Main.class.getResourceAsStream("/images/Copy_24px.png"))));
+        copy.setOnAction(event -> {
+            copySelectionToClipboard(table);
+        });
+        menu.getItems().add(copy);
+
+        MenuItem cut = new MenuItem("Cut", new ImageView(
+                new Image(Main.class.getResourceAsStream("/images/Cut_24px.png"))));
+        cut.setOnAction(event -> {
+            copySelectionToClipboard(table);
+            deleteSelectCells(table);
+        });
+        menu.getItems().add(cut);
+
+        MenuItem paste = new MenuItem("Paste", new ImageView(
+                new Image(Main.class.getResourceAsStream("/images/Paste_24px.png"))));
+        paste.setOnAction(event -> {
+            pasteFromClipboard(table);
+        });
+        menu.getItems().add(paste);
     }
 
     /**
@@ -40,35 +68,35 @@ public class TableUtils {
      */
     public static class TableKeyEventHandler implements EventHandler<KeyEvent> {
 
-        KeyCodeCombination copyKeyCodeCompination = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
-        KeyCodeCombination pasteKeyCodeCompination = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY);
-        KeyCodeCombination cutKeyCodeCompination = new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_ANY);
-        KeyCodeCombination undoKeyCodeCompination = new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_ANY);
-        KeyCodeCombination redoKeyCodeCompination = new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_ANY);
+        KeyCodeCombination copyKeyCodeCombination = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
+        KeyCodeCombination pasteKeyCodeCombination = new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY);
+        KeyCodeCombination cutKeyCodeCombination = new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_ANY);
+        KeyCodeCombination undoKeyCodeCombination = new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_ANY);
+        KeyCodeCombination redoKeyCodeCombination = new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_ANY);
 
         public void handle(final KeyEvent keyEvent) {
 
-            if (copyKeyCodeCompination.match(keyEvent)) {
+            if (copyKeyCodeCombination.match(keyEvent)) {
                 if (keyEvent.getSource() instanceof TableView) {
                     copySelectionToClipboard((TableView<?>) keyEvent.getSource());
                     keyEvent.consume();
                 }
-            } else if (pasteKeyCodeCompination.match(keyEvent)) {
+            } else if (pasteKeyCodeCombination.match(keyEvent)) {
                 if (keyEvent.getSource() instanceof TableView) {
                     pasteFromClipboard((TableView<?>) keyEvent.getSource());
                     keyEvent.consume();
                 }
-            } else if (cutKeyCodeCompination.match(keyEvent)) {
+            } else if (cutKeyCodeCombination.match(keyEvent)) {
                 if (keyEvent.getSource() instanceof TableView) {
                     copySelectionToClipboard((TableView<?>) keyEvent.getSource());
                     deleteSelectCells((TableView<?>) keyEvent.getSource());
                     keyEvent.consume();
                 }
-            } else if (undoKeyCodeCompination.match(keyEvent)) {
+            } else if (undoKeyCodeCombination.match(keyEvent)) {
                 if (keyEvent.getSource() instanceof TableView) {
                     undoManager.undo();
                 }
-            } else if (redoKeyCodeCompination.match(keyEvent)) {
+            } else if (redoKeyCodeCombination.match(keyEvent)) {
                 if (keyEvent.getSource() instanceof TableView) {
                     undoManager.redo();
                 }
@@ -76,6 +104,18 @@ public class TableUtils {
                 if (keyEvent.getSource() instanceof TableView) {
                     deleteSelectCells((TableView<?>) keyEvent.getSource());
                     keyEvent.consume();
+                }
+            } else {
+                TablePosition tp;
+                if (keyEvent.getSource() instanceof TableView) {
+                    if (!keyEvent.isControlDown() &&
+                            (keyEvent.getCode().isLetterKey() || keyEvent.getCode().isDigitKey())) {
+
+                        TableView<?> table = (TableView<?>) keyEvent.getSource();
+                        tp = table.getFocusModel().getFocusedCell();
+                        //noinspection unchecked
+                        table.edit(tp.getRow(), tp.getTableColumn());
+                    }
                 }
             }
         }
@@ -128,7 +168,7 @@ public class TableUtils {
             } else if (observableValue instanceof ReadOnlyStringProperty) {
                 text = ((ReadOnlyStringProperty) observableValue).get();
             } else {
-                System.out.println("Unsupported observable value: " + observableValue);
+                log.error("Unsupported observable value: " + observableValue);
             }
 
             // add new item to clipboard
@@ -155,14 +195,12 @@ public class TableUtils {
             return;
         }
 
+        undoManager.newInput();
+
         // get the cell position to start with
         TablePosition pasteCellPosition = table.getSelectionModel().getSelectedCells().get(0);
 
-        System.out.println("Pasting into cell " + pasteCellPosition);
-
         String pasteString = Clipboard.getSystemClipboard().getString();
-
-        System.out.println(pasteString);
 
         int rowClipboard = -1;
 
@@ -196,40 +234,31 @@ public class TableUtils {
                     continue;
                 }
 
-                // System.out.println( rowClipboard + "/" + colClipboard + ": " + cell);
-
                 // get cell
                 TableColumn tableColumn = table.getColumns().get(colTable);
                 ObservableValue observableValue = tableColumn.getCellObservableValue(rowTable);
 
-                System.out.println(rowTable + "/" + colTable + ": " + observableValue);
-
                 // TODO: handle boolean, etc
-                if (observableValue instanceof DoubleProperty) {
-                    try {
+                try {
+                    if (observableValue instanceof DoubleProperty) {
+
                         double value = numberFormatter.parse(clipboardCellContent).doubleValue();
-                        ((DoubleProperty) observableValue).set(value);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (observableValue instanceof IntegerProperty) {
-                    try {
+                        undoManager.appendInput((DoubleProperty) observableValue, value);
+
+                    } else if (observableValue instanceof IntegerProperty) {
                         int value = NumberFormat.getInstance().parse(clipboardCellContent).intValue();
-                        ((IntegerProperty) observableValue).set(value);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                        undoManager.appendInput((IntegerProperty) observableValue, value);
+                    } else if (observableValue instanceof StringProperty) {
+                        undoManager.appendInput((StringProperty) observableValue, clipboardCellContent);
+                    } else {
+                        log.error("Unsupported observable value: " + observableValue);
                     }
-                } else if (observableValue instanceof StringProperty) {
-                    ((StringProperty) observableValue).set(clipboardCellContent);
-                } else {
-                    System.out.println("Unsupported observable value: " + observableValue);
+
+                } catch (ParseException e) {
+                    log.error("failed", e);
                 }
-
-                System.out.println(rowTable + "/" + colTable);
             }
-
         }
-
     }
 
 
@@ -256,7 +285,7 @@ public class TableUtils {
             } else if (observableValue instanceof StringProperty) {
                 undoManager.appendInput(((StringProperty) observableValue), "");
             } else {
-                System.out.println("Unsupported observable value: " + observableValue);
+                log.error("Unsupported observable value: " + observableValue);
             }
         }
 

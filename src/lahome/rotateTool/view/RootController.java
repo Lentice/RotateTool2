@@ -20,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -236,12 +237,6 @@ public class RootController {
     private TableColumn<RotateItem, String> rotateRemarkColumn;
 
     @FXML
-    private Label rotatePartCount;
-
-    @FXML
-    private Label rotateCurrKitZmmSetTotal;
-
-    @FXML
     private ComboBox<String> stockPartNumCombo;
 
     @FXML
@@ -281,10 +276,16 @@ public class RootController {
     private Label stockPmQty;
 
     @FXML
+    private Text stockTotalHead;
+
+    @FXML
     private Label stockStQtyTotal;
 
     @FXML
     private Label stockApQtyTotal;
+
+    @FXML
+    private Text stockCurrPoTotalHead;
 
     @FXML
     private Label stockCurrPoStQtyTotal;
@@ -396,8 +397,10 @@ public class RootController {
     private boolean showAllParts = true;
     @SuppressWarnings("FieldCanBeLocal")
     private final String ALL_PARTS = "All";
+
     private RotateItem currentRotateItem;
     private StockItem currentStockItem;
+    private boolean isRotateSelectChanging = false;
     private boolean rotateFilterListenerAdded = false;
 
     private DoubleProperty rotateProgressProperty = new SimpleDoubleProperty(0);
@@ -823,23 +826,43 @@ public class RootController {
     }
 
     @FXML
-    void handleAutoCalcButton() {
+    void handleAutoCalcAllButton() {
         int minDc = collection.getMaxDc() - 200;
         TextInputDialog dialog = new TextInputDialog(String.valueOf(minDc));
-        dialog.setTitle("自動計算");
+        dialog.setTitle("自動計算 - 全部");
         dialog.setHeaderText("自動計算所有的 Apply Qty。\n※注意：當前的Apply Qty及Remark都會先被清除。");
         dialog.setContentText("請輸入D/C允許的最小值:");
 
         Optional<String> result = dialog.showAndWait();
         try {
             result.ifPresent(s -> {
-                CalculateRotate.doCalculate(collection, Integer.valueOf(s));
+                CalculateRotate.calculateAll(collection, Integer.valueOf(s));
                 rotateTableView.getSelectionModel().clearAndSelect(0, rotateApplySetColumn);
             });
         } catch (Exception e) {
             log.error("failed!", e);
         }
+    }
 
+    @FXML
+    void handleAutoCalcOneButton() {
+        int minDc = collection.getMaxDc() - 200;
+        TextInputDialog dialog = new TextInputDialog(String.valueOf(minDc));
+        dialog.setTitle("自動計算 - 當前 Kit / Single");
+        dialog.setHeaderText("自動計算當前Kit或Single所有的 Apply Qty。\n※注意：當前的Apply Qty及Remark都會先被清除。");
+        dialog.setContentText("請輸入D/C允許的最小值:");
+
+        Optional<String> result = dialog.showAndWait();
+        try {
+            result.ifPresent(s -> {
+                if (currentRotateItem != null) {
+                    CalculateRotate.calculateOneRotate(collection, currentRotateItem, Integer.valueOf(s));
+                    refreshAllTable();
+                }
+            });
+        } catch (Exception e) {
+            log.error("failed!", e);
+        }
     }
 
     private void configExcelSettings() {
@@ -1548,6 +1571,8 @@ public class RootController {
         if (!kitUpdate)
             return;
 
+        isRotateSelectChanging = true;
+
         currentRotateItem = newRotateItem;
         rotateSelectedKit = newRotateItem.getKitName();
         rotateSelectedPart = newRotateItem.getPartNumber();
@@ -1573,6 +1598,8 @@ public class RootController {
         updateStockTable(newRotateItem);
 
         updateRotateTableTotal();
+
+        isRotateSelectChanging = false;
     }
 
     private void handleSelectedStockItem(StockItem newStockItem) {
@@ -1596,6 +1623,7 @@ public class RootController {
 
         syncToPurchaseTable(newStockItem.getPartNumber(), newStockItem.getPo());
         syncToNoStPurchaseTable(newStockItem.getPartNumber(), newStockItem.getRemark());
+        syncToRotateTable();
     }
 
 
@@ -1664,6 +1692,27 @@ public class RootController {
             purchasePoColumn.setVisible(false);
             purchasePoColumn.setVisible(true);
             updatePurchaseTable(currentStockItem);
+        }
+    }
+
+    private void syncToRotateTable() {
+        if (currentStockItem == null)
+            return;
+        if (currentRotateItem == null)
+            return;
+        if (isRotateSelectChanging)
+            return;
+
+        int row = 0;
+        for (RotateItem item : rotateTableView.getItems()) {
+            if (item == currentStockItem.getRotateItem() && item.isKit() &&
+                    currentRotateItem.getKitName().equals(item.getKitName())) {
+                rotateTableView.scrollTo(Math.max(row - 3, 0));
+                rotateTableView.getSelectionModel().clearAndSelect(row, rotatePmQtyColumn);
+                return;
+            }
+
+            row++;
         }
     }
 
@@ -1746,11 +1795,11 @@ public class RootController {
         // 5. Add sorted (and filtered) data to the table.
         rotateTableView.setItems(sortedData);
         if (obsList.size() > 0) {
-            rotateTableView.getSelectionModel().clearAndSelect(0, rotateApplySetColumn);
+            rotateTableView.getSelectionModel().clearAndSelect(0, rotatePmQtyColumn);
         }
 
         rotateTableView.requestFocus();
-        rotatePartCount.setText(String.valueOf(obsList.size()));
+        //rotatePartCount.setText(String.valueOf(obsList.size()));
     }
 
     private void updateStockTable(RotateItem rotateItem) {
@@ -1887,7 +1936,7 @@ public class RootController {
             }
         }
 
-        rotateCurrKitZmmSetTotal.setText(String.valueOf(applySetTotal));
+        //rotateCurrKitZmmSetTotal.setText(String.valueOf(applySetTotal));
     }
 
     private void updateStockTableTotal() {
@@ -1920,9 +1969,11 @@ public class RootController {
 
         stockPmQty.setText(String.valueOf(pmQty));
 
+        stockTotalHead.setText(String.format("Part \'%s\' Total:", currentStockItem.getRotateItem().getSerialNo()));
         stockStQtyTotal.setText(String.valueOf(stQtyTotal));
         stockApQtyTotal.setText(String.valueOf(applyQtyTotal));
 
+        stockCurrPoTotalHead.setText(String.format("Part \'%s\' current PO:", currentStockItem.getRotateItem().getSerialNo()));
         stockCurrPoStQtyTotal.setText(String.valueOf(currentPoStQtyTotal));
         stockCurrPoApQtyTotal.setText(String.valueOf(currentPoApplyQtyTotal));
     }

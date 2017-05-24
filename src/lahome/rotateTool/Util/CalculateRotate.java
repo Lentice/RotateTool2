@@ -1,9 +1,6 @@
 package lahome.rotateTool.Util;
 
-import lahome.rotateTool.module.PurchaseItem;
-import lahome.rotateTool.module.RotateCollection;
-import lahome.rotateTool.module.RotateItem;
-import lahome.rotateTool.module.StockItem;
+import lahome.rotateTool.module.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,28 +14,24 @@ public class CalculateRotate {
     private static RotateItem[] kit;
     private static List<PurchaseItem> applyNoneStPurchase;
 
-    public static void doCalculate(RotateCollection collection, int dcMinLimit) {
+    public static void calculateAll(RotateCollection collection, int dcMinLimit) {
 
         undoManager = UndoManager.getInstance();
         undoManager.newInput();
 
-        clearForAutoCalc(collection);
+        clearAllForAutoCalc(collection);
         for (RotateItem rotateItem : collection.getRotateObsList()) {
-            if (rotateItem.isDuplicate())
-                continue;
-
-            if (!rotateItem.isRotateValid())
-                continue;
-
-            kit = getKitItems(rotateItem);
-            if (kit == null)
-                continue;
-
-            if (!isValidKit())
-                continue;
-
-            processStockItems(dcMinLimit);
+            processOneRotate(rotateItem, dcMinLimit);
         }
+    }
+
+    public static void calculateOneRotate(RotateCollection collection, RotateItem rotateItem, int dcMinLimit) {
+
+        undoManager = UndoManager.getInstance();
+        undoManager.newInput();
+
+        clearOneRotateForAutoCalc(collection, rotateItem);
+        processOneRotate(rotateItem, dcMinLimit);
     }
 
     private static boolean isValidKit() {
@@ -51,6 +44,23 @@ public class CalculateRotate {
         }
 
         return true;
+    }
+
+    private static void processOneRotate(RotateItem rotateItem, int dcMinLimit) {
+        if (rotateItem.isDuplicate())
+            return;
+
+        if (!rotateItem.isRotateValid())
+            return;
+
+        kit = getKitItems(rotateItem);
+        if (kit == null)
+            return;
+
+        if (!isValidKit())
+            return;
+
+        processStockItems(dcMinLimit);
     }
 
     private static void processStockItems(int dcMinLimit) {
@@ -78,10 +88,6 @@ public class CalculateRotate {
         applyNoneStPurchase = new ArrayList<>();
         boolean useNoneStPurchase = (stockItem.getPurchaseItemList().size() == 0);
 
-//        if ("4501257283".equals(stockItem.getPo())) {
-//            int i = 1;
-//        }
-
         int stockApplySet = getMinApplySetFromStock(stockItem.getPo());
         int applySet = Math.min(stockApplySet, targetSet - ((applyQty[0]) / ratio[0]));
         if (applySet == 0)
@@ -94,7 +100,6 @@ public class CalculateRotate {
         applySet = Math.min(applySet, purchaseApplySet);
         if (applySet == 0)
             return;
-
 
         applyNoneStPurchase.sort((o1, o2) -> o2.getApplyQty() - o1.getApplyQty());
 
@@ -113,14 +118,14 @@ public class CalculateRotate {
     private static void fillApplyQtyToPurchase(String po, int applySet) {
         for (int i = 0; i < kit.length; i++) {
             int expectQty = applySet * ratio[i];
+
             for (PurchaseItem purchaseItem : kit[i].getPurchaseItemList()) {
                 if (purchaseItem.getPo().equals(po)) {
                     int grQty = purchaseItem.getGrQty();
                     int oldApplyQty = purchaseItem.getApplyQty();
                     int applyQty = Math.min(expectQty, grQty - oldApplyQty);
 
-                    undoManager.appendInput(purchaseItem.applyQtyProperty(),
-                            applyQty + oldApplyQty);
+                    undoManager.appendInput(purchaseItem.applyQtyProperty(), applyQty + oldApplyQty);
 
                     expectQty -= applyQty;
                     if (expectQty <= 0)
@@ -133,16 +138,17 @@ public class CalculateRotate {
     private static void fillApplyQtyToNoneStPurchase(String po, int applySet) {
         for (int i = 0; i < kit.length; i++) {
             int expectQty = applySet * ratio[i];
+
             for (PurchaseItem applyPurchase : applyNoneStPurchase) {
                 String applyPo = applyPurchase.getPo();
+
                 for (PurchaseItem purchaseItem : kit[i].getNoneStockPurchaseItemObsList()) {
                     if (purchaseItem.getPo().equals(applyPo)) {
                         int grQty = purchaseItem.getGrQty();
                         int oldApplyQty = purchaseItem.getApplyQty();
                         int applyQty = Math.min(expectQty, grQty - oldApplyQty);
 
-                        undoManager.appendInput(purchaseItem.applyQtyProperty(),
-                                applyQty + oldApplyQty);
+                        undoManager.appendInput(purchaseItem.applyQtyProperty(), applyQty + oldApplyQty);
 
                         String remark = purchaseItem.getRemark();
                         if (remark.isEmpty())
@@ -150,8 +156,7 @@ public class CalculateRotate {
                         else
                             remark += ", " + po;
 
-                        undoManager.appendInput(purchaseItem.remarkProperty(),
-                                remark);
+                        undoManager.appendInput(purchaseItem.remarkProperty(), remark);
 
                         expectQty -= applyQty;
                         if (expectQty <= 0)
@@ -283,21 +288,79 @@ public class CalculateRotate {
         return minApplySet;
     }
 
-    private static void clearForAutoCalc(RotateCollection collection) {
+    private static void clearRotateItem(RotateItem rotateItem) {
+        undoManager.appendInput(rotateItem.remarkProperty(), "");
+    }
+
+    private static void clearStockItem(StockItem stockItem) {
+        stockItem.setAutoCalculated(false);
+
+        undoManager.appendInput(stockItem.applyQtyProperty(), 0);
+        undoManager.appendInput(stockItem.remarkProperty(), "");
+    }
+
+    private static void clearPurchaseItem(PurchaseItem purchaseItem) {
+        undoManager.appendInput(purchaseItem.applyQtyProperty(), 0);
+        undoManager.appendInput(purchaseItem.remarkProperty(), "");
+    }
+
+    private static void clearAllForAutoCalc(RotateCollection collection) {
         for (RotateItem rotateItem : collection.getRotateObsList()) {
-            undoManager.appendInput(rotateItem.remarkProperty(), "");
+            clearRotateItem(rotateItem);
         }
 
         for (StockItem stockItem : collection.getStockItemList()) {
-            stockItem.setAutoCalculated(false);
-
-            undoManager.appendInput(stockItem.applyQtyProperty(), 0);
-            undoManager.appendInput(stockItem.remarkProperty(), "");
+            clearStockItem(stockItem);
         }
 
         for (PurchaseItem purchaseItem : collection.getPurchaseItemList()) {
-            undoManager.appendInput(purchaseItem.applyQtyProperty(), 0);
-            undoManager.appendInput(purchaseItem.remarkProperty(), "");
+            clearPurchaseItem(purchaseItem);
+        }
+    }
+
+    private static void clearOneRotateForAutoCalc(RotateCollection collection, RotateItem rotateItem) {
+
+        List<RotateItem> rotateItemList = null;
+        List<StockItem> stockItemList = null;
+        List<PurchaseItem> purchaseItemList = null;
+
+        for (RotateItem item : collection.getRotateObsList()) {
+            if (rotateItem.isKit() && item.isKit() && item.getKitName().equals(rotateItem.getKitName())) {
+                KitNode kitNode = item.getKitNode();
+
+                rotateItemList = kitNode.getPartsList();
+                stockItemList = kitNode.getStockItemList();
+                purchaseItemList = kitNode.getStAndNoneStPurchaseItemList();
+
+                break;
+            } else if (!rotateItem.isKit() && !item.isKit()) {
+                if (item.getPartNumber().equals(rotateItem.getPartNumber())) {
+                    rotateItemList = new ArrayList<>(2);
+                    rotateItemList.add(rotateItem);
+
+                    stockItemList = rotateItem.getStockItemObsList();
+                    purchaseItemList = rotateItem.getStAndNoneStPurchaseItemList();
+                    break;
+                }
+            }
+        }
+
+        if (rotateItemList != null) {
+            for (RotateItem kitItem : rotateItemList) {
+                clearRotateItem(kitItem);
+            }
+        }
+
+        if (stockItemList != null) {
+            for (StockItem stockItem : stockItemList) {
+                clearStockItem(stockItem);
+            }
+        }
+
+        if (purchaseItemList != null) {
+            for (PurchaseItem purchaseItem : purchaseItemList) {
+                clearPurchaseItem(purchaseItem);
+            }
         }
     }
 
