@@ -27,7 +27,7 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.NumberStringConverter;
 import lahome.rotateTool.Main;
-import lahome.rotateTool.Util.CalculateRotate;
+import lahome.rotateTool.module.autoCalc.CalculateRotate;
 import lahome.rotateTool.Util.Excel.ExcelReader;
 import lahome.rotateTool.Util.Excel.ExcelSaver;
 import lahome.rotateTool.Util.Excel.ExcelSettings;
@@ -836,7 +836,8 @@ public class RootController {
         Optional<String> result = dialog.showAndWait();
         try {
             result.ifPresent(s -> {
-                CalculateRotate.calculateAll(collection, Integer.valueOf(s));
+                CalculateRotate calc = new CalculateRotate(collection, Integer.valueOf(s));
+                calc.calculateAll();
                 rotateTableView.getSelectionModel().clearAndSelect(0, rotateApplySetColumn);
             });
         } catch (Exception e) {
@@ -856,7 +857,8 @@ public class RootController {
         try {
             result.ifPresent(s -> {
                 if (currentRotateItem != null) {
-                    CalculateRotate.calculateOneRotate(collection, currentRotateItem, Integer.valueOf(s));
+                    CalculateRotate calc = new CalculateRotate(collection, Integer.valueOf(s));
+                    calc.calculateOneRotate(currentRotateItem);
                     refreshAllTable();
                 }
             });
@@ -1597,8 +1599,6 @@ public class RootController {
         updateNoneStPurchaseTable(newRotateItem);
         updateStockTable(newRotateItem);
 
-        updateRotateTableTotal();
-
         isRotateSelectChanging = false;
     }
 
@@ -1917,26 +1917,6 @@ public class RootController {
         }
 
         updateNoneStPurchaseTableTotal();
-    }
-
-    private void updateRotateTableTotal() {
-        int applySetTotal = 0;
-
-        if (currentRotateItem.isKit()) {
-            for (PurchaseItem purchaseItem : currentRotateItem.getKitNode().getStAndNoneStPurchaseItemList()) {
-                applySetTotal += purchaseItem.getApplySet();
-            }
-        } else {
-            for (StockItem stockItem : currentRotateItem.getStockItemObsList()) {
-                if (stockItem.isMainStockItem()) {
-                    for (PurchaseItem purchaseItem : stockItem.getPurchaseItemList()) {
-                        applySetTotal += purchaseItem.getApplySet();
-                    }
-                }
-            }
-        }
-
-        //rotateCurrKitZmmSetTotal.setText(String.valueOf(applySetTotal));
     }
 
     private void updateStockTableTotal() {

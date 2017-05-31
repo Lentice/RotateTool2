@@ -1,11 +1,12 @@
-package lahome.rotateTool.Util;
+package lahome.rotateTool.module.autoCalc;
 
+import lahome.rotateTool.Util.UndoManager;
 import lahome.rotateTool.module.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CalculateRotate {
+public class CalculateRotateV1 {
 
     private static UndoManager undoManager;
     private static int targetSet;
@@ -13,6 +14,7 @@ public class CalculateRotate {
     private static int[] applyQty;
     private static RotateItem[] kit;
     private static List<PurchaseItem> applyNoneStPurchase;
+    private static List<PurchaseItem> applyPurchase;
 
     public static void calculateAll(RotateCollection collection, int dcMinLimit) {
 
@@ -23,6 +25,8 @@ public class CalculateRotate {
         for (RotateItem rotateItem : collection.getRotateObsList()) {
             processOneRotate(rotateItem, dcMinLimit);
         }
+
+        clean();
     }
 
     public static void calculateOneRotate(RotateCollection collection, RotateItem rotateItem, int dcMinLimit) {
@@ -32,6 +36,16 @@ public class CalculateRotate {
 
         clearOneRotateForAutoCalc(collection, rotateItem);
         processOneRotate(rotateItem, dcMinLimit);
+
+        clean();
+    }
+
+    private static void clean() {
+        ratio = null;
+        applyQty = null;
+        kit = null;
+        applyNoneStPurchase = null;
+        applyPurchase = null;
     }
 
     private static boolean isValidKit() {
@@ -66,10 +80,11 @@ public class CalculateRotate {
     private static void processStockItems(int dcMinLimit) {
 
         ratio = getRatio();
+        assert ratio != null;
+
+        targetSet = getTargetSet();
         applyQty = new int[kit.length];
 
-        assert ratio != null;
-        targetSet = kit[0].getPmQty() / ratio[0];
 
         List<StockItem> stockList = getAllStockList(dcMinLimit);
         for (StockItem stockItem : stockList) {
@@ -113,6 +128,34 @@ public class CalculateRotate {
         for (int i = 0; i < kit.length; i++) {
             applyQty[i] += applySet * ratio[i];
         }
+    }
+
+    private static int getTargetSet() {
+        int targetSet = Integer.MAX_VALUE;
+
+        for (int i = 0; i < kit.length; i++) {
+            targetSet = Math.min(targetSet, kit[i].getPmQty() / ratio[i]);
+        }
+
+        for (int i = 0; i < kit.length; i++) {
+            int grQty = 0;
+            for (PurchaseItem purchaseItem : kit[i].getStAndNoneStPurchaseItemList()) {
+                grQty += purchaseItem.getGrQty();
+            }
+
+            targetSet = Math.min(targetSet, grQty / ratio[i]);
+        }
+
+        for (int i = 0; i < kit.length; i++) {
+            int stockQty = 0;
+            for (StockItem stockItem : kit[i].getStockItemObsList()) {
+                stockQty += stockItem.getStockQty();
+            }
+
+            targetSet = Math.min(targetSet, stockQty / ratio[i]);
+        }
+
+        return targetSet;
     }
 
     private static void fillApplyQtyToPurchase(String po, int applySet) {
@@ -214,6 +257,7 @@ public class CalculateRotate {
             for (PurchaseItem purchaseItem : kit[i].getPurchaseItemList()) {
                 if (purchaseItem.getPo().equals(po)) {
                     grQty[i] += (purchaseItem.getGrQty() - purchaseItem.getApplyQty());
+                    applyPurchase.add(purchaseItem);
                 }
             }
         }
